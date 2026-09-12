@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>pix3lware — 3D garage</title><link rel="stylesheet" href="style.css">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
+</head><body><main>
+<section class="viewer" aria-label="Interactive Ford Bronco Raptor">
+<div class="viewer-top"><span><span class="dot"></span> PIX3LWARE / LIVE 3D</span><span id="counter">01 / 01</span></div>
+<div id="canvas-wrap"></div>
+<div class="viewer-bottom"><div><p class="eyebrow" id="category"></p><h1 id="object-title">Ford Bronco Raptor</h1></div><div class="controls"><button id="rotate" type="button" aria-pressed="true">Pause rotation</button><button id="reset" type="button">Reset view</button></div></div>
+</section><div class="viewer-note"><span id="status" role="status">Loading the Bronco…</span><span>DRAG TO ORBIT · SCROLL TO ZOOM</span></div>
+<nav id="collection" aria-label="Choose an object" hidden></nav>
+<noscript>Enable JavaScript to explore this 3D model.</noscript></main>
+<script type="module" src="app.js"></script><script>window.addEventListener('error',()=>{document.getElementById('status').textContent='The viewer could not start. Check your connection and WebGL support.';});</script>
+</body></html>

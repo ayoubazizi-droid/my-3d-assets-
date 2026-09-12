@@ -7,8 +7,6 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 // in this GitHub Pages repository. Use a self-contained, uncompressed GLB.
 const objects = [
   { title: 'Ford Bronco Raptor', category: '01 / CUSTOM BRONCO', symbol: '◈', shape: 'knot', url: './models/Ud.glb' },
-  { title: 'Soft geometry', category: '02 / SIMPLE COMPLEXITY', symbol: '◈', shape: 'crystal', url: '' },
-  { title: 'Full circle', category: '03 / BALANCED BY DESIGN', symbol: '◎', shape: 'ring', url: '' },
 ];
 const wrap = document.querySelector('#canvas-wrap');
 const status = document.querySelector('#status');
@@ -37,17 +35,17 @@ controls.minDistance = 2.5;
 controls.maxDistance = 12;
 controls.autoRotate = !reducedMotion;
 controls.autoRotateSpeed = 1.2;
-scene.add(new THREE.HemisphereLight(0xffffff, 0x65744f, 3));
+scene.add(new THREE.HemisphereLight(0xffffff, 0x77778a, 3));
 const key = new THREE.DirectionalLight(0xffffff, 4);
 key.position.set(3, 5, 4);
 scene.add(key);
-const rim = new THREE.DirectionalLight(0xe0f9b9, 2);
+const rim = new THREE.DirectionalLight(0xffffff, 2);
 rim.position.set(-4, 1, -2);
 scene.add(rim);
 const loader = new GLTFLoader();
 let current, requestId = 0;
 function resetView() {
-  camera.position.set(3.8, 2.0, wrap.clientWidth < 500 ? 6.1 : 4.7);
+  camera.position.set(2.8, 1.5, wrap.clientWidth < 500 ? 4.2 : 3.4);
   controls.target.set(0, 0, 0);
   controls.update();
 }

@@ -1,56 +1,25 @@
-# Orbit — Three.js for Blogger
+# pix3lware — Blogger theme and 3D garage
 
-A responsive 3D gallery with three built-in objects, orbit/zoom controls,
-automatic rotation, reduced-motion support, and optional GLB models.
-No build step is required. Internet access is required for Three.js and fonts.
+Live site: https://ayoubazizi-droid.github.io/my-3d-assets-/
 
-## 1. Publish on GitHub Pages
+The design comes from the supplied pix3lware Blogger theme: original pixel artwork, fonts, colors, and page sections. A 3D garage is added below the gallery. The footer wraps on small screens.
 
-1. Create a public GitHub repository (for example, `orbit-3d`).
-2. Upload `index.html`, `style.css`, `app.js`, `.nojekyll`, and the `models` folder
-   at the repository root. Do not upload the enclosing `blogger-3d` folder.
-3. Under repository **Settings → Pages**, select **Deploy from a branch**,
-   choose **main** and **/(root)**, and save.
-4. Wait for deployment and open `https://YOUR-USERNAME.github.io/orbit-3d/`.
-   Confirm the gallery loads before embedding it.
+- `index.html` / `theme.css`: standalone static version of the design. Blogger's live post list is omitted here. The original inactive newsletter form is replaced with a garage link on this static page.
+- `blogger-theme.xml`: complete Blogger theme with its original Blog1 post widget and the embedded 3D garage. The original newsletter form and placeholder social links are preserved; subscribing is not connected to a mailing service.
+- `viewer.html` / `style.css` / `app.js`: compact Three.js viewer, styled to match the theme.
+- `models/Ud.glb`: baked Bronco, with embedded textures, approximately 26 MB.
+- `blogger-embed.html`: optional snippet for an individual Blogger page; unnecessary if installing the complete theme.
 
-## 2. Add your 3D objects
+## Install the Blogger theme
 
-Upload a self-contained, uncompressed `.glb` into `models/`. In `app.js`, change
-an object's empty `url` to `./models/your-file.glb`. Edit its title and category.
-File names are case-sensitive. Use the published GitHub Pages URL for an external
-model, never a GitHub `/blob/` page URL. Keeping models in the same Pages repository
-avoids cross-origin setup. Other servers must allow cross-origin requests.
+In Blogger, open Theme, save a backup of the current theme, then use the theme menu's Restore / Upload option to select `blogger-theme.xml`. Alternatively, replace the contents of Theme → Edit HTML with this XML and save. This theme already includes the viewer, so a separate page embed is not required.
 
-GLTFLoader supports GLB/glTF. This starter does not configure Draco, Meshopt,
-or KTX2 decoders and does not play embedded animations. Export without those
-compression extensions. Models are automatically centered and scaled; a failed
-model load shows a sample object and a visible error message.
+Local copies: `/home/liveuser/Documents/pix3lware-theme/pix3lware-3d.xml` and `original.xml` (the supplied unmodified theme).
 
-## 3. Display it on Blogger
+Blogger renders the dynamic posts. GitHub Pages hosts the 3D viewer and model. The iframe uses the absolute GitHub Pages viewer URL and has desktop/mobile heights.
 
-1. Open `blogger-embed.html` and replace both GitHub placeholders.
-2. In Blogger, create or edit a page and switch the editor to **HTML view**.
-3. Paste the iframe snippet, then preview and publish the page.
-   You can also use **Layout → Add a Gadget → HTML/JavaScript** for an embed.
-4. Adjust the iframe's `height:1250px` for your theme. Use a wide page layout.
+## Validation
 
-Blogger hosts the surrounding blog/page; GitHub Pages hosts the embedded website
-and model files. This is an iframe integration, not a replacement Blogger XML theme.
-The frame scrolls independently if its content is taller than its configured height.
+Theme XML parses and retains Blog1. The model passes Khronos glTF validation with zero errors or warnings. Brave desktop (1365 px) and phone (390 px) checks confirmed the model loads, rotation toggles, reset works, and the main page has no horizontal overflow. No page JavaScript errors were observed. Actual Blogger installation still needs to be performed in Blogger.
 
-## Local preview
-
-From this folder run `python3 -m http.server 8000` and visit
-`http://localhost:8000`. Opening index.html directly as a file is not supported.
-
-## References
-
-- https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site
-- https://threejs.org/manual/en/installation.html
-- https://threejs.org/docs/pages/GLTFLoader.html
-- https://support.google.com/blogger/answer/46888?hl=en
-
-## Included Ford Bronco
-
-The first object now loads `models/Ud.glb` (26.1 MB), with baked textures embedded. Studio reflections are configured for paint and chrome. This detailed model can load slowly on mobile connections. The model passed glTF validation with no errors or warnings.
+Local preview: `python3 -m http.server 8011` from this directory. Open `http://localhost:8011/`; the theme iframe points to the deployed viewer.

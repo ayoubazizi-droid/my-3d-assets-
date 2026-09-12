@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Orbit — 3D collection</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="importmap">
+    {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}
+  </script>
+</head>
+<body>
+  <main>
+    <header><a class="brand" href="./" aria-label="Orbit home">◉ ORBIT<span>OBJECTS & EXPLORATIONS</span></a><span class="edition">VOLUME 001 / DIGITAL COLLECTION</span></header>
+    <section class="intro"><p class="eyebrow">A DIFFERENT PERSPECTIVE</p><h1>Objects worth<br><em>looking around.</em></h1><p>A small collection of shapes, surfaces, and possibilities.<br>Pick an object. Give it a spin.</p></section>
+    <section class="viewer" aria-label="Interactive 3D object viewer">
+      <div class="viewer-top"><span><span class="dot"></span> LIVE 3D</span><span id="counter">01 / 03</span></div>
+      <div id="canvas-wrap"></div>
+      <div class="viewer-bottom"><div><p class="eyebrow" id="category"></p><h2 id="object-title"></h2></div><div class="controls"><button id="rotate" type="button" aria-pressed="true">Pause rotation</button><button id="reset" type="button">Reset view</button></div></div>
+    </section>
+    <div class="viewer-note"><span id="status" role="status">Starting the 3D viewer…</span><span>DRAG TO ORBIT · SCROLL TO ZOOM</span></div>
+    <nav id="collection" aria-label="Choose an object"></nav>
+    <footer><span>Made to be explored.</span><span>ORBIT / A STUDY IN THREE DIMENSIONS</span></footer>
+  </main>
+  <script type="module" src="app.js"></script>
+  <script>window.addEventListener('error', () => { document.getElementById('status').textContent = 'The viewer could not start. Check your connection and WebGL support.'; });</script>
+</body>
+</html>

@@ -2,6 +2,9 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPixelatedPass } from 'three/addons/postprocessing/RenderPixelatedPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 // Replace an empty URL with './models/your-model.glb'. Keep all model files
 // in this GitHub Pages repository. Use a self-contained, uncompressed GLB.
@@ -22,6 +25,21 @@ renderer.toneMappingExposure = 1.3;
 wrap.appendChild(renderer.domElement);
 renderer.domElement.setAttribute('aria-label', '3D preview; choose an object with the buttons below');
 renderer.domElement.setAttribute('role', 'img');
+// Render the model to a small texture, then upscale with nearest-neighbor sampling.
+// Pixel sizes are CSS pixels so high-density screens get the same visual style.
+const pixelStyle = document.querySelector('#pixel-style');
+const composer = new EffectComposer(renderer);
+const pixelPass = new RenderPixelatedPass(4 * renderer.getPixelRatio(), scene, camera, {
+  normalEdgeStrength: 0.2,
+  depthEdgeStrength: 0.3,
+});
+composer.addPass(pixelPass);
+composer.addPass(new OutputPass());
+let pixelSize = 4;
+pixelStyle.addEventListener('change', () => {
+  pixelSize = Number(pixelStyle.value);
+  if (pixelSize > 0) pixelPass.setPixelSize(pixelSize * renderer.getPixelRatio());
+});
 // Studio reflections make the baked metallic paint and chrome visible.
 const pmrem = new THREE.PMREMGenerator(renderer);
 const environment = new RoomEnvironment();
@@ -123,9 +141,11 @@ rotateButton.addEventListener('click', () => { controls.autoRotate = !controls.a
 document.querySelector('#reset').addEventListener('click', resetView);
 new ResizeObserver(() => {
   const width = wrap.clientWidth, height = wrap.clientHeight;
+  if (!width || !height) return;
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
   renderer.setSize(width, height);
+  composer.setSize(width, height);
 }).observe(wrap);
 updateRotationLabel();
 select(0);
@@ -134,5 +154,6 @@ renderer.setAnimationLoop(() => {
   const delta = Math.min(clock.getDelta(), 0.1);
   if (document.hidden) return;
   controls.update(delta);
-  renderer.render(scene, camera);
+  if (pixelSize > 0) composer.render(delta);
+  else renderer.render(scene, camera);
 });

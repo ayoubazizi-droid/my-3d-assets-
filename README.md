@@ -23,3 +23,11 @@ Blogger renders the dynamic posts. GitHub Pages hosts the 3D viewer and model. T
 Theme XML parses and retains Blog1. The model passes Khronos glTF validation with zero errors or warnings. Brave desktop (1365 px) and phone (390 px) checks confirmed the model loads, rotation toggles, reset works, and the main page has no horizontal overflow. No page JavaScript errors were observed. Actual Blogger installation still needs to be performed in Blogger.
 
 Local preview: `python3 -m http.server 8011` from this directory. Open `http://localhost:8011/`; the theme iframe points to the deployed viewer.
+
+## Pixel rendering
+
+The viewer starts in Pixel art mode. The Look selector offers Fine pixels (2 CSS pixels), Pixel art (4), Chunky pixels (7), and Smooth 3D. EffectComposer runs RenderPixelatedPass and OutputPass; smooth mode renders directly. Pixel size accounts for device pixel ratio. Text and buttons remain sharp HTML controls. Render targets resize with the viewer; no change to the GLB or Blogger theme installation is needed.
+
+Validated all four modes in Brave at 1040px / DPR 1 and 390px / DPR 2, including rotation/reset and checks for overflow and console errors.
+
+Reference: https://threejs.org/docs/pages/RenderPixelatedPass.html

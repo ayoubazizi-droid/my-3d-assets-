@@ -197,7 +197,8 @@
     if (!enabled || !active) return;
     const vh = innerHeight, vw = innerWidth;
     scrollTarget = scrollY;
-    smoothY += (scrollTarget - smoothY) * .16;
+    // Low-pass the scroll position so wheel and trackpad input glides into place.
+    smoothY += (scrollTarget - smoothY) * .11;
     if (Math.abs(scrollTarget - smoothY) < .15) smoothY = scrollTarget;
     if (Math.abs(lastY - smoothY) > .05) {
       const y = smoothY;

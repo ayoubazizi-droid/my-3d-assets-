@@ -1,14 +1,16 @@
 (() => {
   'use strict';
   const root = document.documentElement;
-  // Original, gently synthesized game ambience. Sound starts only from its control.
+  // Original, gently synthesized game ambience. It is ready by default and
+  // unlocks as soon as the browser permits audio after the first interaction.
   const sound = document.createElement('button');
   sound.type = 'button'; sound.className = 'sound-toggle';
-  sound.setAttribute('aria-label', 'Play ambient game music');
-  sound.setAttribute('aria-pressed', 'false');
-  sound.innerHTML = '<span class="sound-bars" aria-hidden="true"><i></i><i></i><i></i></span><span class="sound-label">SOUND OFF</span>';
+  sound.setAttribute('aria-label', 'Mute ambient game music');
+  sound.setAttribute('aria-pressed', 'true');
+  sound.classList.add('sound-on');
+  sound.innerHTML = '<span class="sound-bars" aria-hidden="true"><i></i><i></i><i></i></span><span class="sound-label">SOUND ON</span>';
   document.body.append(sound);
-  let audio, master, wet, musicOn = false, nextChord = 0, chordIndex = 0, scheduler;
+  let audio, master, wet, musicOn = true, nextChord = 0, chordIndex = 0, scheduler, unlocked = false;
   const chords = [[57,60,64,69], [53,57,60,65], [48,55,60,64], [55,59,62,67]];
   const melody = [0, 2, 3, 1, 2, 0, 3, 2];
   const frequency = midi => 440 * 2 ** ((midi - 69) / 12);
@@ -51,11 +53,25 @@
     wet.connect(reverb); reverb.connect(master);
     scheduler = setInterval(scheduleMusic, 250);
   }
+  async function unlockMusic() {
+    if (unlocked || !musicOn) return;
+    try {
+      if (!audio) createAudio();
+      await audio.resume();
+      master.gain.setTargetAtTime(.38, audio.currentTime, .2);
+      nextChord = audio.currentTime + .05;
+      scheduleMusic();
+      unlocked = true;
+    } catch (_) {}
+  }
+  // Browsers require a user gesture before audible audio; the first tap/click starts it.
+  document.addEventListener('pointerdown', unlockMusic, {once:false, passive:true});
   sound.addEventListener('click', async () => {
     try {
       if (!audio) createAudio();
       await audio.resume();
       musicOn = !musicOn;
+      unlocked = true;
       master.gain.cancelScheduledValues(audio.currentTime);
       master.gain.setTargetAtTime(musicOn ? .38 : 0, audio.currentTime, .2);
       if (musicOn) { nextChord = audio.currentTime + .05; scheduleMusic(); }
@@ -65,6 +81,7 @@
       sound.setAttribute('aria-label', musicOn ? 'Mute ambient game music' : 'Play ambient game music');
     } catch (_) { sound.querySelector('.sound-label').textContent = 'SOUND UNAVAILABLE'; }
   });
+  unlockMusic();
 
   const canvas = document.createElement('canvas'); canvas.className = 'pixel-atmosphere';
   canvas.setAttribute('aria-hidden', 'true'); document.body.append(canvas);

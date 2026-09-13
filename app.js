@@ -32,6 +32,7 @@ const objects = [
 const wrap = document.querySelector('#canvas-wrap');
 const status = document.querySelector('#status');
 const rotateButton = document.querySelector('#rotate');
+const zoomButton = document.querySelector('#zoom-mode');
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(38, 1, 0.01, 100);
@@ -67,6 +68,10 @@ pmrem.dispose();
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.enablePan = false;
+controls.enableZoom = false;
+controls.minPolarAngle = 0.18;
+// Never allow the camera below the car's ground plane.
+controls.maxPolarAngle = Math.PI / 2 - 0.08;
 controls.minDistance = 1.8;
 controls.maxDistance = 12;
 controls.autoRotate = !reducedMotion;
@@ -168,6 +173,30 @@ function updateRotationLabel() {
 }
 rotateButton.addEventListener('click', () => { controls.autoRotate = !controls.autoRotate; updateRotationLabel(); });
 document.querySelector('#reset').addEventListener('click', resetView);
+let zoomMode = false;
+function setZoomMode(enabled) {
+  zoomMode = enabled;
+  controls.enableZoom = enabled;
+  if (zoomButton) {
+    zoomButton.textContent = enabled ? 'Exit zoom mode' : 'Zoom mode';
+    zoomButton.setAttribute('aria-pressed', String(enabled));
+  }
+}
+zoomButton?.addEventListener('click', () => setZoomMode(!zoomMode));
+// Middle mouse (button 1) is an explicit desktop zoom gesture.
+renderer.domElement.addEventListener('pointerdown', event => {
+  if (event.button === 1) setZoomMode(true);
+}, {capture:true});
+renderer.domElement.addEventListener('pointerup', event => {
+  if (event.button === 1 && !zoomButton?.matches(':focus')) setZoomMode(false);
+});
+// Two fingers temporarily unlock pinch zoom; one finger remains available for page scroll.
+renderer.domElement.addEventListener('touchstart', event => {
+  if (event.touches.length >= 2) { setZoomMode(true); event.preventDefault(); }
+}, {passive:false});
+renderer.domElement.addEventListener('touchend', event => {
+  if (event.touches.length < 2 && !zoomButton?.matches(':focus')) setZoomMode(false);
+}, {passive:true});
 new ResizeObserver(() => {
   const width = wrap.clientWidth, height = wrap.clientHeight;
   if (!width || !height) return;

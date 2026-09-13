@@ -28,6 +28,10 @@ Local preview: `python3 -m http.server 8011` from this directory. Open `http://l
 
 The viewer starts in Pixel art mode. The Look selector offers Fine pixels (2 CSS pixels), Pixel art (4), Chunky pixels (7), and Smooth 3D. EffectComposer runs RenderPixelatedPass and OutputPass; smooth mode renders directly. Pixel size accounts for device pixel ratio. Text and buttons remain sharp HTML controls. Render targets resize with the viewer; no change to the GLB or Blogger theme installation is needed.
 
+The display also has a CRT treatment: four-pixel scanlines, mild red/green phosphor fringing, a curved-screen vignette, softened contrast, and an inset glass highlight. It is applied as a CSS screen layer above the rendered canvas, so it stays lightweight and keeps the model controls accessible.
+
+The CRT layer is enabled by default on the deployed viewer and works together with every Look mode.
+
 Validated all four modes in Brave at 1040px / DPR 1 and 390px / DPR 2, including rotation/reset and checks for overflow and console errors.
 
 Reference: https://threejs.org/docs/pages/RenderPixelatedPass.html

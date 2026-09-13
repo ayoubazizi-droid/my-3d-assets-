@@ -182,9 +182,161 @@
   .crt-text, .crt-text h1, .crt-text h2, .crt-text h3, .crt-text p, .crt-text a, .crt-text button, .crt-text label, .crt-text span, .crt-text li, .crt-text select{ text-shadow:.06rem 0 .06rem rgba(234,54,175,.58),-.125rem 0 .06rem rgba(117,250,105,.46); }
   .crt-text{filter:url(#crt-curve);}
   @media (prefers-reduced-motion:no-preference){body::before{animation:crt-breathe 8s steps(2,end) infinite}.crt-text{animation:textflicker .08s infinite alternate}@keyframes crt-breathe{0%,100%{opacity:.88}50%{opacity:1}}@keyframes textflicker{from{text-shadow:1px 0 0 rgba(234,54,175,.5),-2px 0 0 rgba(117,250,105,.4)}to{text-shadow:2px .5px 2px rgba(234,54,175,.68),-1px -.5px 2px rgba(117,250,105,.54)}}}
+
+
+
+
+
+
+/* pix-motion:start */
+/* Progressive enhancement: the document remains readable without JavaScript. */
+html { scroll-padding-top: 100px; }
+body { overflow-x: clip; }
+/* A filter on body would turn fixed loaders and sticky navigation into scrolling layers. */
+body.crt-text { filter: none; }
+.hero-banner, .sprite-row, .tile svg { filter: url(#crt-curve); }
+.site-header { isolation: isolate; }
+.scroll-meter { position: absolute; bottom: -3px; left: 0; width: 100%; height: 3px; background: var(--red); transform: scaleX(var(--page-progress,0)); transform-origin: left; }
+.motion-toggle { border: 1px solid currentColor; background: transparent; color: inherit; font: 10px 'Space Mono', monospace; cursor: pointer; padding: 6px 8px; white-space: nowrap; }
+.motion-toggle:hover, .motion-toggle:focus-visible { background: var(--ink); color: var(--bg-panel); }
+.motion-ready section, .motion-ready footer { position: relative; overflow-x: clip; }
+.hero { min-height: min(960px, 100svh); display: grid; align-items: center; }
+.hero-inner { width: 100%; }
+.hero-orbit { position: absolute; inset: 10% 8%; border: 1px solid rgba(27,27,47,.16); border-radius: 50%; pointer-events: none; transform: rotate(-22deg); }
+.hero-orbit::before, .hero-orbit::after { content: ''; position: absolute; width: 22px; height: 22px; border: 3px solid var(--ink); background: var(--mint); top: 12%; left: 14%; box-shadow: 4px 4px 0 var(--ink); }
+.hero-orbit::after { background: var(--red); top: auto; left: auto; right: 10%; bottom: 15%; width: 34px; height: 34px; }
+.scroll-cue { display: block; width: max-content; margin: 34px auto 0; text-transform: uppercase; font-size: 10px; letter-spacing: 3px; text-decoration: none; }
+.scroll-cue span { display: inline-block; margin-left: 10px; animation: cue-drop 1.4s ease-in-out infinite; }
+@keyframes cue-drop { 50% { transform: translateY(7px); } }
+.motion-word { display: inline-block; }
+.scroll-story { padding: 0; background: var(--ink); color: var(--bg-panel); overflow: clip; }
+.story-pin { min-height: 85svh; display: flex; flex-direction: column; justify-content: space-between; padding: 40px 5vw; }
+.story-label, .story-bottom { font-size: 10px; letter-spacing: 2px; }
+.story-label { color: var(--mint); }
+.story-bottom { display: flex; justify-content: space-between; gap: 20px; }
+.story-lines { padding-block: 60px; }
+.story-line { font-family: 'Press Start 2P', monospace; font-size: clamp(20px, 4.6vw, 76px); line-height: 1.8; letter-spacing: -.05em; white-space: nowrap; }
+.story-line:nth-child(2) { text-align: right; color: var(--yellow); }
+.story-line em { font-style: normal; color: var(--mint); }
+.story-line:nth-child(2) em { color: var(--red); }
+.motion-ready .scroll-story { height: 220svh; }
+.motion-ready .story-pin { position: sticky; top: 72px; height: calc(100svh - 72px); min-height: 0; }
+.motion-ready .about-copy h2 { font-size: clamp(23px, 3.7vw, 42px); line-height: 1.65; }
+.motion-ready .section-head h2 { font-size: clamp(25px, 4.2vw, 48px); line-height: 1.5; }
+.motion-ready .section-head { max-width: 840px; }
+.motion-ready #about { padding-top: 130px; padding-bottom: 130px; }
+.motion-ready .palette { height: 250px; align-items: stretch; transform-origin: center; }
+.motion-ready .palette div { height: auto; }
+.motion-ready .cart-grid { perspective: 1000px; gap: 32px; }
+.motion-ready .cart { min-height: 310px; display: flex; flex-direction: column; justify-content: center; }
+.motion-ready .cart .num { font-size: 32px; margin-bottom: 28px; }
+.motion-ready .cart:nth-child(2) { background: var(--yellow); }
+.motion-ready .cart:nth-child(3) { background: var(--mint); }
+.motion-ready .cart:nth-child(3) .num { color: var(--ink); }
+.motion-band { overflow: hidden; padding: 25px 0; border-block: 3px solid var(--ink); background: var(--yellow); }
+.motion-band:nth-of-type(even) { background: var(--mint); }
+.motion-band-track { display: flex; width: max-content; gap: 40px; align-items: center; font-family: 'Press Start 2P', monospace; font-size: clamp(23px, 5vw, 70px); line-height: 1.3; white-space: nowrap; }
+.motion-band-track span:nth-child(even) { color: transparent; -webkit-text-stroke: 1.5px var(--ink); }
+.motion-band-track i { font-style: normal; color: var(--red); }
+.motion-ready .gallery-stage { height: 260svh; position: relative; margin-inline: calc(50% - 50vw); }
+.motion-ready .gallery-pin { position: sticky; top: 80px; height: calc(100svh - 80px); overflow: hidden; display: flex; flex-direction: column; justify-content: center; gap: 30px; padding: 28px max(24px, calc((100vw - 1032px)/2)); }
+.gallery-caption { display: flex; justify-content: space-between; gap: 16px; text-transform: uppercase; font-size: 11px; letter-spacing: 2px; }
+.motion-ready .gallery-stage .gallery { display: flex; width: max-content; gap: 30px; }
+.motion-ready .gallery-stage .tile { flex: 0 0 min(42vw, 430px, 52svh); width: min(42vw, 430px, 52svh); position: relative; }
+.motion-ready .gallery-stage .tile::after { content: attr(data-index); position: absolute; bottom: 10px; left: 16px; font-size: 11px; }
+.motion-ready .gallery-stage .tile svg { transition: transform .45s ease; }
+.motion-ready .gallery-stage .tile:hover svg { transform: rotate(-8deg) scale(1.12); }
+.gallery-progress { height: 3px; background: rgba(27,27,47,.18); }
+.gallery-progress span { height: 100%; display: block; background: var(--red); transform-origin: left; transform: scaleX(var(--gallery-progress,0)); }
+.motion-ready .garage { margin-top: 110px; }
+.motion-ready .garage-frame { transform-origin: center; }
+.motion-ready .newsletter { padding-block: 120px; overflow: hidden; }
+.motion-ready .newsletter h2 { font-size: clamp(26px, 5vw, 58px); }
+.contact-title { font-family: 'Press Start 2P', monospace; font-size: clamp(30px, 7vw, 82px); line-height: 1.5; margin: 0 0 45px; }
+.contact-title .contact-arrow { color: var(--red); display: inline-block; }
+.motion-ready .site-footer { padding-block: 100px 38px; }
+.foot-links a { display: inline-block; transition: transform .2s, color .2s; }
+.foot-links a:hover { transform: translateY(-4px); }
+.asset-notice { background: var(--yellow); color: var(--ink); padding: 12px 24px; font-size: 12px; border-bottom: 2px solid var(--ink); }
+.asset-notice a { margin-left: 12px; }
+
+/* Boot screen sits above the CRT, and the baked video retains its original black world. */
+.site-loader { position: fixed; inset: 0; z-index: 10000; background: #000; color: #f3efe1; display: none; place-items: center; overflow: auto; font-family: 'Space Mono', monospace; }
+html.booting { overflow: hidden; }
+.booting .site-loader { display: grid; }
+.loader-shell { width: min(86vw, 560px); padding: 30px 0; }
+.loader-top, .loader-bottom { display: flex; justify-content: space-between; gap: 15px; align-items: center; text-transform: uppercase; font-size: 10px; letter-spacing: 2px; }
+.loader-top { color: #9c9b96; }
+.loader-led { width: 7px; height: 7px; display: inline-block; background: #2fbd8e; margin-right: 8px; }
+.loader-film { width: 100%; aspect-ratio: 1; max-height: 65svh; object-fit: contain; display: block; }
+.loader-bottom { margin-top: 8px; }
+.loader-percent { font-size: 18px; color: #ffce3d; }
+.loader-bar { height: 4px; margin: 17px 0 22px; background: #202022; }
+.loader-bar span { display: block; height: 100%; background: #ffce3d; transform: scaleX(var(--load-progress,0)); transform-origin: left; transition: transform .3s; }
+.loader-caption { font-size: 10px; color: #8e8e91; letter-spacing: 2px; }
+.loader-continue { background: transparent; color: #f3efe1; border: 1px solid #656568; font: inherit; font-size: 11px; padding: 10px 14px; cursor: pointer; margin-top: 15px; }
+.loader-leaving { pointer-events: none; animation: loader-out .75s cubic-bezier(.76,0,.24,1) forwards; }
+@keyframes loader-out { to { clip-path: inset(0 0 100% 0); transform: translateY(-5vh); } }
+
+@media (max-width: 860px) {
+  .motion-ready .story-pin { top: 112px; height: calc(100svh - 112px); }
+  .story-pin { padding: 30px 5vw; }
+  .story-line { font-size: clamp(14px, 4.5vw, 38px); }
+  .story-label, .story-bottom { font-size: 8px; letter-spacing: 1px; }
+  nav.wrap { flex-wrap: wrap; gap: 12px; }
+  nav.wrap ul { display: flex; order: 3; width: 100%; overflow-x: auto; white-space: nowrap; gap: 20px; padding-block: 3px; font-size: 11px; }
+  .logo { font-size: 12px; }
+  .motion-ready .palette { height: 160px; }
+  .motion-ready .cart { min-height: 240px; }
+  .motion-ready .gallery-pin { top: 112px; height: calc(100svh - 112px); padding-inline: 20px; }
+  .motion-ready .gallery-stage .tile { flex-basis: min(74vw, 48svh); width: min(74vw, 48svh); }
+  .gallery-caption { font-size: 9px; letter-spacing: 1px; }
+  .hero-orbit { inset: 18% 2%; }
+  .motion-ready #about, .motion-ready .newsletter { padding-block: 85px; }
+  .about-copy .stat-row { gap: 18px; justify-content: space-between; }
+  .stat b { font-size: 17px; }
+  .stat span { font-size: 10px; }
+  .contact-title { font-size: clamp(26px, 7vw, 50px); }
+}
+/* Pausing motion restores a conventional responsive grid and native scrolling. */
+.motion-off *, .motion-off *::before, .motion-off *::after { animation: none !important; transition: none !important; }
+html.motion-off { scroll-behavior: auto; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .loader-leaving { animation: none; }
+}
+
+/* pix-motion:end */
 ]]></b:skin>
+<!-- pix-motion-head:start -->
+<style>.site-loader{display:none}html.booting{overflow:hidden}.booting .site-loader{display:grid;position:fixed;inset:0;z-index:10000;background:#000;color:#f3efe1;place-items:center}.loader-shell{width:min(86vw,560px)}.loader-film{width:100%;aspect-ratio:1;object-fit:contain}body.crt-text{filter:none}</style>
+<script>//<![CDATA[
+document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=setTimeout(function(){if(!window.pix3lwareMotionStarted)document.documentElement.classList.remove('booting');},15000);
+//]]></script>
+<!-- pix-motion-head:end -->
 </head>
 <body class='crt-text'>
+<!-- pix-loader:start -->
+<div class='site-loader' id='site-loader' aria-label='Loading pix3lware'>
+  <div class='loader-shell'>
+    <div class='loader-top'><span><span class='loader-led'></span>PIX3LWARE</span><span>PLEASE STAND BY</span></div>
+    <video class='loader-film' autoplay='autoplay' muted='muted' playsinline='playsinline' loop='loop' preload='auto' poster='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/loader/poster.jpg' aria-label='Original pix3lware pixel animation'>
+      <source src='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/loader/pix3lware.mp4' type='video/mp4'/>
+      <source src='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/loader/pix3lware.webm' type='video/webm'/>
+    </video>
+    <div class='loader-bottom'><span class='loader-status' role='status'>Loading your world</span><span class='loader-percent' aria-hidden='true'>00%</span></div>
+    <div class='loader-bar' aria-hidden='true'><span></span></div>
+    <div class='loader-caption'>SMALL SQUARES. BIG IDEAS.</div>
+    <button class='loader-continue' type='button' hidden='hidden'>Continue while media loads &#8599;</button>
+  </div>
+</div>
+<!-- pix-loader:end -->
+
+
+
+
+
+
 <svg aria-hidden='true' class='crt-filter-defs' focusable='false' height='0' style='position:absolute' width='0'><filter id='crt-curve' x='-5%' y='-5%' width='110%' height='110%' color-interpolation-filters='sRGB'><feTurbulence baseFrequency='0.008 0.02' numOctaves='1' seed='7' type='fractalNoise' result='crt-noise'/><feDisplacementMap in='SourceGraphic' in2='crt-noise' scale='3' xChannelSelector='R' yChannelSelector='G'/></filter></svg>
 
 <header class='site-header'>
@@ -291,7 +443,7 @@
       <h2>take it for a spin.</h2>
       <p>Our custom Ford Bronco Raptor. Drag to look around and zoom in on the details.</p>
     </div>
-    <iframe class='garage-frame' src='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html' title='Interactive Ford Bronco Raptor viewer' loading='lazy' allow='fullscreen'></iframe>
+    <iframe class='garage-frame' src='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html?v=scroll-20260913-v2' title='Interactive Ford Bronco Raptor viewer' loading='eager' allow='fullscreen'></iframe>
     <a class='garage-link' href='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html' target='_blank' rel='noopener'>Open the 3D garage in a new tab &#8599;</a>
   </div>
 
@@ -1167,7 +1319,8 @@
       pix3lware
     </span>
     <ul class='foot-links'>
-      <li><a href='mailto:hello@pix3lware.com'>hello@pix3lware.com</a></li>
+      <li><a href='mailto:pix3lware@gmail.com'>pix3lware@gmail.com</a></li>
+      <li><a href='https://pix3lware.blogspot.com/' target='_blank' rel='noopener noreferrer'>Blog</a></li>
       <li><a href='https://www.tiktok.com/@pix3lware' target='_blank' rel='noopener noreferrer'>TikTok</a></li>
       <li><a href='https://www.pinterest.com/pix3lware/' target='_blank' rel='noopener noreferrer'>Pinterest</a></li>
       <li><a href='https://www.instagram.com/pix3lware/' target='_blank' rel='noopener noreferrer'>Instagram</a></li>
@@ -1179,5 +1332,297 @@
 
 </footer>
 
+<!-- pix-motion-script:start -->
+<script>//<![CDATA[
+(() => {
+  'use strict';
+  window.pix3lwareMotionStarted = true;
+  const root = document.documentElement;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+  const clamp = (v, low = 0, high = 1) => Math.min(high, Math.max(low, v));
+  const loader = $('#site-loader');
+  const video = $('.loader-film');
+  const frame = $('.garage-frame');
+  const tasks = new Map();
+  const failures = new Set();
+  let dismissed = false, slowTimer, deadlineTimer, bootStarted = performance.now();
+  let manualPause = false;
+  try { manualPause = sessionStorage.getItem('pix3lware-motion') === 'off'; } catch (_) {}
+  let enabled = !reduced.matches && !manualPause;
+
+  function progress() {
+    const value = [...tasks.values()].reduce((a, b) => a + b, 0) / Math.max(tasks.size, 1);
+    loader?.style.setProperty('--load-progress', value);
+    if ($('.loader-percent')) $('.loader-percent').textContent = `${Math.floor(value * 100).toString().padStart(2, '0')}%`;
+  }
+  function finishTask(name, failed = false) {
+    if (failed) failures.add(name);
+    tasks.set(name, 1);
+    progress();
+  }
+  function dismiss() {
+    if (dismissed) return;
+    dismissed = true;
+    clearTimeout(slowTimer);
+    clearTimeout(deadlineTimer);
+    if (window.pix3lwareBootWatchdog) clearTimeout(window.pix3lwareBootWatchdog);
+    if (enabled && loader && root.classList.contains('booting')) {
+      loader.classList.add('loader-leaving');
+      setTimeout(removeLoader, 760);
+    } else removeLoader();
+    if (failures.size) {
+      const note = document.createElement('div');
+      note.className = 'asset-notice'; note.setAttribute('role', 'status');
+      note.textContent = 'Some media could not load. You can still explore the page.';
+      const retry = document.createElement('a'); retry.href = location.href; retry.textContent = 'Retry';
+      note.append(retry); $('header').after(note);
+    }
+  }
+  function removeLoader() {
+    root.classList.remove('booting');
+    if (loader) { loader.hidden = true; loader.style.display = 'none'; }
+    video?.pause();
+    document.dispatchEvent(new Event('pix3lware:entered'));
+  }
+  const waitEvent = (el, good, bad = 'error') => new Promise(resolve => {
+    const done = event => { el.removeEventListener(good, done); el.removeEventListener(bad, done); resolve(event.type === good); };
+    el.addEventListener(good, done, { once: true }); el.addEventListener(bad, done, { once: true });
+  });
+
+  // Install the cross-origin handshake BEFORE making the garage eager.
+  let resolveGarage;
+  const garageReady = new Promise(resolve => { resolveGarage = resolve; });
+  const garageOrigin = frame ? new URL(frame.src, location.href).origin : '';
+  window.addEventListener('message', event => {
+    if (!frame || event.source !== frame.contentWindow || event.origin !== garageOrigin) return;
+    if (event.data?.type === 'pix3lware:garage-progress' && !dismissed) {
+      tasks.set('3D garage', clamp(event.data.progress, 0, .95)); progress();
+    }
+    if (event.data?.type === 'pix3lware:garage-ready') resolveGarage(true);
+    if (event.data?.type === 'pix3lware:garage-error') resolveGarage(false);
+  });
+  if (frame) {
+    frame.loading = 'eager';
+    const ask = () => frame.contentWindow?.postMessage({ type: 'pix3lware:status-request' }, garageOrigin);
+    frame.addEventListener('load', ask);
+    frame.addEventListener('error', () => resolveGarage(false));
+    ask();
+  } else resolveGarage(true);
+
+  async function boot() {
+    const jobs = [
+      ['Page', document.readyState === 'complete' ? Promise.resolve(true) : waitEvent(window, 'load')],
+      ['Fonts', document.fonts ? document.fonts.ready.then(() => true) : Promise.resolve(true)],
+      ['Images', Promise.all($$('img').map(img => img.decode ? img.decode().then(() => true, () => false) : (img.complete ? Promise.resolve(!!img.naturalWidth) : waitEvent(img, 'load')))).then(values => values.every(Boolean))],
+      ['3D garage', garageReady]
+    ];
+    if (video) {
+      jobs.push(['Intro', video.readyState >= 2 ? Promise.resolve(true) : waitEvent(video, 'loadeddata')]);
+      if (enabled) video.play().catch(() => {});
+    }
+    jobs.forEach(([name]) => tasks.set(name, 0)); progress();
+    deadlineTimer = setTimeout(() => {
+      for (const [name, value] of tasks) if (value < 1) failures.add(name);
+      dismiss();
+    }, 20000);
+    slowTimer = setTimeout(() => {
+      const status = $('.loader-status');
+      if (status) status.textContent = 'Still loading your world…';
+      const skip = $('.loader-continue'); if (skip) skip.hidden = false;
+    }, 12000);
+    $('.loader-continue')?.addEventListener('click', () => {
+      for (const [name, value] of tasks) if (value < 1) failures.add(name);
+      dismiss();
+    });
+    await Promise.all(jobs.map(async ([name, job]) => {
+      try { finishTask(name, !(await job)); } catch (_) { finishTask(name, true); }
+    }));
+    if ($('.loader-status')) $('.loader-status').textContent = 'Ready to explore';
+    // A tiny paint window, no artificial full-loop delay after the actual assets are ready.
+    setTimeout(dismiss, Math.max(0, 500 - (performance.now() - bootStarted)));
+  }
+
+  const nav = $('nav.wrap');
+  const toggle = document.createElement('button');
+  toggle.type = 'button'; toggle.className = 'motion-toggle';
+  nav?.append(toggle);
+  const meter = document.createElement('span'); meter.className = 'scroll-meter'; meter.setAttribute('aria-hidden', 'true');
+  $('header')?.append(meter);
+  const orbit = document.createElement('div'); orbit.className = 'hero-orbit'; orbit.setAttribute('aria-hidden', 'true');
+  $('.hero')?.prepend(orbit);
+  const cue = document.createElement('a'); cue.className = 'scroll-cue'; cue.href = '#about'; cue.innerHTML = 'Scroll to explore <span aria-hidden="true">↓</span>';
+  $('.hero-inner')?.append(cue);
+
+  const story = document.createElement('section');
+  story.className = 'scroll-story';
+  story.setAttribute('aria-label', 'Small squares. Big ideas. Your next world.');
+  story.innerHTML = `<div class="story-pin"><span class="story-label">01 / THE WORLD OF PIX3LWARE</span><div class="story-lines" aria-hidden="true"><div class="story-line">SMALL <em>SQUARES.</em></div><div class="story-line"><em>BIG</em> IDEAS.</div><div class="story-line">YOUR NEXT <em>WORLD.</em></div></div><div class="story-bottom"><span>SPRITES / TILESETS / 3D</span><span>KEEP SCROLLING ↓</span></div></div>`;
+  $('.hero')?.after(story);
+
+  for (const [selector, words] of [['#about', 'PIXEL BY PIXEL'], ['.newsletter', 'SMALL SQUARES. BIG IDEAS.']]) {
+    const target = $(selector); if (!target) continue;
+    const band = document.createElement('div'); band.className = 'motion-band'; band.setAttribute('aria-hidden', 'true');
+    const track = document.createElement('div'); track.className = 'motion-band-track';
+    for (let i = 0; i < 6; i++) { const span = document.createElement('span'); span.textContent = words; const star = document.createElement('i'); star.textContent = '✳'; track.append(span, star); }
+    band.append(track); target.before(band);
+  }
+  const footer = $('#contact .wrap');
+  if (footer && !$('.contact-title', footer)) {
+    const title = document.createElement('h2'); title.className = 'contact-title'; title.innerHTML = 'let’s make<br/>some pixels. <span class="contact-arrow" aria-hidden="true">↗</span>';
+    footer.prepend(title);
+  }
+
+  const headings = $$('.section-head h2, .about-copy h2, .newsletter h2, .hero .tagline');
+  headings.forEach(el => {
+    // Split only text nodes, preserving original links, emphasis, and accessible words.
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    const nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);
+    let wordIndex = 0;
+    nodes.forEach(node => {
+      const fragment = document.createDocumentFragment();
+      node.textContent.split(/(\s+)/).forEach(part => {
+        if (!part.trim()) fragment.append(document.createTextNode(part));
+        else { const word = document.createElement('span'); word.className = 'motion-word'; word.dataset.word = wordIndex++; word.textContent = part; fragment.append(word); }
+      });
+      node.replaceWith(fragment);
+    });
+  });
+
+  const gallery = $('.gallery');
+  let stage, pin, counter;
+  if (gallery) {
+    stage = document.createElement('div'); stage.className = 'gallery-stage';
+    pin = document.createElement('div'); pin.className = 'gallery-pin';
+    const caption = document.createElement('div'); caption.className = 'gallery-caption';
+    caption.innerHTML = '<span>THE PIXEL ARCHIVE / SCROLL TO EXPLORE</span><span class="gallery-counter">01 — 08</span>';
+    counter = $('.gallery-counter', caption);
+    const line = document.createElement('div'); line.className = 'gallery-progress'; line.setAttribute('aria-hidden', 'true'); line.append(document.createElement('span'));
+    gallery.before(stage); stage.append(pin); pin.append(caption, gallery, line);
+    $$('.tile', gallery).forEach((tile, i) => { tile.dataset.index = `${String(i + 1).padStart(2, '0')} / PIX3LWARE`; });
+  }
+
+  let metrics = [], galleryMetric, raf = 0, active = true, lastY = -1, scrollTarget = scrollY, smoothY = scrollY;
+  const styled = new Set();
+  function transform(el, value, opacity) {
+    if (!el) return;
+    styled.add(el); el.style.transform = value;
+    if (opacity !== undefined) el.style.opacity = opacity;
+  }
+  function measure() {
+    // Remove previous transforms for stable layout-based scroll offsets.
+    styled.forEach(el => { el.style.transform = ''; el.style.opacity = ''; });
+    metrics = [];
+    function add(selector, type) {
+      $$(selector).forEach((el, i) => {
+        const rect = el.getBoundingClientRect();
+        metrics.push({el, type, i, top: rect.top + scrollY, height: rect.height, words: type === 'heading' ? $$('.motion-word', el) : []});
+      });
+    }
+    add('.section-head h2, .about-copy h2, .newsletter h2, .hero .tagline', 'heading');
+    add('.section-head p, .about-copy p, .stat, .eyebrow, .foot-links li', 'reveal');
+    add('.scroll-story', 'story');
+    add('.cart', 'card'); add('.palette', 'palette'); add('.hero-banner', 'hero');
+    add('.hero p.sub, .hero-ctas, .sprite-row', 'heroLayer');
+    add('.motion-band-track', 'band'); add('.garage-frame', 'garage'); add('.contact-title', 'contact');
+    if (stage) galleryMetric = { top: stage.getBoundingClientRect().top + scrollY, height: stage.offsetHeight, pinHeight: pin.offsetHeight, inset: parseFloat(getComputedStyle(pin).top) || 0, travel: Math.max(0, gallery.scrollWidth - (pin.clientWidth - parseFloat(getComputedStyle(pin).paddingLeft) - parseFloat(getComputedStyle(pin).paddingRight))) };
+    lastY = -1; requestTick();
+  }
+  function render() {
+    raf = 0;
+    if (!enabled || !active) return;
+    const vh = innerHeight, vw = innerWidth;
+    scrollTarget = scrollY;
+    smoothY += (scrollTarget - smoothY) * .16;
+    if (Math.abs(scrollTarget - smoothY) < .15) smoothY = scrollTarget;
+    if (Math.abs(lastY - smoothY) > .05) {
+      const y = smoothY;
+      root.style.setProperty('--page-progress', clamp(scrollY / Math.max(1, document.documentElement.scrollHeight - vh)));
+      for (const m of metrics) {
+        const rel = m.top - y;
+        if (rel > vh * 1.5 || rel + m.height < -vh) continue;
+        const entry = clamp((vh * .97 - rel) / (vh * .6));
+        const eased = 1 - Math.pow(1 - entry, 3);
+        const through = clamp((vh - rel) / (vh + m.height));
+        if (m.type === 'story') {
+          const p = clamp((y - m.top + vh * .65) / (m.height - vh * .35));
+          $$('.story-line', m.el).forEach((line, i) => {
+            const enter = clamp((p - i * .13) / .35);
+            const q = 1 - Math.pow(1 - enter, 2);
+            const exit = clamp((p - .88) / .12);
+            transform(line, `translate3d(${((1-q)*.95-exit*.15)*vw*(i%2?1:-1)}px,0,0)`, .08+.92*q);
+          });
+        } else if (m.type === 'heading') {
+          m.words.forEach((word, i) => {
+            const p = clamp(entry * 1.45 - (i / Math.max(m.words.length, 1)) * .42);
+            const q = 1 - Math.pow(1 - p, 3);
+            const x = (1 - q) * Math.min(vw * .7, 780) * (m.i % 2 ? 1 : -1);
+            transform(word, `translate3d(${x}px,${(1-q)*35}px,0) rotate(${(1-q)*(m.i%2?4:-4)}deg)`, .12 + .88*q);
+          });
+        } else if (m.type === 'reveal') {
+          const side = m.i % 2 ? 1 : -1;
+          transform(m.el, `translate3d(${(1-eased)*side*70}px,${(1-eased)*30}px,0)`, .12+.88*eased);
+        } else if (m.type === 'card') {
+          const p = clamp(entry * 1.4 - (m.i % 3) * .12), q = 1-Math.pow(1-p,3);
+          const drift = (through-.5) * (m.i%2? -28:28);
+          transform(m.el, `translate3d(${(1-q)*(m.i%2?140:-140)}px,${(1-q)*100+drift}px,0) rotate(${(1-q)*(m.i%2?-9:9)+(through-.5)*3}deg)`, .15+.85*q);
+        } else if (m.type === 'palette') {
+          transform(m.el, `translate3d(${(1-eased)*130}px,${(through-.5)*-60}px,0) rotate(${(through-.5)*12}deg) scale(${.83+.17*eased})`);
+          [...m.el.children].forEach((el,i) => transform(el, `translateY(${Math.sin(through*Math.PI*2+i*.8)*18}px)`));
+        } else if (m.type === 'hero') {
+          const p = clamp(y / vh);
+          transform(m.el, `translate3d(${p*-70}px,${p*110}px,0) rotate(${-p*7}deg) scale(${1+p*.2})`, 1-p*.7);
+        } else if (m.type === 'heroLayer') {
+          const p = clamp(y/vh); transform(m.el, `translate3d(${p*(m.i%2?65:-65)}px,${p*(35+m.i*20)}px,0)`, 1-p*.85);
+        } else if (m.type === 'band') {
+          transform(m.el, `translate3d(${-320+(through-.5)*(m.i%2?660:-660)}px,0,0)`);
+        } else if (m.type === 'garage') {
+          transform(m.el, `translate3d(0,${(1-eased)*60}px,0) scale(${.9+.1*eased})`);
+        } else if (m.type === 'contact') {
+          transform(m.el, `translate3d(${(1-eased)*-180}px,0,0)`, .2+.8*eased);
+          transform($('.contact-arrow',m.el), `rotate(${(through-.5)*70}deg)`);
+        }
+      }
+      if (galleryMetric) {
+        const m=galleryMetric, p=clamp((scrollY-m.top+m.inset)/Math.max(1,m.height-m.pinHeight));
+        transform(gallery, `translate3d(${-p*m.travel}px,0,0)`);
+        stage.style.setProperty('--gallery-progress', p);
+        const count = gallery.children.length;
+        counter.textContent = `${String(Math.min(count,Math.round(p*(count-1))+1)).padStart(2,'0')} — ${String(count).padStart(2,'0')}`;
+      }
+      lastY=y;
+    }
+    if (smoothY !== scrollTarget) requestTick();
+  }
+  function requestTick() { if (!raf && enabled && active) raf = requestAnimationFrame(render); }
+  function applyMotion() {
+    enabled = !reduced.matches && !manualPause;
+    root.classList.toggle('motion-ready', enabled); root.classList.toggle('motion-off', !enabled);
+    toggle.textContent = enabled ? 'MOTION ON' : 'MOTION OFF';
+    toggle.setAttribute('aria-label', enabled ? 'Pause page motion' : 'Enable page motion');
+    toggle.setAttribute('aria-pressed', String(enabled));
+    styled.forEach(el => { el.style.transform=''; el.style.opacity=''; });
+    if (enabled) { smoothY=scrollY; measure(); if (!dismissed) video?.play().catch(()=>{}); }
+    else { video?.pause(); if (raf) cancelAnimationFrame(raf); raf=0; }
+    // Keep the embedded scene's auto-rotation in step with the page motion preference.
+    frame?.contentWindow?.postMessage({type:'pix3lware:motion',enabled}, garageOrigin);
+  }
+  toggle.addEventListener('click', () => { manualPause=enabled; try {sessionStorage.setItem('pix3lware-motion',manualPause?'off':'on');} catch (_) {} applyMotion(); });
+  reduced.addEventListener('change',applyMotion);
+  window.addEventListener('scroll',requestTick,{passive:true});
+  let resizeTimer;
+  window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(measure,120);});
+  window.addEventListener('load',measure,{once:true});
+  document.fonts?.ready.then(measure);
+  document.addEventListener('visibilitychange',()=>{active=!document.hidden;if(active)requestTick();});
+  document.addEventListener('pix3lware:entered',()=>{measure();});
+  window.addEventListener('pageshow',event=>{if(event.persisted){dismiss();measure();}});
+  applyMotion();
+  boot().catch(dismiss);
+})();
+
+//]]></script>
+<!-- pix-motion-script:end -->
 </body>
 </html>

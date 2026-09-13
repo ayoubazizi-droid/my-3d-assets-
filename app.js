@@ -6,6 +6,23 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPixelatedPass } from 'three/addons/postprocessing/RenderPixelatedPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
+// The outer page waits for the model's first successful render, not iframe.onload.
+let garageState = 'loading', garageProgress = 0;
+const parentOrigin = document.referrer ? new URL(document.referrer).origin : '*';
+function notifyParent(type, details = {}) {
+  if (window.parent !== window) window.parent.postMessage({ type, ...details }, parentOrigin);
+}
+window.addEventListener('message', event => {
+  if (event.source !== window.parent || (parentOrigin !== '*' && event.origin !== parentOrigin)) return;
+  if (event.data?.type === 'pix3lware:status-request') {
+    notifyParent(`pix3lware:garage-${garageState === 'loading' ? 'progress' : garageState}`, {progress: garageProgress});
+  }
+  if (event.data?.type === 'pix3lware:motion') {
+    controls.autoRotate = !!event.data.enabled;
+    updateRotationLabel();
+  }
+});
+
 // Replace an empty URL with './models/your-model.glb'. Keep all model files
 // in this GitHub Pages repository. Use a self-contained, uncompressed GLB.
 const objects = [
@@ -97,7 +114,10 @@ async function select(index) {
   status.textContent = entry.url ? 'Loading model…' : 'Ready to explore';
   let root;
   try {
-    root = entry.url ? (await loader.loadAsync(entry.url)).scene : demo(entry.shape);
+    root = entry.url ? (await loader.loadAsync(entry.url, event => {
+      garageProgress = event.total ? event.loaded / event.total * .9 : 0;
+      notifyParent('pix3lware:garage-progress', {progress: garageProgress});
+    })).scene : demo(entry.shape);
     if (id !== requestId) { dispose(root); return; }
     root.updateMatrixWorld(true);
     const bounds = new THREE.Box3().setFromObject(root);
@@ -110,7 +130,11 @@ async function select(index) {
     holder.scale.setScalar(2.5 / extent);
     current = holder;
     scene.add(current);
+    await renderer.compileAsync(scene, camera);
+    composer.render();
     status.textContent = 'Ready to explore';
+    garageState = 'ready'; garageProgress = 1;
+    notifyParent('pix3lware:garage-ready');
   } catch (error) {
     if (root) dispose(root);
     if (id !== requestId) return;
@@ -118,6 +142,8 @@ async function select(index) {
     current = demo(entry.shape);
     scene.add(current);
     console.error(error);
+    garageState = 'error';
+    notifyParent('pix3lware:garage-error');
   }
 }
 objects.forEach((entry, index) => {

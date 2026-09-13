@@ -1,0 +1,15 @@
+{
+  "source": "pix3lware.blend",
+  "frames": [
+    1,
+    148
+  ],
+  "fps": 24.0,
+  "duration_seconds": 6.166666666666667,
+  "camera": "Camera",
+  "animated_meshes": 115,
+  "material": "64x64 baked emission map; original material settings",
+  "hdri_added": false,
+  "render_engine": "BLENDER_EEVEE",
+  "delivery": "720x720 MP4 / WebM; original frames and camera; no retiming"
+}

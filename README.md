@@ -35,3 +35,11 @@ The CRT layer is enabled by default on the deployed viewer and works together wi
 Validated all four modes in Brave at 1040px / DPR 1 and 390px / DPR 2, including rotation/reset and checks for overflow and console errors.
 
 Reference: https://threejs.org/docs/pages/RenderPixelatedPass.html
+
+## Scroll experience
+
+The motion layer (`motion.js` and `motion.css`) adds alternating side entrances, a pinned typography sequence, parallax, scroll progress, and a horizontal gallery driven by native vertical scrolling. The Motion button and system reduced-motion preference restore a static layout.
+
+The looping loader uses `/home/liveuser/Videos/0001-0148.mkv`, converted to H.264 MP4 (960px) and VP9 WebM (720px), with a poster fallback. It tracks page assets and the viewer, offers Continue after 12 seconds, and releases the page after 20 seconds even if media stalls.
+
+Run `python3 scripts/sync-motion.py` after motion edits to update the static page, Blogger XML, and local Blogger install copies. The static iframe uses a relative URL so previews use the local viewer.

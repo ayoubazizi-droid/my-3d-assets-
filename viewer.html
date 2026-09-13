@@ -1,6 +1,21 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>pix3lware — 3D garage</title><link rel="stylesheet" href="style.css">
+<script>
+// Report startup/import/WebGL failures too: the outer loader must not hang on them.
+window.pix3lwareGarageFailed = false;
+function reportGarageFailure() {
+  window.pix3lwareGarageFailed = true;
+  const status = document.getElementById('status');
+  if (status) status.textContent = 'The viewer could not start. Check your connection and WebGL support.';
+  if (parent !== window) parent.postMessage({type:'pix3lware:garage-error'}, document.referrer ? new URL(document.referrer).origin : '*');
+}
+window.addEventListener('error', reportGarageFailure, true);
+window.addEventListener('unhandledrejection', reportGarageFailure);
+window.addEventListener('message', event => {
+  if (event.source === parent && event.data?.type === 'pix3lware:status-request' && window.pix3lwareGarageFailed) reportGarageFailure();
+});
+</script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
 </head><body><main>
 <section class="viewer" aria-label="Interactive Ford Bronco Raptor">
@@ -10,5 +25,5 @@
 </section><div class="viewer-note"><span id="status" role="status">Loading the Bronco…</span><span>DRAG TO ORBIT · SCROLL TO ZOOM</span></div>
 <nav id="collection" aria-label="Choose an object" hidden></nav>
 <noscript>Enable JavaScript to explore this 3D model.</noscript></main>
-<script type="module" src="app.js"></script><script>window.addEventListener('error',()=>{document.getElementById('status').textContent='The viewer could not start. Check your connection and WebGL support.';});</script>
+<script type="module" src="app.js?v=motion-20260913"></script>
 </body></html>

@@ -1,6 +1,32 @@
 <!doctype html>
 <html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>pix3lware — pixel art &amp; 3D garage</title><link href='https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400&amp;display=swap' rel='stylesheet'/>
-<link rel='stylesheet' href='theme.css'></head><body class='crt-text'>
+<link rel='stylesheet' href='theme.css'><!-- pix-motion-head:start -->
+<style>.site-loader{display:none}html.booting{overflow:hidden}.booting .site-loader{display:grid;position:fixed;inset:0;z-index:10000;background:#000;color:#f3efe1;place-items:center}.loader-shell{width:min(86vw,560px)}.loader-film{width:100%;aspect-ratio:1;object-fit:contain}body.crt-text{filter:none}</style>
+<script>document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=setTimeout(function(){if(!window.pix3lwareMotionStarted)document.documentElement.classList.remove('booting');},15000);</script>
+<link rel='stylesheet' href='motion.css?v=scroll-20260913-v2'/>
+<!-- pix-motion-head:end -->
+</head><body class='crt-text'>
+<!-- pix-loader:start -->
+<div class='site-loader' id='site-loader' aria-label='Loading pix3lware'>
+  <div class='loader-shell'>
+    <div class='loader-top'><span><span class='loader-led'></span>PIX3LWARE</span><span>PLEASE STAND BY</span></div>
+    <video class='loader-film' autoplay='autoplay' muted='muted' playsinline='playsinline' loop='loop' preload='auto' poster='./assets/loader/poster.jpg' aria-label='Original pix3lware pixel animation'>
+      <source src='./assets/loader/pix3lware.mp4' type='video/mp4'/>
+      <source src='./assets/loader/pix3lware.webm' type='video/webm'/>
+    </video>
+    <div class='loader-bottom'><span class='loader-status' role='status'>Loading your world</span><span class='loader-percent' aria-hidden='true'>00%</span></div>
+    <div class='loader-bar' aria-hidden='true'><span></span></div>
+    <div class='loader-caption'>SMALL SQUARES. BIG IDEAS.</div>
+    <button class='loader-continue' type='button' hidden='hidden'>Continue while media loads &#8599;</button>
+  </div>
+</div>
+<!-- pix-loader:end -->
+
+
+
+
+
+
 <svg aria-hidden='true' class='crt-filter-defs' focusable='false' height='0' style='position:absolute' width='0'><filter id='crt-curve' x='-5%' y='-5%' width='110%' height='110%' color-interpolation-filters='sRGB'><feTurbulence baseFrequency='0.008 0.02' numOctaves='1' seed='7' type='fractalNoise' result='crt-noise'/><feDisplacementMap in='SourceGraphic' in2='crt-noise' scale='3' xChannelSelector='R' yChannelSelector='G'/></filter></svg>
 
 <header class='site-header'>
@@ -107,7 +133,7 @@
       <h2>take it for a spin.</h2>
       <p>Our custom Ford Bronco Raptor. Drag to look around and zoom in on the details.</p>
     </div>
-    <iframe class='garage-frame' src='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html' title='Interactive Ford Bronco Raptor viewer' loading='lazy' allow='fullscreen'></iframe>
+    <iframe class='garage-frame' src='./viewer.html?v=scroll-20260913-v2' title='Interactive Ford Bronco Raptor viewer' loading='eager' allow='fullscreen'></iframe>
     <a class='garage-link' href='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html' target='_blank' rel='noopener'>Open the 3D garage in a new tab &#8599;</a>
   </div>
 
@@ -126,7 +152,8 @@
       pix3lware
     </span>
     <ul class='foot-links'>
-      <li><a href='mailto:hello@pix3lware.com'>hello@pix3lware.com</a></li>
+      <li><a href='mailto:pix3lware@gmail.com'>pix3lware@gmail.com</a></li>
+      <li><a href='https://pix3lware.blogspot.com/' target='_blank' rel='noopener noreferrer'>Blog</a></li>
       <li><a href='https://www.tiktok.com/@pix3lware' target='_blank' rel='noopener noreferrer'>TikTok</a></li>
       <li><a href='https://www.pinterest.com/pix3lware/' target='_blank' rel='noopener noreferrer'>Pinterest</a></li>
       <li><a href='https://www.instagram.com/pix3lware/' target='_blank' rel='noopener noreferrer'>Instagram</a></li>
@@ -138,4 +165,7 @@
 
 </footer>
 
+<!-- pix-motion-script:start -->
+<script src='motion.js?v=scroll-20260913-v2'></script>
+<!-- pix-motion-script:end -->
 </body></html>

@@ -1,26 +1,29 @@
 <!doctype html>
 <html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>pix3lware — pixel art &amp; 3D garage</title><link href='https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400&amp;display=swap' rel='stylesheet'/>
 <link rel='stylesheet' href='theme.css'><!-- pix-motion-head:start -->
-<style>.site-loader{display:none}html.booting{overflow:hidden}.booting .site-loader{display:grid;position:fixed;inset:0;z-index:10000;background:#000;color:#f3efe1;place-items:center}.loader-shell{width:min(86vw,560px)}.loader-film{width:100%;aspect-ratio:1;object-fit:contain}body.crt-text{filter:none}</style>
-<script>document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=setTimeout(function(){if(!window.pix3lwareMotionStarted)document.documentElement.classList.remove('booting');},15000);</script>
-<link rel='stylesheet' href='motion.css?v=scroll-20260913-v2'/>
+<style>.site-loader{display:none}html.booting{overflow:hidden}.booting .site-loader{display:block;position:fixed;inset:0;z-index:10000;background:#000;color:#fff}.loader-film{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}body.crt-text{filter:none}</style>
+<script>document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=setTimeout(function(){if(!window.pix3lwareMotionStarted){var s=document.querySelector('.loader-status');if(s)s.textContent='Please reload to start your world';var b=document.querySelector('.loader-retry');if(b){b.hidden=false;b.onclick=function(){location.reload();};}}},15000);</script>
+<link rel='stylesheet' href='motion.css?v=immersive-20260913-v3'/>
 <!-- pix-motion-head:end -->
 </head><body class='crt-text'>
 <!-- pix-loader:start -->
-<div class='site-loader' id='site-loader' aria-label='Loading pix3lware'>
-  <div class='loader-shell'>
-    <div class='loader-top'><span><span class='loader-led'></span>PIX3LWARE</span><span>PLEASE STAND BY</span></div>
-    <video class='loader-film' autoplay='autoplay' muted='muted' playsinline='playsinline' loop='loop' preload='auto' poster='./assets/loader/poster.jpg' aria-label='Original pix3lware pixel animation'>
-      <source src='./assets/loader/pix3lware.mp4' type='video/mp4'/>
-      <source src='./assets/loader/pix3lware.webm' type='video/webm'/>
+<div class='site-loader' id='site-loader' aria-label='Loading the Ford Bronco'>
+    <video class='loader-film' autoplay='autoplay' muted='muted' playsinline='playsinline' loop='loop' preload='auto' poster='./assets/loader/poster.jpg' aria-label='Pix3lware animated intro'>
+      <source src='./assets/loader/pix3lware.mp4?v=immersive-20260913-v3' type='video/mp4'/>
+      <source src='./assets/loader/pix3lware.webm?v=immersive-20260913-v3' type='video/webm'/>
     </video>
-    <div class='loader-bottom'><span class='loader-status' role='status'>Loading your world</span><span class='loader-percent' aria-hidden='true'>00%</span></div>
-    <div class='loader-bar' aria-hidden='true'><span></span></div>
-    <div class='loader-caption'>SMALL SQUARES. BIG IDEAS.</div>
-    <button class='loader-continue' type='button' hidden='hidden'>Continue while media loads &#8599;</button>
-  </div>
+    <div class='loader-hud'>
+      <div class='loader-bottom'><span class='loader-status' role='status'>Loading the Ford Bronco…</span><span class='loader-percent' aria-hidden='true'>00%</span></div>
+      <div class='loader-bar' aria-hidden='true'><span></span></div>
+      <button class='loader-play' type='button' hidden='hidden'>PLAY INTRO &#9654;</button>
+      <button class='loader-retry' type='button' hidden='hidden'>RETRY LOADING &#8635;</button>
+    </div>
 </div>
 <!-- pix-loader:end -->
+
+
+
+
 
 
 
@@ -31,9 +34,9 @@
 
 <header class='site-header'>
   <nav class='wrap'>
-    <a class='logo' href='./'>
+    <a class='logo' href='./' aria-label='pix3lware home'>
       <img alt='pix3lware' height='28' src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAACFCAYAAADbwO/4AAACUElEQVR42u3dS07CUBiG4e9AEZB4GRpZhIkjN+HQLbgYN+Bm3IAjl+HEEC8JN6F14N+kITEqbf/C6fsmBIq04uOxPSJgGI8vRPWX2PmdpFtJK1teShracldSKimz805h/dS2Ubw+LawTJH1K6tnHOnZ9fpulpAO7Xbqx7rqwXla4b4ldzgrLXVsOtl6w61Z2WZIW9vnPmoS+lHTCuKuvfBTOoPCBHkHhA72Awgd6CoUPNAdCJ2gCmoMhbQF9AIUPdIDCB3oOBQfDqKAzKOotf/TuusQ2ynyTvI8NTyXub6hiRLelxg767KOBrqVXoH0aAe3TFGifFkD7dAq0TzOgfRoC7VMGtE9roPnNkKooYWDVvn+fShq1DfqqAehDdh0+pUBzMIxv7g40IxpoAnp3jYFmehdNAWimd0ATuw6md7vUo/0ob3MKW56SNkLzpyzPOS3Q9cfzOpwaAO3TO9A+nQPt0xLoyL/etkEfA+3TBGhGdFQlQEc+j276uXdNPDH83nYhPUkvkvr6fv3hkaQPW+5LerPz5yoGZKjgvUn37QX7gV0HE3gCGmgCGmigCWigCWiggSag96KmHyYNjGgCGmgCGmigCWigCWiggSaggSaggQaagAaagAYaaAIaaAIaaKAJaKAJaKCBJqCBJqCBBpqABpqABhpoAnofoR+0/f8nKVPWwKlRaEa2E/QUCvbRUUEPoPCBnkPBiI4KegYFB8OooAMUPtB9KBjRUUFPoGBERzfrqPLRrf9uJ/1lW5v3LfvhXH9cdi9/J8cbxly9fQGtyY2B/hQbIgAAAABJRU5ErkJggg=='/>
-      pix3lware
+      ix3lware
     </a>
     <ul>
       <li><a href='./'>home</a></li>
@@ -133,7 +136,7 @@
       <h2>take it for a spin.</h2>
       <p>Our custom Ford Bronco Raptor. Drag to look around and zoom in on the details.</p>
     </div>
-    <iframe class='garage-frame' src='./viewer.html?v=scroll-20260913-v2' title='Interactive Ford Bronco Raptor viewer' loading='eager' allow='fullscreen'></iframe>
+    <iframe class='garage-frame' src='./viewer.html?v=immersive-20260913-v3' title='Interactive Ford Bronco Raptor viewer' loading='eager' allow='fullscreen'></iframe>
     <a class='garage-link' href='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html' target='_blank' rel='noopener'>Open the 3D garage in a new tab &#8599;</a>
   </div>
 
@@ -149,7 +152,7 @@
   <div class='foot-grid'>
     <span class='logo'>
       <img alt='pix3lware' height='24' src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAACFCAYAAADbwO/4AAACUElEQVR42u3dS07CUBiG4e9AEZB4GRpZhIkjN+HQLbgYN+Bm3IAjl+HEEC8JN6F14N+kITEqbf/C6fsmBIq04uOxPSJgGI8vRPWX2PmdpFtJK1teShracldSKimz805h/dS2Ubw+LawTJH1K6tnHOnZ9fpulpAO7Xbqx7rqwXla4b4ldzgrLXVsOtl6w61Z2WZIW9vnPmoS+lHTCuKuvfBTOoPCBHkHhA72Awgd6CoUPNAdCJ2gCmoMhbQF9AIUPdIDCB3oOBQfDqKAzKOotf/TuusQ2ynyTvI8NTyXub6hiRLelxg767KOBrqVXoH0aAe3TFGifFkD7dAq0TzOgfRoC7VMGtE9roPnNkKooYWDVvn+fShq1DfqqAehDdh0+pUBzMIxv7g40IxpoAnp3jYFmehdNAWimd0ATuw6md7vUo/0ob3MKW56SNkLzpyzPOS3Q9cfzOpwaAO3TO9A+nQPt0xLoyL/etkEfA+3TBGhGdFQlQEc+j276uXdNPDH83nYhPUkvkvr6fv3hkaQPW+5LerPz5yoGZKjgvUn37QX7gV0HE3gCGmgCGmigCWigCWiggSag96KmHyYNjGgCGmgCGmigCWigCWiggSaggSaggQaagAaagAYaaAIaaAIaaKAJaKAJaKCBJqCBJqCBBpqABpqABhpoAnofoR+0/f8nKVPWwKlRaEa2E/QUCvbRUUEPoPCBnkPBiI4KegYFB8OooAMUPtB9KBjRUUFPoGBERzfrqPLRrf9uJ/1lW5v3LfvhXH9cdi9/J8cbxly9fQGtyY2B/hQbIgAAAABJRU5ErkJggg=='/>
-      pix3lware
+      ix3lware
     </span>
     <ul class='foot-links'>
       <li><a href='mailto:pix3lware@gmail.com'>pix3lware@gmail.com</a></li>
@@ -166,6 +169,7 @@
 </footer>
 
 <!-- pix-motion-script:start -->
-<script src='motion.js?v=scroll-20260913-v2'></script>
+<script src='motion.js?v=immersive-20260913-v3'></script>
+<script src='experience.js?v=immersive-20260913-v3'></script>
 <!-- pix-motion-script:end -->
 </body></html>

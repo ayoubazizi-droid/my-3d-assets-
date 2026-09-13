@@ -188,6 +188,10 @@
 
 
 
+
+
+
+
 /* pix-motion:start */
 /* Progressive enhancement: the document remains readable without JavaScript. */
 html { scroll-padding-top: 100px; }
@@ -260,26 +264,64 @@ body.crt-text { filter: none; }
 .asset-notice { background: var(--yellow); color: var(--ink); padding: 12px 24px; font-size: 12px; border-bottom: 2px solid var(--ink); }
 .asset-notice a { margin-left: 12px; }
 
-/* Boot screen sits above the CRT, and the baked video retains its original black world. */
-.site-loader { position: fixed; inset: 0; z-index: 10000; background: #000; color: #f3efe1; display: none; place-items: center; overflow: auto; font-family: 'Space Mono', monospace; }
+/* The movie occupies the entire viewport, with only a small loading HUD. */
+.site-loader { position: fixed; inset: 0; z-index: 10000; background: #000; color: #fff; display: none; overflow: hidden; font-family: 'Space Mono', monospace; }
 html.booting { overflow: hidden; }
-.booting .site-loader { display: grid; }
-.loader-shell { width: min(86vw, 560px); padding: 30px 0; }
-.loader-top, .loader-bottom { display: flex; justify-content: space-between; gap: 15px; align-items: center; text-transform: uppercase; font-size: 10px; letter-spacing: 2px; }
-.loader-top { color: #9c9b96; }
-.loader-led { width: 7px; height: 7px; display: inline-block; background: #2fbd8e; margin-right: 8px; }
-.loader-film { width: 100%; aspect-ratio: 1; max-height: 65svh; object-fit: contain; display: block; }
-.loader-bottom { margin-top: 8px; }
-.loader-percent { font-size: 18px; color: #ffce3d; }
-.loader-bar { height: 4px; margin: 17px 0 22px; background: #202022; }
+.booting .site-loader { display: block; }
+.site-loader .loader-film { position: absolute; inset: 0; width: 100%; height: 100%; max-height: none; aspect-ratio: auto; object-fit: cover; display: block; }
+.loader-hud { position: absolute; bottom: max(34px, env(safe-area-inset-bottom)); left: 4vw; width: min(420px, 66vw); z-index: 1; text-shadow: none; }
+.loader-bottom { display: flex; justify-content: space-between; gap: 16px; align-items: center; text-transform: uppercase; font-size: 10px; letter-spacing: 2px; }
+.loader-status, .loader-percent { text-shadow: none !important; }
+.loader-percent { font-size: 14px; color: #ffce3d; }
+.loader-bar { height: 2px; margin-top: 12px; background: #333; }
 .loader-bar span { display: block; height: 100%; background: #ffce3d; transform: scaleX(var(--load-progress,0)); transform-origin: left; transition: transform .3s; }
-.loader-caption { font-size: 10px; color: #8e8e91; letter-spacing: 2px; }
-.loader-continue { background: transparent; color: #f3efe1; border: 1px solid #656568; font: inherit; font-size: 11px; padding: 10px 14px; cursor: pointer; margin-top: 15px; }
-.loader-leaving { pointer-events: none; animation: loader-out .75s cubic-bezier(.76,0,.24,1) forwards; }
-@keyframes loader-out { to { clip-path: inset(0 0 100% 0); transform: translateY(-5vh); } }
+.loader-play, .loader-retry { background: #000b; color: #fff; border: 1px solid #999; padding: 12px 16px; margin-top: 16px; font: 11px 'Space Mono', monospace; cursor: pointer; }
+.loader-leaving { pointer-events: none; animation: loader-out .9s cubic-bezier(.76,0,.24,1) forwards; }
+@keyframes loader-out { to { clip-path: inset(0 0 100% 0); } }
+
+/* A full-height opening scene replaces the short, static paper-like hero. */
+.logo { gap: 0; }
+.logo img { margin-right: 0; width: 19px; height: 28px; object-fit: contain; }
+.motion-ready .hero-stage { height: 210svh; }
+.motion-ready .hero { position: sticky; top: var(--header-height, 70px); height: calc(100svh - var(--header-height, 70px)); min-height: 0; }
+.hero { background: #10101d; color: var(--bg-panel); }
+.hero-inner { padding-block: 48px; }
+.hero-banner { width: min(720px, 80vw); filter: brightness(0) invert(1); }
+.hero-orbit { border-color: #ffffff24; }
+.hero-orbit::before, .hero-orbit::after { box-shadow: 0 0 35px #2fbd8e66; border-color: var(--mint); }
+.motion-ready .scroll-story { height: 320svh; }
+.motion-ready .story-pin, .motion-ready .gallery-pin { top: var(--header-height, 70px); height: calc(100svh - var(--header-height, 70px)); }
+#about { background: #cee9c9; }
+#offerings { background: #11111e; color: var(--bg-panel); }
+#offerings .cart { color: var(--ink); }
+#gallery { background: #e9dfc3; }
+.motion-ready .motion-word { will-change: transform, opacity; }
+.motion-ready .palette { box-shadow: 18px 18px 0 var(--ink); }
+.pixel-atmosphere { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; opacity: .55; }
+.booting .pixel-atmosphere { visibility: hidden; }
+.sound-toggle { position: fixed; right: 22px; bottom: max(24px, env(safe-area-inset-bottom)); z-index: 10002; display: flex; gap: 10px; align-items: center; background: #10101de8; color: #f3efe1; border: 1px solid #ffffff50; padding: 12px; font: 10px 'Space Mono', monospace; letter-spacing: 1px; cursor: pointer; text-shadow: none !important; }
+.sound-bars { display: flex; align-items: center; gap: 3px; height: 16px; }
+.sound-bars i { width: 2px; height: 3px; background: #2fbd8e; }
+.sound-on .sound-bars i { animation: equalizer .8s ease-in-out infinite alternate; }
+.sound-on .sound-bars i:nth-child(2) { animation-delay: -.5s; }
+.sound-on .sound-bars i:nth-child(3) { animation-delay: -.2s; }
+@keyframes equalizer { to { height: 16px; } }
+.cursor-ring { position: fixed; top: 0; left: 0; width: 32px; height: 32px; border: 1px solid #ffce3d; pointer-events: none; z-index: 10005; opacity: 0; transition: width .2s, height .2s, border-color .2s; mix-blend-mode: difference; }
+.cursor-ring.cursor-visible { opacity: 1; }
+.cursor-ring.cursor-link { width: 48px; height: 48px; border-color: #2fbd8e; }
+@media (pointer: coarse) { .cursor-ring { display: none; } }
+@media (max-width: 600px) {
+  .sound-toggle { right: 12px; bottom: 18px; padding: 10px 8px; font-size: 8px; }
+  .loader-hud { bottom: 24px; left: 18px; width: calc(100vw - 150px); }
+  .loader-bottom { font-size: 8px; letter-spacing: .5px; }
+  .hero-inner { padding-block: 24px; }
+  .hero p.sub { font-size: 14px; }
+  .sprite-row { margin-top: 26px; }
+  .scroll-cue { margin-top: 24px; }
+}
 
 @media (max-width: 860px) {
-  .motion-ready .story-pin { top: 112px; height: calc(100svh - 112px); }
+  .motion-ready .story-pin { top: var(--header-height, 112px); height: calc(100svh - var(--header-height, 112px)); }
   .story-pin { padding: 30px 5vw; }
   .story-line { font-size: clamp(14px, 4.5vw, 38px); }
   .story-label, .story-bottom { font-size: 8px; letter-spacing: 1px; }
@@ -288,7 +330,7 @@ html.booting { overflow: hidden; }
   .logo { font-size: 12px; }
   .motion-ready .palette { height: 160px; }
   .motion-ready .cart { min-height: 240px; }
-  .motion-ready .gallery-pin { top: 112px; height: calc(100svh - 112px); padding-inline: 20px; }
+  .motion-ready .gallery-pin { top: var(--header-height, 112px); height: calc(100svh - var(--header-height, 112px)); padding-inline: 20px; }
   .motion-ready .gallery-stage .tile { flex-basis: min(74vw, 48svh); width: min(74vw, 48svh); }
   .gallery-caption { font-size: 9px; letter-spacing: 1px; }
   .hero-orbit { inset: 18% 2%; }
@@ -305,32 +347,38 @@ html.motion-off { scroll-behavior: auto; }
   html { scroll-behavior: auto; }
   .loader-leaving { animation: none; }
 }
+@media (pointer: fine) {
+  html, body, a, button, input, select, label { cursor: url('https://ayoubazizi-droid.github.io/my-3d-assets-/assets/pixel-cursor.svg') 16 16, crosshair; }
+}
 
 /* pix-motion:end */
 ]]></b:skin>
 <!-- pix-motion-head:start -->
-<style>.site-loader{display:none}html.booting{overflow:hidden}.booting .site-loader{display:grid;position:fixed;inset:0;z-index:10000;background:#000;color:#f3efe1;place-items:center}.loader-shell{width:min(86vw,560px)}.loader-film{width:100%;aspect-ratio:1;object-fit:contain}body.crt-text{filter:none}</style>
+<style>.site-loader{display:none}html.booting{overflow:hidden}.booting .site-loader{display:block;position:fixed;inset:0;z-index:10000;background:#000;color:#fff}.loader-film{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}body.crt-text{filter:none}</style>
 <script>//<![CDATA[
-document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=setTimeout(function(){if(!window.pix3lwareMotionStarted)document.documentElement.classList.remove('booting');},15000);
+document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=setTimeout(function(){if(!window.pix3lwareMotionStarted){var s=document.querySelector('.loader-status');if(s)s.textContent='Please reload to start your world';var b=document.querySelector('.loader-retry');if(b){b.hidden=false;b.onclick=function(){location.reload();};}}},15000);
 //]]></script>
 <!-- pix-motion-head:end -->
 </head>
 <body class='crt-text'>
 <!-- pix-loader:start -->
-<div class='site-loader' id='site-loader' aria-label='Loading pix3lware'>
-  <div class='loader-shell'>
-    <div class='loader-top'><span><span class='loader-led'></span>PIX3LWARE</span><span>PLEASE STAND BY</span></div>
-    <video class='loader-film' autoplay='autoplay' muted='muted' playsinline='playsinline' loop='loop' preload='auto' poster='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/loader/poster.jpg' aria-label='Original pix3lware pixel animation'>
-      <source src='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/loader/pix3lware.mp4' type='video/mp4'/>
-      <source src='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/loader/pix3lware.webm' type='video/webm'/>
+<div class='site-loader' id='site-loader' aria-label='Loading the Ford Bronco'>
+    <video class='loader-film' autoplay='autoplay' muted='muted' playsinline='playsinline' loop='loop' preload='auto' poster='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/loader/poster.jpg' aria-label='Pix3lware animated intro'>
+      <source src='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/loader/pix3lware.mp4?v=immersive-20260913-v3' type='video/mp4'/>
+      <source src='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/loader/pix3lware.webm?v=immersive-20260913-v3' type='video/webm'/>
     </video>
-    <div class='loader-bottom'><span class='loader-status' role='status'>Loading your world</span><span class='loader-percent' aria-hidden='true'>00%</span></div>
-    <div class='loader-bar' aria-hidden='true'><span></span></div>
-    <div class='loader-caption'>SMALL SQUARES. BIG IDEAS.</div>
-    <button class='loader-continue' type='button' hidden='hidden'>Continue while media loads &#8599;</button>
-  </div>
+    <div class='loader-hud'>
+      <div class='loader-bottom'><span class='loader-status' role='status'>Loading the Ford Bronco…</span><span class='loader-percent' aria-hidden='true'>00%</span></div>
+      <div class='loader-bar' aria-hidden='true'><span></span></div>
+      <button class='loader-play' type='button' hidden='hidden'>PLAY INTRO &#9654;</button>
+      <button class='loader-retry' type='button' hidden='hidden'>RETRY LOADING &#8635;</button>
+    </div>
 </div>
 <!-- pix-loader:end -->
+
+
+
+
 
 
 
@@ -341,7 +389,7 @@ document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=s
 
 <header class='site-header'>
   <nav class='wrap'>
-    <a class='logo' expr:href='data:blog.homepageUrl'>
+    <a class='logo' expr:href='data:blog.homepageUrl' aria-label='pix3lware home'>
       <img alt='pix3lware' height='28' src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAACFCAYAAADbwO/4AAACUElEQVR42u3dS07CUBiG4e9AEZB4GRpZhIkjN+HQLbgYN+Bm3IAjl+HEEC8JN6F14N+kITEqbf/C6fsmBIq04uOxPSJgGI8vRPWX2PmdpFtJK1teShracldSKimz805h/dS2Ubw+LawTJH1K6tnHOnZ9fpulpAO7Xbqx7rqwXla4b4ldzgrLXVsOtl6w61Z2WZIW9vnPmoS+lHTCuKuvfBTOoPCBHkHhA72Awgd6CoUPNAdCJ2gCmoMhbQF9AIUPdIDCB3oOBQfDqKAzKOotf/TuusQ2ynyTvI8NTyXub6hiRLelxg767KOBrqVXoH0aAe3TFGifFkD7dAq0TzOgfRoC7VMGtE9roPnNkKooYWDVvn+fShq1DfqqAehDdh0+pUBzMIxv7g40IxpoAnp3jYFmehdNAWimd0ATuw6md7vUo/0ob3MKW56SNkLzpyzPOS3Q9cfzOpwaAO3TO9A+nQPt0xLoyL/etkEfA+3TBGhGdFQlQEc+j276uXdNPDH83nYhPUkvkvr6fv3hkaQPW+5LerPz5yoGZKjgvUn37QX7gV0HE3gCGmgCGmigCWigCWiggSag96KmHyYNjGgCGmgCGmigCWigCWiggSaggSaggQaagAaagAYaaAIaaAIaaKAJaKAJaKCBJqCBJqCBBpqABpqABhpoAnofoR+0/f8nKVPWwKlRaEa2E/QUCvbRUUEPoPCBnkPBiI4KegYFB8OooAMUPtB9KBjRUUFPoGBERzfrqPLRrf9uJ/1lW5v3LfvhXH9cdi9/J8cbxly9fQGtyY2B/hQbIgAAAABJRU5ErkJggg=='/>
       <data:blog.title/>
     </a>
@@ -443,7 +491,7 @@ document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=s
       <h2>take it for a spin.</h2>
       <p>Our custom Ford Bronco Raptor. Drag to look around and zoom in on the details.</p>
     </div>
-    <iframe class='garage-frame' src='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html?v=scroll-20260913-v2' title='Interactive Ford Bronco Raptor viewer' loading='eager' allow='fullscreen'></iframe>
+    <iframe class='garage-frame' src='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html?v=immersive-20260913-v3' title='Interactive Ford Bronco Raptor viewer' loading='eager' allow='fullscreen'></iframe>
     <a class='garage-link' href='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html' target='_blank' rel='noopener'>Open the 3D garage in a new tab &#8599;</a>
   </div>
 
@@ -1316,7 +1364,7 @@ document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=s
   <div class='foot-grid'>
     <span class='logo'>
       <img alt='pix3lware' height='24' src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAACFCAYAAADbwO/4AAACUElEQVR42u3dS07CUBiG4e9AEZB4GRpZhIkjN+HQLbgYN+Bm3IAjl+HEEC8JN6F14N+kITEqbf/C6fsmBIq04uOxPSJgGI8vRPWX2PmdpFtJK1teShracldSKimz805h/dS2Ubw+LawTJH1K6tnHOnZ9fpulpAO7Xbqx7rqwXla4b4ldzgrLXVsOtl6w61Z2WZIW9vnPmoS+lHTCuKuvfBTOoPCBHkHhA72Awgd6CoUPNAdCJ2gCmoMhbQF9AIUPdIDCB3oOBQfDqKAzKOotf/TuusQ2ynyTvI8NTyXub6hiRLelxg767KOBrqVXoH0aAe3TFGifFkD7dAq0TzOgfRoC7VMGtE9roPnNkKooYWDVvn+fShq1DfqqAehDdh0+pUBzMIxv7g40IxpoAnp3jYFmehdNAWimd0ATuw6md7vUo/0ob3MKW56SNkLzpyzPOS3Q9cfzOpwaAO3TO9A+nQPt0xLoyL/etkEfA+3TBGhGdFQlQEc+j276uXdNPDH83nYhPUkvkvr6fv3hkaQPW+5LerPz5yoGZKjgvUn37QX7gV0HE3gCGmgCGmigCWigCWiggSag96KmHyYNjGgCGmgCGmigCWigCWiggSaggSaggQaagAaagAYaaAIaaAIaaKAJaKAJaKCBJqCBJqCBBpqABpqABhpoAnofoR+0/f8nKVPWwKlRaEa2E/QUCvbRUUEPoPCBnkPBiI4KegYFB8OooAMUPtB9KBjRUUFPoGBERzfrqPLRrf9uJ/1lW5v3LfvhXH9cdi9/J8cbxly9fQGtyY2B/hQbIgAAAABJRU5ErkJggg=='/>
-      pix3lware
+      ix3lware
     </span>
     <ul class='foot-links'>
       <li><a href='mailto:pix3lware@gmail.com'>pix3lware@gmail.com</a></li>
@@ -1346,103 +1394,94 @@ document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=s
   const video = $('.loader-film');
   const frame = $('.garage-frame');
   const tasks = new Map();
-  const failures = new Set();
-  let dismissed = false, slowTimer, deadlineTimer, bootStarted = performance.now();
-  let manualPause = false;
-  try { manualPause = sessionStorage.getItem('pix3lware-motion') === 'off'; } catch (_) {}
-  let enabled = !reduced.matches && !manualPause;
-
+  let dismissed = false, garageLoaded = false, introPlayed = false, slowTimer;
+  // A new session starts with motion; an explicit control can override the OS preference.
+  let motionChoice = null;
+  let enabled = !reduced.matches;
+  const status = $('.loader-status');
+  const retry = $('.loader-retry');
+  const playIntro = $('.loader-play');
+  const garageOrigin = frame ? new URL(frame.src, location.href).origin : '';
   function progress() {
-    const value = [...tasks.values()].reduce((a, b) => a + b, 0) / Math.max(tasks.size, 1);
+    const value = garageLoaded ? 1 : Math.min(.98, tasks.get('3D garage') || 0);
     loader?.style.setProperty('--load-progress', value);
-    if ($('.loader-percent')) $('.loader-percent').textContent = `${Math.floor(value * 100).toString().padStart(2, '0')}%`;
-  }
-  function finishTask(name, failed = false) {
-    if (failed) failures.add(name);
-    tasks.set(name, 1);
-    progress();
+    const percent = $('.loader-percent');
+    if (percent) percent.textContent = `${Math.floor(value * 100).toString().padStart(2, '0')}%`;
   }
   function dismiss() {
-    if (dismissed) return;
+    // No timeout and no skip may bypass the actual model's first successful render.
+    if (dismissed || !garageLoaded || !introPlayed) return;
     dismissed = true;
     clearTimeout(slowTimer);
-    clearTimeout(deadlineTimer);
-    if (window.pix3lwareBootWatchdog) clearTimeout(window.pix3lwareBootWatchdog);
-    if (enabled && loader && root.classList.contains('booting')) {
-      loader.classList.add('loader-leaving');
-      setTimeout(removeLoader, 760);
-    } else removeLoader();
-    if (failures.size) {
-      const note = document.createElement('div');
-      note.className = 'asset-notice'; note.setAttribute('role', 'status');
-      note.textContent = 'Some media could not load. You can still explore the page.';
-      const retry = document.createElement('a'); retry.href = location.href; retry.textContent = 'Retry';
-      note.append(retry); $('header').after(note);
-    }
+    clearTimeout(window.pix3lwareBootWatchdog);
+    loader?.classList.add('loader-leaving');
+    setTimeout(() => {
+      root.classList.remove('booting');
+      if (loader) { loader.hidden = true; loader.style.display = 'none'; }
+      video?.pause();
+      document.dispatchEvent(new Event('pix3lware:entered'));
+    }, enabled ? 900 : 0);
   }
-  function removeLoader() {
-    root.classList.remove('booting');
-    if (loader) { loader.hidden = true; loader.style.display = 'none'; }
-    video?.pause();
-    document.dispatchEvent(new Event('pix3lware:entered'));
+  function garageError() {
+    if (dismissed) return;
+    if (status) status.textContent = 'Bronco could not load. Retry to enter.';
+    if (retry) retry.hidden = false;
   }
-  const waitEvent = (el, good, bad = 'error') => new Promise(resolve => {
-    const done = event => { el.removeEventListener(good, done); el.removeEventListener(bad, done); resolve(event.type === good); };
-    el.addEventListener(good, done, { once: true }); el.addEventListener(bad, done, { once: true });
-  });
-
-  // Install the cross-origin handshake BEFORE making the garage eager.
-  let resolveGarage;
-  const garageReady = new Promise(resolve => { resolveGarage = resolve; });
-  const garageOrigin = frame ? new URL(frame.src, location.href).origin : '';
   window.addEventListener('message', event => {
     if (!frame || event.source !== frame.contentWindow || event.origin !== garageOrigin) return;
-    if (event.data?.type === 'pix3lware:garage-progress' && !dismissed) {
-      tasks.set('3D garage', clamp(event.data.progress, 0, .95)); progress();
+    if (event.data?.type === 'pix3lware:garage-progress' && !garageLoaded) {
+      tasks.set('3D garage', clamp(event.data.progress, 0, .98)); progress();
+      if (status) status.textContent = event.data.progress >= .9 ? 'Preparing the Bronco…' : 'Loading the Ford Bronco…';
     }
-    if (event.data?.type === 'pix3lware:garage-ready') resolveGarage(true);
-    if (event.data?.type === 'pix3lware:garage-error') resolveGarage(false);
+    if (event.data?.type === 'pix3lware:garage-ready') {
+      garageLoaded = true; progress();
+      if (status) status.textContent = 'Your world is ready';
+      if (retry) retry.hidden = true;
+      frame.contentWindow?.postMessage({type:'pix3lware:motion', enabled}, garageOrigin);
+      dismiss();
+    }
+    if (event.data?.type === 'pix3lware:garage-error') garageError();
   });
   if (frame) {
     frame.loading = 'eager';
-    const ask = () => frame.contentWindow?.postMessage({ type: 'pix3lware:status-request' }, garageOrigin);
+    const ask = () => frame.contentWindow?.postMessage({type:'pix3lware:status-request'}, garageOrigin);
     frame.addEventListener('load', ask);
-    frame.addEventListener('error', () => resolveGarage(false));
+    frame.addEventListener('error', garageError);
     ask();
-  } else resolveGarage(true);
-
-  async function boot() {
-    const jobs = [
-      ['Page', document.readyState === 'complete' ? Promise.resolve(true) : waitEvent(window, 'load')],
-      ['Fonts', document.fonts ? document.fonts.ready.then(() => true) : Promise.resolve(true)],
-      ['Images', Promise.all($$('img').map(img => img.decode ? img.decode().then(() => true, () => false) : (img.complete ? Promise.resolve(!!img.naturalWidth) : waitEvent(img, 'load')))).then(values => values.every(Boolean))],
-      ['3D garage', garageReady]
-    ];
-    if (video) {
-      jobs.push(['Intro', video.readyState >= 2 ? Promise.resolve(true) : waitEvent(video, 'loadeddata')]);
-      if (enabled) video.play().catch(() => {});
-    }
-    jobs.forEach(([name]) => tasks.set(name, 0)); progress();
-    deadlineTimer = setTimeout(() => {
-      for (const [name, value] of tasks) if (value < 1) failures.add(name);
-      dismiss();
-    }, 20000);
-    slowTimer = setTimeout(() => {
-      const status = $('.loader-status');
-      if (status) status.textContent = 'Still loading your world…';
-      const skip = $('.loader-continue'); if (skip) skip.hidden = false;
-    }, 12000);
-    $('.loader-continue')?.addEventListener('click', () => {
-      for (const [name, value] of tasks) if (value < 1) failures.add(name);
-      dismiss();
-    });
-    await Promise.all(jobs.map(async ([name, job]) => {
-      try { finishTask(name, !(await job)); } catch (_) { finishTask(name, true); }
-    }));
-    if ($('.loader-status')) $('.loader-status').textContent = 'Ready to explore';
-    // A tiny paint window, no artificial full-loop delay after the actual assets are ready.
-    setTimeout(dismiss, Math.max(0, 500 - (performance.now() - bootStarted)));
+  } else garageError();
+  retry?.addEventListener('click', () => location.reload());
+  // Explicit muted playback is independent of reduced motion / the page motion control.
+  async function playVideo() {
+    if (!video || dismissed) return;
+    video.muted = true; video.defaultMuted = true; video.loop = true; video.playsInline = true;
+    try { await video.play(); if (playIntro) playIntro.hidden = true; }
+    catch (_) { if (playIntro) playIntro.hidden = false; }
   }
+  if (video) {
+    let lastTime = 0;
+    video.addEventListener('timeupdate', () => {
+      // Show the supplied animation at least once, even on a warm model cache.
+      if (video.currentTime >= Math.max(.1, video.duration - .3) || (lastTime > 1 && video.currentTime < lastTime)) {
+        introPlayed = true; dismiss();
+      }
+      lastTime = video.currentTime;
+    });
+    video.addEventListener('error', () => {
+      if (status) status.textContent = 'Intro could not load. Please retry.';
+      if (retry) retry.hidden = false;
+    });
+    video.addEventListener('canplay', playVideo, {once:true});
+    playIntro?.addEventListener('click', playVideo);
+    document.addEventListener('pointerdown', () => { if (!dismissed && video.paused) playVideo(); }, {passive:true});
+    playVideo();
+  }
+  slowTimer = setTimeout(() => {
+    if (!garageLoaded) {
+      if (status) status.textContent = 'Still preparing your Bronco. Please wait…';
+      if (retry) retry.hidden = false;
+    }
+  }, 30000);
+  progress();
 
   const nav = $('nav.wrap');
   const toggle = document.createElement('button');
@@ -1459,7 +1498,10 @@ document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=s
   story.className = 'scroll-story';
   story.setAttribute('aria-label', 'Small squares. Big ideas. Your next world.');
   story.innerHTML = `<div class="story-pin"><span class="story-label">01 / THE WORLD OF PIX3LWARE</span><div class="story-lines" aria-hidden="true"><div class="story-line">SMALL <em>SQUARES.</em></div><div class="story-line"><em>BIG</em> IDEAS.</div><div class="story-line">YOUR NEXT <em>WORLD.</em></div></div><div class="story-bottom"><span>SPRITES / TILESETS / 3D</span><span>KEEP SCROLLING ↓</span></div></div>`;
-  $('.hero')?.after(story);
+  const hero = $('.hero');
+  const heroStage = document.createElement('div'); heroStage.className = 'hero-stage';
+  hero?.before(heroStage); if (hero) heroStage.append(hero);
+  heroStage.after(story);
 
   for (const [selector, words] of [['#about', 'PIXEL BY PIXEL'], ['.newsletter', 'SMALL SQUARES. BIG IDEAS.']]) {
     const target = $(selector); if (!target) continue;
@@ -1511,6 +1553,7 @@ document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=s
     if (opacity !== undefined) el.style.opacity = opacity;
   }
   function measure() {
+    root.style.setProperty('--header-height', `${$('header')?.offsetHeight || 70}px`);
     // Remove previous transforms for stable layout-based scroll offsets.
     styled.forEach(el => { el.style.transform = ''; el.style.opacity = ''; });
     metrics = [];
@@ -1520,7 +1563,8 @@ document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=s
         metrics.push({el, type, i, top: rect.top + scrollY, height: rect.height, words: type === 'heading' ? $$('.motion-word', el) : []});
       });
     }
-    add('.section-head h2, .about-copy h2, .newsletter h2, .hero .tagline', 'heading');
+    add('.section-head h2, .about-copy h2, .newsletter h2', 'heading');
+    add('.hero .tagline', 'heroLayer');
     add('.section-head p, .about-copy p, .stat, .eyebrow, .foot-links li', 'reveal');
     add('.scroll-story', 'story');
     add('.cart', 'card'); add('.palette', 'palette'); add('.hero-banner', 'hero');
@@ -1546,23 +1590,28 @@ document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=s
         const eased = 1 - Math.pow(1 - entry, 3);
         const through = clamp((vh - rel) / (vh + m.height));
         if (m.type === 'story') {
-          const p = clamp((y - m.top + vh * .65) / (m.height - vh * .35));
+          const p = clamp((y - m.top + vh * .35) / (m.height - vh * .65));
           $$('.story-line', m.el).forEach((line, i) => {
-            const enter = clamp((p - i * .13) / .35);
-            const q = 1 - Math.pow(1 - enter, 2);
-            const exit = clamp((p - .88) / .12);
-            transform(line, `translate3d(${((1-q)*.95-exit*.15)*vw*(i%2?1:-1)}px,0,0)`, .08+.92*q);
+            const t = clamp((p - i * .09) / .68);
+            const arrival = clamp(t / .55);
+            const departure = clamp((t - .65) / .35);
+            const x = ((1 - arrival) * 1.05 - departure * .65) * vw * (i % 2 ? 1 : -1);
+            transform(line, `translate3d(${x}px,0,0) rotate(${(1-arrival)*(i%2?5:-5)}deg)`, clamp(arrival*2)*(1-departure*.7));
           });
         } else if (m.type === 'heading') {
           m.words.forEach((word, i) => {
-            const p = clamp(entry * 1.45 - (i / Math.max(m.words.length, 1)) * .42);
-            const q = 1 - Math.pow(1 - p, 3);
-            const x = (1 - q) * Math.min(vw * .7, 780) * (m.i % 2 ? 1 : -1);
-            transform(word, `translate3d(${x}px,${(1-q)*35}px,0) rotate(${(1-q)*(m.i%2?4:-4)}deg)`, .12 + .88*q);
+            const p = clamp((vh * .95 - rel) / (vh * .7) - i / Math.max(m.words.length, 1) * .16);
+            const q = p * p * (3 - 2 * p);
+            const drift = clamp((vh * .3 - rel) / vh, 0, 1) * Math.min(vw * .16, 180);
+            const side = m.i % 2 ? 1 : -1;
+            const x = ((1-q) * Math.min(vw * .95, 1000) - drift) * side;
+            transform(word, `translate3d(${x}px,${(1-q)*65}px,0) rotate(${(1-q)*side*7}deg)`, clamp(p*2));
           });
         } else if (m.type === 'reveal') {
+          const p = clamp((vh * .95 - rel) / (vh * .65));
           const side = m.i % 2 ? 1 : -1;
-          transform(m.el, `translate3d(${(1-eased)*side*70}px,${(1-eased)*30}px,0)`, .12+.88*eased);
+          const drift = clamp((vh * .25 - rel) / vh) * 45;
+          transform(m.el, `translate3d(${((1-p)*Math.min(vw*.38,360)-drift)*side}px,${(1-p)*45}px,0)`, clamp(p*1.6));
         } else if (m.type === 'card') {
           const p = clamp(entry * 1.4 - (m.i % 3) * .12), q = 1-Math.pow(1-p,3);
           const drift = (through-.5) * (m.i%2? -28:28);
@@ -1571,10 +1620,10 @@ document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=s
           transform(m.el, `translate3d(${(1-eased)*130}px,${(through-.5)*-60}px,0) rotate(${(through-.5)*12}deg) scale(${.83+.17*eased})`);
           [...m.el.children].forEach((el,i) => transform(el, `translateY(${Math.sin(through*Math.PI*2+i*.8)*18}px)`));
         } else if (m.type === 'hero') {
-          const p = clamp(y / vh);
-          transform(m.el, `translate3d(${p*-70}px,${p*110}px,0) rotate(${-p*7}deg) scale(${1+p*.2})`, 1-p*.7);
+          const p = clamp(y / (vh*1.15));
+          transform(m.el, `translate3d(${p*-vw*.48}px,${p*-100}px,0) rotate(${-p*12}deg) scale(${1+p*.5})`, 1-p);
         } else if (m.type === 'heroLayer') {
-          const p = clamp(y/vh); transform(m.el, `translate3d(${p*(m.i%2?65:-65)}px,${p*(35+m.i*20)}px,0)`, 1-p*.85);
+          const p = clamp(y/(vh*1.15)); transform(m.el, `translate3d(${p*vw*(m.i%2?.55:-.55)}px,${p*(15+m.i*15)}px,0)`, 1-p);
         } else if (m.type === 'band') {
           transform(m.el, `translate3d(${-320+(through-.5)*(m.i%2?660:-660)}px,0,0)`);
         } else if (m.type === 'garage') {
@@ -1597,29 +1646,158 @@ document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=s
   }
   function requestTick() { if (!raf && enabled && active) raf = requestAnimationFrame(render); }
   function applyMotion() {
-    enabled = !reduced.matches && !manualPause;
+    enabled = motionChoice === null ? !reduced.matches : motionChoice;
     root.classList.toggle('motion-ready', enabled); root.classList.toggle('motion-off', !enabled);
     toggle.textContent = enabled ? 'MOTION ON' : 'MOTION OFF';
     toggle.setAttribute('aria-label', enabled ? 'Pause page motion' : 'Enable page motion');
     toggle.setAttribute('aria-pressed', String(enabled));
     styled.forEach(el => { el.style.transform=''; el.style.opacity=''; });
-    if (enabled) { smoothY=scrollY; measure(); if (!dismissed) video?.play().catch(()=>{}); }
-    else { video?.pause(); if (raf) cancelAnimationFrame(raf); raf=0; }
+    if (enabled) { smoothY=scrollY; measure(); }
+    else { if (raf) cancelAnimationFrame(raf); raf=0; }
     // Keep the embedded scene's auto-rotation in step with the page motion preference.
     frame?.contentWindow?.postMessage({type:'pix3lware:motion',enabled}, garageOrigin);
+    document.dispatchEvent(new CustomEvent('pix3lware:motion-change', {detail:{enabled}}));
   }
-  toggle.addEventListener('click', () => { manualPause=enabled; try {sessionStorage.setItem('pix3lware-motion',manualPause?'off':'on');} catch (_) {} applyMotion(); });
+  toggle.addEventListener('click', () => { motionChoice=!enabled; applyMotion(); });
   reduced.addEventListener('change',applyMotion);
   window.addEventListener('scroll',requestTick,{passive:true});
   let resizeTimer;
   window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(measure,120);});
   window.addEventListener('load',measure,{once:true});
   document.fonts?.ready.then(measure);
-  document.addEventListener('visibilitychange',()=>{active=!document.hidden;if(active)requestTick();});
+  document.addEventListener('visibilitychange',()=>{active=!document.hidden;if(active){requestTick();if(!dismissed)playVideo();}});
   document.addEventListener('pix3lware:entered',()=>{measure();});
   window.addEventListener('pageshow',event=>{if(event.persisted){dismiss();measure();}});
   applyMotion();
-  boot().catch(dismiss);
+  document.dispatchEvent(new Event('pix3lware:motion-ready'));
+})();
+
+(() => {
+  'use strict';
+  const root = document.documentElement;
+  // Original, gently synthesized game ambience. Sound starts only from its control.
+  const sound = document.createElement('button');
+  sound.type = 'button'; sound.className = 'sound-toggle';
+  sound.setAttribute('aria-label', 'Play ambient game music');
+  sound.setAttribute('aria-pressed', 'false');
+  sound.innerHTML = '<span class="sound-bars" aria-hidden="true"><i></i><i></i><i></i></span><span class="sound-label">SOUND OFF</span>';
+  document.body.append(sound);
+  let audio, master, wet, musicOn = false, nextChord = 0, chordIndex = 0, scheduler;
+  const chords = [[57,60,64,69], [53,57,60,65], [48,55,60,64], [55,59,62,67]];
+  const melody = [0, 2, 3, 1, 2, 0, 3, 2];
+  const frequency = midi => 440 * 2 ** ((midi - 69) / 12);
+  function voice(midi, start, length, volume, type = 'sine') {
+    const oscillator = audio.createOscillator(), envelope = audio.createGain();
+    oscillator.type = type; oscillator.frequency.value = frequency(midi);
+    envelope.gain.setValueAtTime(0, start);
+    envelope.gain.linearRampToValueAtTime(volume, start + Math.min(1.6, length * .2));
+    envelope.gain.exponentialRampToValueAtTime(.0001, start + length);
+    oscillator.connect(envelope); envelope.connect(master); envelope.connect(wet);
+    oscillator.start(start); oscillator.stop(start + length + .05);
+    oscillator.onended = () => { oscillator.disconnect(); envelope.disconnect(); };
+  }
+  function scheduleMusic() {
+    if (!musicOn || audio.state !== 'running') return;
+    if (nextChord < audio.currentTime) nextChord = audio.currentTime + .08;
+    while (nextChord < audio.currentTime + 1) {
+      const chord = chords[chordIndex % chords.length];
+      chord.forEach((note, i) => voice(note, nextChord + i * .06, 9.8, .045));
+      voice(chord[0] - 12, nextChord, 7.8, .04);
+      melody.forEach((index, i) => voice(chord[index] + 12, nextChord + i + .35, 2.1, .018, 'triangle'));
+      nextChord += 8; chordIndex++;
+    }
+  }
+  function createAudio() {
+    const Audio = window.AudioContext || window.webkitAudioContext;
+    if (!Audio) throw new Error('Audio unavailable');
+    audio = new Audio();
+    master = audio.createGain(); master.gain.value = 0;
+    const filter = audio.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 2600;
+    const compressor = audio.createDynamicsCompressor();
+    master.connect(filter); filter.connect(compressor); compressor.connect(audio.destination);
+    const reverb = audio.createConvolver();
+    const impulse = audio.createBuffer(2, audio.sampleRate * 3, audio.sampleRate);
+    for (let channel = 0; channel < 2; channel++) {
+      const data = impulse.getChannelData(channel);
+      for (let i = 0; i < data.length; i++) data[i] = (Math.random()*2-1) * (1-i/data.length)**3 * .35;
+    }
+    reverb.buffer = impulse; wet = audio.createGain(); wet.gain.value = .3;
+    wet.connect(reverb); reverb.connect(master);
+    scheduler = setInterval(scheduleMusic, 250);
+  }
+  sound.addEventListener('click', async () => {
+    try {
+      if (!audio) createAudio();
+      await audio.resume();
+      musicOn = !musicOn;
+      master.gain.cancelScheduledValues(audio.currentTime);
+      master.gain.setTargetAtTime(musicOn ? .38 : 0, audio.currentTime, .2);
+      if (musicOn) { nextChord = audio.currentTime + .05; scheduleMusic(); }
+      sound.classList.toggle('sound-on', musicOn);
+      sound.querySelector('.sound-label').textContent = musicOn ? 'SOUND ON' : 'SOUND OFF';
+      sound.setAttribute('aria-pressed', String(musicOn));
+      sound.setAttribute('aria-label', musicOn ? 'Mute ambient game music' : 'Play ambient game music');
+    } catch (_) { sound.querySelector('.sound-label').textContent = 'SOUND UNAVAILABLE'; }
+  });
+
+  const canvas = document.createElement('canvas'); canvas.className = 'pixel-atmosphere';
+  canvas.setAttribute('aria-hidden', 'true'); document.body.append(canvas);
+  const context = canvas.getContext('2d');
+  const cursor = document.createElement('div'); cursor.className = 'cursor-ring';
+  cursor.setAttribute('aria-hidden', 'true'); document.body.append(cursor);
+  const finePointer = matchMedia('(pointer: fine)');
+  let width = innerWidth, height = innerHeight, pointerX = -100, pointerY = -100;
+  let cursorX = pointerX, cursorY = pointerY, tick = 0, previousTime = 0;
+  let motion = root.classList.contains('motion-ready');
+  const particles = Array.from({length: 64}, (_, i) => ({
+    x: Math.random(), y: Math.random(), depth: .1 + Math.random()*.65,
+    size: 2 + (i%3)*2, color: ['#2fbd8e','#ffce3d','#ff4d5e'][i%3]
+  }));
+  function resize() {
+    width = innerWidth; height = innerHeight;
+    const scale = Math.min(devicePixelRatio, 2);
+    canvas.width = width*scale; canvas.height = height*scale;
+    context?.setTransform(scale,0,0,scale,0,0);
+  }
+  function draw(time) {
+    tick = 0;
+    if (document.hidden || !motion) return;
+    // Cap background drawing at 30 fps; cursor movement stays interpolated.
+    cursorX += (pointerX-cursorX)*.24; cursorY += (pointerY-cursorY)*.24;
+    cursor.style.transform = `translate3d(${cursorX-cursor.offsetWidth/2}px,${cursorY-cursor.offsetHeight/2}px,0) rotate(45deg)`;
+    if (context && time - previousTime > 32) {
+      previousTime = time; context.clearRect(0,0,width,height);
+      for (const p of particles) {
+        const x = (p.x*width + Math.sin(time*.00015+p.y*10)*35 + (pointerX-width/2)*p.depth*.015 + width) % width;
+        const y = ((p.y*height - scrollY*p.depth*.55 - time*.004*p.depth) % height + height) % height;
+        context.globalAlpha = .15+p.depth*.4; context.fillStyle = p.color;
+        context.fillRect(Math.round(x),Math.round(y),p.size,p.size);
+      }
+    }
+    tick = requestAnimationFrame(draw);
+  }
+  function start() { if (!tick && motion && !document.hidden) tick = requestAnimationFrame(draw); }
+  window.addEventListener('pointermove', event => {
+    if (!finePointer.matches) return;
+    pointerX = event.clientX; pointerY = event.clientY;
+    cursor.classList.toggle('cursor-visible', motion);
+    cursor.classList.toggle('cursor-link', !!event.target.closest('a,button,input,select'));
+  }, {passive:true});
+  document.addEventListener('pointerout', event => { if (!event.relatedTarget) cursor.classList.remove('cursor-visible'); });
+  document.addEventListener('pix3lware:motion-change', event => {
+    motion = event.detail.enabled;
+    canvas.hidden = !motion;
+    if (!motion) { cancelAnimationFrame(tick); tick=0; cursor.classList.remove('cursor-visible'); }
+    else start();
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { if (audio) audio.suspend().catch(()=>{}); }
+    else { if (audio && musicOn) audio.resume().then(scheduleMusic).catch(()=>{}); start(); }
+  });
+  window.addEventListener('pagehide', () => { if (scheduler) clearInterval(scheduler); });
+  window.addEventListener('pageshow', event => { if (event.persisted && audio) scheduler = setInterval(scheduleMusic,250); });
+  window.addEventListener('resize', resize, {passive:true});
+  resize(); start();
 })();
 
 //]]></script>

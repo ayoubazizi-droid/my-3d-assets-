@@ -8,6 +8,7 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 // The outer page waits for the model's first successful render, not iframe.onload.
 let garageState = 'loading', garageProgress = 0;
+let sceneVisible = false;
 const parentOrigin = document.referrer ? new URL(document.referrer).origin : '*';
 function notifyParent(type, details = {}) {
   if (window.parent !== window) window.parent.postMessage({ type, ...details }, parentOrigin);
@@ -173,12 +174,13 @@ new ResizeObserver(() => {
   renderer.setSize(width, height);
   composer.setSize(width, height);
 }).observe(wrap);
+new IntersectionObserver(entries => { sceneVisible = entries[0].isIntersecting; }).observe(wrap);
 updateRotationLabel();
 select(0);
 const clock = new THREE.Clock();
 renderer.setAnimationLoop(() => {
   const delta = Math.min(clock.getDelta(), 0.1);
-  if (document.hidden) return;
+  if (document.hidden || !sceneVisible || garageState !== 'ready') return;
   controls.update(delta);
   if (pixelSize > 0) composer.render(delta);
   else renderer.render(scene, camera);

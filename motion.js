@@ -10,103 +10,94 @@
   const video = $('.loader-film');
   const frame = $('.garage-frame');
   const tasks = new Map();
-  const failures = new Set();
-  let dismissed = false, slowTimer, deadlineTimer, bootStarted = performance.now();
-  let manualPause = false;
-  try { manualPause = sessionStorage.getItem('pix3lware-motion') === 'off'; } catch (_) {}
-  let enabled = !reduced.matches && !manualPause;
-
+  let dismissed = false, garageLoaded = false, introPlayed = false, slowTimer;
+  // A new session starts with motion; an explicit control can override the OS preference.
+  let motionChoice = null;
+  let enabled = !reduced.matches;
+  const status = $('.loader-status');
+  const retry = $('.loader-retry');
+  const playIntro = $('.loader-play');
+  const garageOrigin = frame ? new URL(frame.src, location.href).origin : '';
   function progress() {
-    const value = [...tasks.values()].reduce((a, b) => a + b, 0) / Math.max(tasks.size, 1);
+    const value = garageLoaded ? 1 : Math.min(.98, tasks.get('3D garage') || 0);
     loader?.style.setProperty('--load-progress', value);
-    if ($('.loader-percent')) $('.loader-percent').textContent = `${Math.floor(value * 100).toString().padStart(2, '0')}%`;
-  }
-  function finishTask(name, failed = false) {
-    if (failed) failures.add(name);
-    tasks.set(name, 1);
-    progress();
+    const percent = $('.loader-percent');
+    if (percent) percent.textContent = `${Math.floor(value * 100).toString().padStart(2, '0')}%`;
   }
   function dismiss() {
-    if (dismissed) return;
+    // No timeout and no skip may bypass the actual model's first successful render.
+    if (dismissed || !garageLoaded || !introPlayed) return;
     dismissed = true;
     clearTimeout(slowTimer);
-    clearTimeout(deadlineTimer);
-    if (window.pix3lwareBootWatchdog) clearTimeout(window.pix3lwareBootWatchdog);
-    if (enabled && loader && root.classList.contains('booting')) {
-      loader.classList.add('loader-leaving');
-      setTimeout(removeLoader, 760);
-    } else removeLoader();
-    if (failures.size) {
-      const note = document.createElement('div');
-      note.className = 'asset-notice'; note.setAttribute('role', 'status');
-      note.textContent = 'Some media could not load. You can still explore the page.';
-      const retry = document.createElement('a'); retry.href = location.href; retry.textContent = 'Retry';
-      note.append(retry); $('header').after(note);
-    }
+    clearTimeout(window.pix3lwareBootWatchdog);
+    loader?.classList.add('loader-leaving');
+    setTimeout(() => {
+      root.classList.remove('booting');
+      if (loader) { loader.hidden = true; loader.style.display = 'none'; }
+      video?.pause();
+      document.dispatchEvent(new Event('pix3lware:entered'));
+    }, enabled ? 900 : 0);
   }
-  function removeLoader() {
-    root.classList.remove('booting');
-    if (loader) { loader.hidden = true; loader.style.display = 'none'; }
-    video?.pause();
-    document.dispatchEvent(new Event('pix3lware:entered'));
+  function garageError() {
+    if (dismissed) return;
+    if (status) status.textContent = 'Bronco could not load. Retry to enter.';
+    if (retry) retry.hidden = false;
   }
-  const waitEvent = (el, good, bad = 'error') => new Promise(resolve => {
-    const done = event => { el.removeEventListener(good, done); el.removeEventListener(bad, done); resolve(event.type === good); };
-    el.addEventListener(good, done, { once: true }); el.addEventListener(bad, done, { once: true });
-  });
-
-  // Install the cross-origin handshake BEFORE making the garage eager.
-  let resolveGarage;
-  const garageReady = new Promise(resolve => { resolveGarage = resolve; });
-  const garageOrigin = frame ? new URL(frame.src, location.href).origin : '';
   window.addEventListener('message', event => {
     if (!frame || event.source !== frame.contentWindow || event.origin !== garageOrigin) return;
-    if (event.data?.type === 'pix3lware:garage-progress' && !dismissed) {
-      tasks.set('3D garage', clamp(event.data.progress, 0, .95)); progress();
+    if (event.data?.type === 'pix3lware:garage-progress' && !garageLoaded) {
+      tasks.set('3D garage', clamp(event.data.progress, 0, .98)); progress();
+      if (status) status.textContent = event.data.progress >= .9 ? 'Preparing the Bronco…' : 'Loading the Ford Bronco…';
     }
-    if (event.data?.type === 'pix3lware:garage-ready') resolveGarage(true);
-    if (event.data?.type === 'pix3lware:garage-error') resolveGarage(false);
+    if (event.data?.type === 'pix3lware:garage-ready') {
+      garageLoaded = true; progress();
+      if (status) status.textContent = 'Your world is ready';
+      if (retry) retry.hidden = true;
+      frame.contentWindow?.postMessage({type:'pix3lware:motion', enabled}, garageOrigin);
+      dismiss();
+    }
+    if (event.data?.type === 'pix3lware:garage-error') garageError();
   });
   if (frame) {
     frame.loading = 'eager';
-    const ask = () => frame.contentWindow?.postMessage({ type: 'pix3lware:status-request' }, garageOrigin);
+    const ask = () => frame.contentWindow?.postMessage({type:'pix3lware:status-request'}, garageOrigin);
     frame.addEventListener('load', ask);
-    frame.addEventListener('error', () => resolveGarage(false));
+    frame.addEventListener('error', garageError);
     ask();
-  } else resolveGarage(true);
-
-  async function boot() {
-    const jobs = [
-      ['Page', document.readyState === 'complete' ? Promise.resolve(true) : waitEvent(window, 'load')],
-      ['Fonts', document.fonts ? document.fonts.ready.then(() => true) : Promise.resolve(true)],
-      ['Images', Promise.all($$('img').map(img => img.decode ? img.decode().then(() => true, () => false) : (img.complete ? Promise.resolve(!!img.naturalWidth) : waitEvent(img, 'load')))).then(values => values.every(Boolean))],
-      ['3D garage', garageReady]
-    ];
-    if (video) {
-      jobs.push(['Intro', video.readyState >= 2 ? Promise.resolve(true) : waitEvent(video, 'loadeddata')]);
-      if (enabled) video.play().catch(() => {});
-    }
-    jobs.forEach(([name]) => tasks.set(name, 0)); progress();
-    deadlineTimer = setTimeout(() => {
-      for (const [name, value] of tasks) if (value < 1) failures.add(name);
-      dismiss();
-    }, 20000);
-    slowTimer = setTimeout(() => {
-      const status = $('.loader-status');
-      if (status) status.textContent = 'Still loading your world…';
-      const skip = $('.loader-continue'); if (skip) skip.hidden = false;
-    }, 12000);
-    $('.loader-continue')?.addEventListener('click', () => {
-      for (const [name, value] of tasks) if (value < 1) failures.add(name);
-      dismiss();
-    });
-    await Promise.all(jobs.map(async ([name, job]) => {
-      try { finishTask(name, !(await job)); } catch (_) { finishTask(name, true); }
-    }));
-    if ($('.loader-status')) $('.loader-status').textContent = 'Ready to explore';
-    // A tiny paint window, no artificial full-loop delay after the actual assets are ready.
-    setTimeout(dismiss, Math.max(0, 500 - (performance.now() - bootStarted)));
+  } else garageError();
+  retry?.addEventListener('click', () => location.reload());
+  // Explicit muted playback is independent of reduced motion / the page motion control.
+  async function playVideo() {
+    if (!video || dismissed) return;
+    video.muted = true; video.defaultMuted = true; video.loop = true; video.playsInline = true;
+    try { await video.play(); if (playIntro) playIntro.hidden = true; }
+    catch (_) { if (playIntro) playIntro.hidden = false; }
   }
+  if (video) {
+    let lastTime = 0;
+    video.addEventListener('timeupdate', () => {
+      // Show the supplied animation at least once, even on a warm model cache.
+      if (video.currentTime >= Math.max(.1, video.duration - .3) || (lastTime > 1 && video.currentTime < lastTime)) {
+        introPlayed = true; dismiss();
+      }
+      lastTime = video.currentTime;
+    });
+    video.addEventListener('error', () => {
+      if (status) status.textContent = 'Intro could not load. Please retry.';
+      if (retry) retry.hidden = false;
+    });
+    video.addEventListener('canplay', playVideo, {once:true});
+    playIntro?.addEventListener('click', playVideo);
+    document.addEventListener('pointerdown', () => { if (!dismissed && video.paused) playVideo(); }, {passive:true});
+    playVideo();
+  }
+  slowTimer = setTimeout(() => {
+    if (!garageLoaded) {
+      if (status) status.textContent = 'Still preparing your Bronco. Please wait…';
+      if (retry) retry.hidden = false;
+    }
+  }, 30000);
+  progress();
 
   const nav = $('nav.wrap');
   const toggle = document.createElement('button');
@@ -123,7 +114,10 @@
   story.className = 'scroll-story';
   story.setAttribute('aria-label', 'Small squares. Big ideas. Your next world.');
   story.innerHTML = `<div class="story-pin"><span class="story-label">01 / THE WORLD OF PIX3LWARE</span><div class="story-lines" aria-hidden="true"><div class="story-line">SMALL <em>SQUARES.</em></div><div class="story-line"><em>BIG</em> IDEAS.</div><div class="story-line">YOUR NEXT <em>WORLD.</em></div></div><div class="story-bottom"><span>SPRITES / TILESETS / 3D</span><span>KEEP SCROLLING ↓</span></div></div>`;
-  $('.hero')?.after(story);
+  const hero = $('.hero');
+  const heroStage = document.createElement('div'); heroStage.className = 'hero-stage';
+  hero?.before(heroStage); if (hero) heroStage.append(hero);
+  heroStage.after(story);
 
   for (const [selector, words] of [['#about', 'PIXEL BY PIXEL'], ['.newsletter', 'SMALL SQUARES. BIG IDEAS.']]) {
     const target = $(selector); if (!target) continue;
@@ -175,6 +169,7 @@
     if (opacity !== undefined) el.style.opacity = opacity;
   }
   function measure() {
+    root.style.setProperty('--header-height', `${$('header')?.offsetHeight || 70}px`);
     // Remove previous transforms for stable layout-based scroll offsets.
     styled.forEach(el => { el.style.transform = ''; el.style.opacity = ''; });
     metrics = [];
@@ -184,7 +179,8 @@
         metrics.push({el, type, i, top: rect.top + scrollY, height: rect.height, words: type === 'heading' ? $$('.motion-word', el) : []});
       });
     }
-    add('.section-head h2, .about-copy h2, .newsletter h2, .hero .tagline', 'heading');
+    add('.section-head h2, .about-copy h2, .newsletter h2', 'heading');
+    add('.hero .tagline', 'heroLayer');
     add('.section-head p, .about-copy p, .stat, .eyebrow, .foot-links li', 'reveal');
     add('.scroll-story', 'story');
     add('.cart', 'card'); add('.palette', 'palette'); add('.hero-banner', 'hero');
@@ -210,23 +206,28 @@
         const eased = 1 - Math.pow(1 - entry, 3);
         const through = clamp((vh - rel) / (vh + m.height));
         if (m.type === 'story') {
-          const p = clamp((y - m.top + vh * .65) / (m.height - vh * .35));
+          const p = clamp((y - m.top + vh * .35) / (m.height - vh * .65));
           $$('.story-line', m.el).forEach((line, i) => {
-            const enter = clamp((p - i * .13) / .35);
-            const q = 1 - Math.pow(1 - enter, 2);
-            const exit = clamp((p - .88) / .12);
-            transform(line, `translate3d(${((1-q)*.95-exit*.15)*vw*(i%2?1:-1)}px,0,0)`, .08+.92*q);
+            const t = clamp((p - i * .09) / .68);
+            const arrival = clamp(t / .55);
+            const departure = clamp((t - .65) / .35);
+            const x = ((1 - arrival) * 1.05 - departure * .65) * vw * (i % 2 ? 1 : -1);
+            transform(line, `translate3d(${x}px,0,0) rotate(${(1-arrival)*(i%2?5:-5)}deg)`, clamp(arrival*2)*(1-departure*.7));
           });
         } else if (m.type === 'heading') {
           m.words.forEach((word, i) => {
-            const p = clamp(entry * 1.45 - (i / Math.max(m.words.length, 1)) * .42);
-            const q = 1 - Math.pow(1 - p, 3);
-            const x = (1 - q) * Math.min(vw * .7, 780) * (m.i % 2 ? 1 : -1);
-            transform(word, `translate3d(${x}px,${(1-q)*35}px,0) rotate(${(1-q)*(m.i%2?4:-4)}deg)`, .12 + .88*q);
+            const p = clamp((vh * .95 - rel) / (vh * .7) - i / Math.max(m.words.length, 1) * .16);
+            const q = p * p * (3 - 2 * p);
+            const drift = clamp((vh * .3 - rel) / vh, 0, 1) * Math.min(vw * .16, 180);
+            const side = m.i % 2 ? 1 : -1;
+            const x = ((1-q) * Math.min(vw * .95, 1000) - drift) * side;
+            transform(word, `translate3d(${x}px,${(1-q)*65}px,0) rotate(${(1-q)*side*7}deg)`, clamp(p*2));
           });
         } else if (m.type === 'reveal') {
+          const p = clamp((vh * .95 - rel) / (vh * .65));
           const side = m.i % 2 ? 1 : -1;
-          transform(m.el, `translate3d(${(1-eased)*side*70}px,${(1-eased)*30}px,0)`, .12+.88*eased);
+          const drift = clamp((vh * .25 - rel) / vh) * 45;
+          transform(m.el, `translate3d(${((1-p)*Math.min(vw*.38,360)-drift)*side}px,${(1-p)*45}px,0)`, clamp(p*1.6));
         } else if (m.type === 'card') {
           const p = clamp(entry * 1.4 - (m.i % 3) * .12), q = 1-Math.pow(1-p,3);
           const drift = (through-.5) * (m.i%2? -28:28);
@@ -235,10 +236,10 @@
           transform(m.el, `translate3d(${(1-eased)*130}px,${(through-.5)*-60}px,0) rotate(${(through-.5)*12}deg) scale(${.83+.17*eased})`);
           [...m.el.children].forEach((el,i) => transform(el, `translateY(${Math.sin(through*Math.PI*2+i*.8)*18}px)`));
         } else if (m.type === 'hero') {
-          const p = clamp(y / vh);
-          transform(m.el, `translate3d(${p*-70}px,${p*110}px,0) rotate(${-p*7}deg) scale(${1+p*.2})`, 1-p*.7);
+          const p = clamp(y / (vh*1.15));
+          transform(m.el, `translate3d(${p*-vw*.48}px,${p*-100}px,0) rotate(${-p*12}deg) scale(${1+p*.5})`, 1-p);
         } else if (m.type === 'heroLayer') {
-          const p = clamp(y/vh); transform(m.el, `translate3d(${p*(m.i%2?65:-65)}px,${p*(35+m.i*20)}px,0)`, 1-p*.85);
+          const p = clamp(y/(vh*1.15)); transform(m.el, `translate3d(${p*vw*(m.i%2?.55:-.55)}px,${p*(15+m.i*15)}px,0)`, 1-p);
         } else if (m.type === 'band') {
           transform(m.el, `translate3d(${-320+(through-.5)*(m.i%2?660:-660)}px,0,0)`);
         } else if (m.type === 'garage') {
@@ -261,27 +262,28 @@
   }
   function requestTick() { if (!raf && enabled && active) raf = requestAnimationFrame(render); }
   function applyMotion() {
-    enabled = !reduced.matches && !manualPause;
+    enabled = motionChoice === null ? !reduced.matches : motionChoice;
     root.classList.toggle('motion-ready', enabled); root.classList.toggle('motion-off', !enabled);
     toggle.textContent = enabled ? 'MOTION ON' : 'MOTION OFF';
     toggle.setAttribute('aria-label', enabled ? 'Pause page motion' : 'Enable page motion');
     toggle.setAttribute('aria-pressed', String(enabled));
     styled.forEach(el => { el.style.transform=''; el.style.opacity=''; });
-    if (enabled) { smoothY=scrollY; measure(); if (!dismissed) video?.play().catch(()=>{}); }
-    else { video?.pause(); if (raf) cancelAnimationFrame(raf); raf=0; }
+    if (enabled) { smoothY=scrollY; measure(); }
+    else { if (raf) cancelAnimationFrame(raf); raf=0; }
     // Keep the embedded scene's auto-rotation in step with the page motion preference.
     frame?.contentWindow?.postMessage({type:'pix3lware:motion',enabled}, garageOrigin);
+    document.dispatchEvent(new CustomEvent('pix3lware:motion-change', {detail:{enabled}}));
   }
-  toggle.addEventListener('click', () => { manualPause=enabled; try {sessionStorage.setItem('pix3lware-motion',manualPause?'off':'on');} catch (_) {} applyMotion(); });
+  toggle.addEventListener('click', () => { motionChoice=!enabled; applyMotion(); });
   reduced.addEventListener('change',applyMotion);
   window.addEventListener('scroll',requestTick,{passive:true});
   let resizeTimer;
   window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(measure,120);});
   window.addEventListener('load',measure,{once:true});
   document.fonts?.ready.then(measure);
-  document.addEventListener('visibilitychange',()=>{active=!document.hidden;if(active)requestTick();});
+  document.addEventListener('visibilitychange',()=>{active=!document.hidden;if(active){requestTick();if(!dismissed)playVideo();}});
   document.addEventListener('pix3lware:entered',()=>{measure();});
   window.addEventListener('pageshow',event=>{if(event.persisted){dismiss();measure();}});
   applyMotion();
-  boot().catch(dismiss);
+  document.dispatchEvent(new Event('pix3lware:motion-ready'));
 })();

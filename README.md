@@ -38,8 +38,10 @@ Reference: https://threejs.org/docs/pages/RenderPixelatedPass.html
 
 ## Scroll experience
 
-The motion layer (`motion.js` and `motion.css`) adds alternating side entrances, a pinned typography sequence, parallax, scroll progress, and a horizontal gallery driven by native vertical scrolling. The Motion button and system reduced-motion preference restore a static layout.
+`motion.js` / `motion.css` provide a pinned opening, reversible side-to-side text movement through the viewport, a pinned typography sequence, parallax, and a vertically controlled horizontal gallery. The Motion control can explicitly enable animation even when the operating system requests reduced motion. Previous session pause settings no longer silently disable this experience.
 
-The looping loader uses `/home/liveuser/Videos/0001-0148.mkv`, converted to H.264 MP4 (960px) and VP9 WebM (720px), with a poster fallback. It tracks page assets and the viewer, offers Continue after 12 seconds, and releases the page after 20 seconds even if media stalls.
+The full-viewport loader uses the original 1920×1920 H.264 stream from `/home/liveuser/Videos/0001-0148.mkv`, remuxed to MP4 without re-encoding. VP9 WebM and a poster are fallbacks. The video fills the viewport with `object-fit: cover` (cropping the square to fit widescreen or portrait), plays muted regardless of the motion setting, and shows at least one loop. The page opens only after the Bronco signals a successful first render. Errors offer Retry; there is no timeout or skip that bypasses model readiness.
 
-Run `python3 scripts/sync-motion.py` after motion edits to update the static page, Blogger XML, and local Blogger install copies. The static iframe uses a relative URL so previews use the local viewer.
+`experience.js` adds a pixel cursor, a subtle particle atmosphere, and an original four-chord ambient game score synthesized using Web Audio. Sound is initially off and starts with the Sound button, as required by browser audio autoplay restrictions. It fades when muted and pauses in background tabs.
+
+Run `python3 scripts/sync-motion.py` after edits to update the static page, Blogger XML, and local Blogger install copies. The static iframe uses a relative URL so previews use the local viewer.

@@ -2,7 +2,6 @@
   'use strict';
   window.pix3lwareMotionStarted = true;
   const root = document.documentElement;
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
   const clamp = (v, low = 0, high = 1) => Math.min(high, Math.max(low, v));
@@ -11,9 +10,10 @@
   const frame = $('.garage-frame');
   const tasks = new Map();
   let dismissed = false, garageLoaded = false, introPlayed = false, slowTimer;
-  // A new session starts with motion; an explicit control can override the OS preference.
-  let motionChoice = null;
-  let enabled = !reduced.matches;
+  // The requested animated experience starts enabled on every device. The visible
+  // Motion control remains available to pause it without relying on OS settings.
+  let motionChoice = true;
+  let enabled = true;
   const status = $('.loader-status');
   const retry = $('.loader-retry');
   const playIntro = $('.loader-play');
@@ -33,6 +33,8 @@
     loader?.classList.add('loader-leaving');
     setTimeout(() => {
       root.classList.remove('booting');
+      window.scrollTo({top: 0, left: 0, behavior: 'instant'});
+      smoothY = scrollTarget = 0;
       if (loader) { loader.hidden = true; loader.style.display = 'none'; }
       video?.pause();
       document.dispatchEvent(new Event('pix3lware:entered'));
@@ -170,6 +172,7 @@
   }
   function measure() {
     root.style.setProperty('--header-height', `${$('header')?.offsetHeight || 70}px`);
+    root.style.setProperty('--viewport-width', `${root.clientWidth}px`);
     // Remove previous transforms for stable layout-based scroll offsets.
     styled.forEach(el => { el.style.transform = ''; el.style.opacity = ''; });
     metrics = [];
@@ -243,7 +246,7 @@
         } else if (m.type === 'band') {
           transform(m.el, `translate3d(${-320+(through-.5)*(m.i%2?660:-660)}px,0,0)`);
         } else if (m.type === 'garage') {
-          transform(m.el, `translate3d(0,${(1-eased)*60}px,0) scale(${.9+.1*eased})`);
+          transform(m.el, `translate3d(0,${(1-eased)*60}px,0)`);
         } else if (m.type === 'contact') {
           transform(m.el, `translate3d(${(1-eased)*-180}px,0,0)`, .2+.8*eased);
           transform($('.contact-arrow',m.el), `rotate(${(through-.5)*70}deg)`);
@@ -262,7 +265,7 @@
   }
   function requestTick() { if (!raf && enabled && active) raf = requestAnimationFrame(render); }
   function applyMotion() {
-    enabled = motionChoice === null ? !reduced.matches : motionChoice;
+    enabled = motionChoice;
     root.classList.toggle('motion-ready', enabled); root.classList.toggle('motion-off', !enabled);
     toggle.textContent = enabled ? 'MOTION ON' : 'MOTION OFF';
     toggle.setAttribute('aria-label', enabled ? 'Pause page motion' : 'Enable page motion');
@@ -275,7 +278,6 @@
     document.dispatchEvent(new CustomEvent('pix3lware:motion-change', {detail:{enabled}}));
   }
   toggle.addEventListener('click', () => { motionChoice=!enabled; applyMotion(); });
-  reduced.addEventListener('change',applyMotion);
   window.addEventListener('scroll',requestTick,{passive:true});
   let resizeTimer;
   window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(measure,120);});

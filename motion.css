@@ -1,6 +1,7 @@
 /* Progressive enhancement: the document remains readable without JavaScript. */
 html { scroll-padding-top: 100px; }
 body { overflow-x: clip; }
+html.booting, .garage-frame { overflow-anchor: none; }
 /* A filter on body would turn fixed loaders and sticky navigation into scrolling layers. */
 body.crt-text { filter: none; }
 .hero-banner, .sprite-row, .tile svg { filter: url(#crt-curve); }
@@ -59,6 +60,7 @@ body.crt-text { filter: none; }
 .gallery-progress span { height: 100%; display: block; background: var(--red); transform-origin: left; transform: scaleX(var(--gallery-progress,0)); }
 .motion-ready .garage { margin-top: 110px; }
 .motion-ready .garage-frame { transform-origin: center; }
+.garage .garage-frame { width: var(--viewport-width, 100vw); margin-inline: calc((100% - var(--viewport-width, 100vw)) / 2); height: calc(100svh - var(--header-height, 70px)); min-height: 600px; border: 0; box-shadow: none; }
 .motion-ready .newsletter { padding-block: 120px; overflow: hidden; }
 .motion-ready .newsletter h2 { font-size: clamp(26px, 5vw, 58px); }
 .contact-title { font-family: 'Press Start 2P', monospace; font-size: clamp(30px, 7vw, 82px); line-height: 1.5; margin: 0 0 45px; }

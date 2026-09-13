@@ -38,7 +38,7 @@ Reference: https://threejs.org/docs/pages/RenderPixelatedPass.html
 
 ## Scroll experience
 
-`motion.js` / `motion.css` provide a pinned opening, reversible side-to-side text movement through the viewport, a pinned typography sequence, parallax, and a vertically controlled horizontal gallery. The Motion control can explicitly enable animation even when the operating system requests reduced motion. Previous session pause settings no longer silently disable this experience.
+`motion.js` / `motion.css` provide a pinned opening, reversible side-to-side text movement through the viewport, a pinned typography sequence, parallax, and a vertically controlled horizontal gallery. Scroll motion starts enabled on desktop and mobile, including computers with reduced motion enabled in the OS. The visible Motion control pauses the experience. Previous session pause settings no longer silently disable this experience. Fresh visits and reloads start at the hero instead of restoring a previous garage scroll position. The Bronco viewer fills the available screen width and height without side borders, with closer desktop camera framing. Its default four-pixel rendering is unchanged.
 
 The full-viewport loader uses the original 1920×1920 H.264 stream from `/home/liveuser/Videos/0001-0148.mkv`, remuxed to MP4 without re-encoding. VP9 WebM and a poster are fallbacks. The video fills the viewport with `object-fit: cover` (cropping the square to fit widescreen or portrait), plays muted regardless of the motion setting, and shows at least one loop. The page opens only after the Bronco signals a successful first render. Errors offer Retry; there is no timeout or skip that bypasses model readiness.
 

@@ -4,9 +4,9 @@ import re, shutil, xml.etree.ElementTree as ET
 
 root=Path(__file__).resolve().parents[1]
 base='https://ayoubazizi-droid.github.io/my-3d-assets-/'
-version='immersive-20260913-v3'
+version='desktop-20260913-v4'
 critical=""".site-loader{display:none}html.booting{overflow:hidden}.booting .site-loader{display:block;position:fixed;inset:0;z-index:10000;background:#000;color:#fff}.loader-film{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}body.crt-text{filter:none}"""
-bootstrap="""document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=setTimeout(function(){if(!window.pix3lwareMotionStarted){var s=document.querySelector('.loader-status');if(s)s.textContent='Please reload to start your world';var b=document.querySelector('.loader-retry');if(b){b.hidden=false;b.onclick=function(){location.reload();};}}},15000);"""
+bootstrap="""if('scrollRestoration' in history)history.scrollRestoration='manual';if(location.hash)history.replaceState(history.state,'',location.pathname+location.search);window.scrollTo({top:0,left:0,behavior:'instant'});document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=setTimeout(function(){if(!window.pix3lwareMotionStarted){var s=document.querySelector('.loader-status');if(s)s.textContent='Please reload to start your world';var b=document.querySelector('.loader-retry');if(b){b.hidden=false;b.onclick=function(){location.reload();};}}},15000);"""
 loader="""<div class='site-loader' id='site-loader' aria-label='Loading the Ford Bronco'>
     <video class='loader-film' autoplay='autoplay' muted='muted' playsinline='playsinline' loop='loop' preload='auto' poster='{base}assets/loader/poster.jpg' aria-label='Pix3lware animated intro'>
       <source src='{base}assets/loader/pix3lware.mp4?v=immersive-20260913-v3' type='video/mp4'/>

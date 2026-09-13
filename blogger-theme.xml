@@ -192,10 +192,13 @@
 
 
 
+
+
 /* pix-motion:start */
 /* Progressive enhancement: the document remains readable without JavaScript. */
 html { scroll-padding-top: 100px; }
 body { overflow-x: clip; }
+html.booting, .garage-frame { overflow-anchor: none; }
 /* A filter on body would turn fixed loaders and sticky navigation into scrolling layers. */
 body.crt-text { filter: none; }
 .hero-banner, .sprite-row, .tile svg { filter: url(#crt-curve); }
@@ -254,6 +257,7 @@ body.crt-text { filter: none; }
 .gallery-progress span { height: 100%; display: block; background: var(--red); transform-origin: left; transform: scaleX(var(--gallery-progress,0)); }
 .motion-ready .garage { margin-top: 110px; }
 .motion-ready .garage-frame { transform-origin: center; }
+.garage .garage-frame { width: var(--viewport-width, 100vw); margin-inline: calc((100% - var(--viewport-width, 100vw)) / 2); height: calc(100svh - var(--header-height, 70px)); min-height: 600px; border: 0; box-shadow: none; }
 .motion-ready .newsletter { padding-block: 120px; overflow: hidden; }
 .motion-ready .newsletter h2 { font-size: clamp(26px, 5vw, 58px); }
 .contact-title { font-family: 'Press Start 2P', monospace; font-size: clamp(30px, 7vw, 82px); line-height: 1.5; margin: 0 0 45px; }
@@ -356,7 +360,7 @@ html.motion-off { scroll-behavior: auto; }
 <!-- pix-motion-head:start -->
 <style>.site-loader{display:none}html.booting{overflow:hidden}.booting .site-loader{display:block;position:fixed;inset:0;z-index:10000;background:#000;color:#fff}.loader-film{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}body.crt-text{filter:none}</style>
 <script>//<![CDATA[
-document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=setTimeout(function(){if(!window.pix3lwareMotionStarted){var s=document.querySelector('.loader-status');if(s)s.textContent='Please reload to start your world';var b=document.querySelector('.loader-retry');if(b){b.hidden=false;b.onclick=function(){location.reload();};}}},15000);
+if('scrollRestoration' in history)history.scrollRestoration='manual';if(location.hash)history.replaceState(history.state,'',location.pathname+location.search);window.scrollTo({top:0,left:0,behavior:'instant'});document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=setTimeout(function(){if(!window.pix3lwareMotionStarted){var s=document.querySelector('.loader-status');if(s)s.textContent='Please reload to start your world';var b=document.querySelector('.loader-retry');if(b){b.hidden=false;b.onclick=function(){location.reload();};}}},15000);
 //]]></script>
 <!-- pix-motion-head:end -->
 </head>
@@ -375,6 +379,8 @@ document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=s
     </div>
 </div>
 <!-- pix-loader:end -->
+
+
 
 
 
@@ -491,7 +497,7 @@ document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=s
       <h2>take it for a spin.</h2>
       <p>Our custom Ford Bronco Raptor. Drag to look around and zoom in on the details.</p>
     </div>
-    <iframe class='garage-frame' src='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html?v=immersive-20260913-v3' title='Interactive Ford Bronco Raptor viewer' loading='eager' allow='fullscreen'></iframe>
+    <iframe class='garage-frame' src='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html?v=desktop-20260913-v4' title='Interactive Ford Bronco Raptor viewer' loading='eager' allow='fullscreen'></iframe>
     <a class='garage-link' href='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html' target='_blank' rel='noopener'>Open the 3D garage in a new tab &#8599;</a>
   </div>
 
@@ -1386,7 +1392,6 @@ document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=s
   'use strict';
   window.pix3lwareMotionStarted = true;
   const root = document.documentElement;
-  const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
   const clamp = (v, low = 0, high = 1) => Math.min(high, Math.max(low, v));
@@ -1395,9 +1400,10 @@ document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=s
   const frame = $('.garage-frame');
   const tasks = new Map();
   let dismissed = false, garageLoaded = false, introPlayed = false, slowTimer;
-  // A new session starts with motion; an explicit control can override the OS preference.
-  let motionChoice = null;
-  let enabled = !reduced.matches;
+  // The requested animated experience starts enabled on every device. The visible
+  // Motion control remains available to pause it without relying on OS settings.
+  let motionChoice = true;
+  let enabled = true;
   const status = $('.loader-status');
   const retry = $('.loader-retry');
   const playIntro = $('.loader-play');
@@ -1417,6 +1423,8 @@ document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=s
     loader?.classList.add('loader-leaving');
     setTimeout(() => {
       root.classList.remove('booting');
+      window.scrollTo({top: 0, left: 0, behavior: 'instant'});
+      smoothY = scrollTarget = 0;
       if (loader) { loader.hidden = true; loader.style.display = 'none'; }
       video?.pause();
       document.dispatchEvent(new Event('pix3lware:entered'));
@@ -1554,6 +1562,7 @@ document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=s
   }
   function measure() {
     root.style.setProperty('--header-height', `${$('header')?.offsetHeight || 70}px`);
+    root.style.setProperty('--viewport-width', `${root.clientWidth}px`);
     // Remove previous transforms for stable layout-based scroll offsets.
     styled.forEach(el => { el.style.transform = ''; el.style.opacity = ''; });
     metrics = [];
@@ -1627,7 +1636,7 @@ document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=s
         } else if (m.type === 'band') {
           transform(m.el, `translate3d(${-320+(through-.5)*(m.i%2?660:-660)}px,0,0)`);
         } else if (m.type === 'garage') {
-          transform(m.el, `translate3d(0,${(1-eased)*60}px,0) scale(${.9+.1*eased})`);
+          transform(m.el, `translate3d(0,${(1-eased)*60}px,0)`);
         } else if (m.type === 'contact') {
           transform(m.el, `translate3d(${(1-eased)*-180}px,0,0)`, .2+.8*eased);
           transform($('.contact-arrow',m.el), `rotate(${(through-.5)*70}deg)`);
@@ -1646,7 +1655,7 @@ document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=s
   }
   function requestTick() { if (!raf && enabled && active) raf = requestAnimationFrame(render); }
   function applyMotion() {
-    enabled = motionChoice === null ? !reduced.matches : motionChoice;
+    enabled = motionChoice;
     root.classList.toggle('motion-ready', enabled); root.classList.toggle('motion-off', !enabled);
     toggle.textContent = enabled ? 'MOTION ON' : 'MOTION OFF';
     toggle.setAttribute('aria-label', enabled ? 'Pause page motion' : 'Enable page motion');
@@ -1659,7 +1668,6 @@ document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=s
     document.dispatchEvent(new CustomEvent('pix3lware:motion-change', {detail:{enabled}}));
   }
   toggle.addEventListener('click', () => { motionChoice=!enabled; applyMotion(); });
-  reduced.addEventListener('change',applyMotion);
   window.addEventListener('scroll',requestTick,{passive:true});
   let resizeTimer;
   window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(measure,120);});

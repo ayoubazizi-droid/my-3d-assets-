@@ -67,7 +67,7 @@ pmrem.dispose();
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.enablePan = false;
-controls.minDistance = 2.5;
+controls.minDistance = 1.8;
 controls.maxDistance = 12;
 controls.autoRotate = !reducedMotion;
 controls.autoRotateSpeed = 1.2;
@@ -81,7 +81,9 @@ scene.add(rim);
 const loader = new GLTFLoader();
 let current, requestId = 0;
 function resetView() {
-  camera.position.set(2.8, 1.5, wrap.clientWidth < 500 ? 4.2 : 3.4);
+  // Closer framing on wide screens; preserve space around the car on phones.
+  const distance = wrap.clientWidth < 600 ? 4.6 : 3.55;
+  camera.position.set(2.8, 1.5, 3.4).normalize().multiplyScalar(distance);
   controls.target.set(0, 0, 0);
   controls.update();
 }

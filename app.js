@@ -33,6 +33,7 @@ const wrap = document.querySelector('#canvas-wrap');
 const status = document.querySelector('#status');
 const rotateButton = document.querySelector('#rotate');
 const zoomButton = document.querySelector('#zoom-mode');
+const lockAngleButton = document.querySelector('#lock-angle');
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(38, 1, 0.01, 100);
@@ -72,7 +73,8 @@ controls.enableZoom = false;
 controls.minPolarAngle = 0.18;
 // Let the orbit travel beneath the chassis for the requested underside shot.
 // The limit stops short of flipping the camera upside down.
-controls.maxPolarAngle = Math.PI * 0.82;
+let savedMaxPolar = Number.parseFloat(localStorage.getItem('pix3lware-max-polar'));
+controls.maxPolarAngle = Number.isFinite(savedMaxPolar) ? savedMaxPolar : Math.PI * 0.82;
 controls.minDistance = 1.8;
 controls.maxDistance = 12;
 controls.autoRotate = !reducedMotion;
@@ -184,6 +186,12 @@ function setZoomMode(enabled) {
   }
 }
 zoomButton?.addEventListener('click', () => setZoomMode(!zoomMode));
+lockAngleButton?.addEventListener('click', () => {
+  const angle = controls.getPolarAngle();
+  controls.maxPolarAngle = angle;
+  localStorage.setItem('pix3lware-max-polar', String(angle));
+  lockAngleButton.textContent = 'Angle locked';
+});
 // Middle mouse (button 1) is an explicit desktop zoom gesture.
 renderer.domElement.addEventListener('pointerdown', event => {
   if (event.button === 1) setZoomMode(true);

@@ -70,9 +70,9 @@ controls.enableDamping = true;
 controls.enablePan = false;
 controls.enableZoom = false;
 controls.minPolarAngle = 0.18;
-// Allow a low, wheel-level cinematic angle, while keeping the camera just
-// above the underside so nothing below the car can be seen.
-controls.maxPolarAngle = Math.PI / 2 + 0.26;
+// Let the orbit travel beneath the chassis for the requested underside shot.
+// The limit stops short of flipping the camera upside down.
+controls.maxPolarAngle = Math.PI * 0.82;
 controls.minDistance = 1.8;
 controls.maxDistance = 12;
 controls.autoRotate = !reducedMotion;
@@ -90,7 +90,7 @@ function resetView() {
   // Closer framing on wide screens; preserve space around the car on phones.
   const distance = wrap.clientWidth < 600 ? 4.6 : 3.55;
   camera.position.set(2.8, 1.5, 3.4).normalize().multiplyScalar(distance);
-  controls.target.set(0, -0.22, 0);
+  controls.target.set(0, -0.28, 0);
   controls.update();
 }
 function dispose(root) {

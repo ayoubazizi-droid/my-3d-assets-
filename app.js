@@ -70,8 +70,9 @@ controls.enableDamping = true;
 controls.enablePan = false;
 controls.enableZoom = false;
 controls.minPolarAngle = 0.18;
-// Never allow the camera below the car's ground plane.
-controls.maxPolarAngle = Math.PI / 2 - 0.08;
+// Allow a low, wheel-level cinematic angle, while keeping the camera just
+// above the underside so nothing below the car can be seen.
+controls.maxPolarAngle = Math.PI / 2 + 0.12;
 controls.minDistance = 1.8;
 controls.maxDistance = 12;
 controls.autoRotate = !reducedMotion;
@@ -89,7 +90,7 @@ function resetView() {
   // Closer framing on wide screens; preserve space around the car on phones.
   const distance = wrap.clientWidth < 600 ? 4.6 : 3.55;
   camera.position.set(2.8, 1.5, 3.4).normalize().multiplyScalar(distance);
-  controls.target.set(0, 0, 0);
+  controls.target.set(0, -0.12, 0);
   controls.update();
 }
 function dispose(root) {

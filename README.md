@@ -5,7 +5,7 @@ Live site: https://ayoubazizi-droid.github.io/my-3d-assets-/
 The design comes from the supplied pix3lware Blogger theme: original pixel artwork, fonts, colors, and page sections. A 3D garage is added below the gallery. The footer wraps on small screens.
 
 - `index.html` / `theme.css`: standalone static version of the design. Blogger's live post list is omitted here. The original inactive newsletter form is replaced with a garage link on this static page.
-- `blogger-theme.xml`: complete Blogger theme with its original Blog1 post widget and the embedded 3D garage. The original newsletter form and placeholder social links are preserved; subscribing is not connected to a mailing service.
+- `blogger-theme.xml`: complete Blogger theme with its original Blog1 post widget and the embedded 3D garage. The Contact footer links to TikTok, Pinterest, Instagram, and X. The original newsletter form is preserved; subscribing is not connected to a mailing service.
 - `viewer.html` / `style.css` / `app.js`: compact Three.js viewer, styled to match the theme.
 - `models/Ud.glb`: baked Bronco, with embedded textures, approximately 26 MB.
 - `blogger-embed.html`: optional snippet for an individual Blogger page; unnecessary if installing the complete theme.

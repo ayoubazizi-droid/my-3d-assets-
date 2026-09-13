@@ -42,6 +42,8 @@ Reference: https://threejs.org/docs/pages/RenderPixelatedPass.html
 
 The full-viewport loader uses the original 1920×1920 H.264 stream from `/home/liveuser/Videos/0001-0148.mkv`, remuxed to MP4 without re-encoding. VP9 WebM and a poster are fallbacks. The video fills the viewport with `object-fit: cover` (cropping the square to fit widescreen or portrait), plays muted regardless of the motion setting, and shows at least one loop. The page opens only after the Bronco signals a successful first render. Errors offer Retry; there is no timeout or skip that bypasses model readiness.
 
+Page wheel input is damped into continuous `scrollTo` motion so coarse mouse wheels do not produce stair-step movement. Wheel events received inside the viewer are forwarded to the parent page while zoom mode is off. The Blender camera at `/home/liveuser/Documents/ford bronco.blend` is used as the floor-height lower orbit limit; the camera can reach the wheel-level cinematic view without flipping over.
+
 `experience.js` adds a pixel cursor, a subtle particle atmosphere, and an original four-chord ambient game score synthesized using Web Audio. Sound is initially off and starts with the Sound button, as required by browser audio autoplay restrictions. It fades when muted and pauses in background tabs.
 
 Run `python3 scripts/sync-motion.py` after edits to update the static page, Blogger XML, and local Blogger install copies. The static iframe uses a relative URL so previews use the local viewer.

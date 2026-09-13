@@ -59,6 +59,7 @@
       dismiss();
     }
     if (event.data?.type === 'pix3lware:garage-error') garageError();
+    if (event.data?.type === 'pix3lware:page-wheel') handlePageWheel(event.data.deltaY);
   });
   if (frame) {
     frame.loading = 'eager';
@@ -164,6 +165,24 @@
   }
 
   let metrics = [], galleryMetric, raf = 0, active = true, lastY = -1, scrollTarget = scrollY, smoothY = scrollY;
+  let wheelTarget = scrollY, wheelRaf = 0;
+  function handlePageWheel(delta) {
+    wheelTarget = clamp(wheelTarget + Number(delta || 0) * 0.9, 0, document.documentElement.scrollHeight - innerHeight);
+    if (!wheelRaf) wheelRaf = requestAnimationFrame(smoothWheel);
+  }
+  function smoothWheel() {
+    wheelRaf = 0;
+    const distance = wheelTarget - scrollY;
+    if (Math.abs(distance) < 0.35) { window.scrollTo(0, wheelTarget); return; }
+    window.scrollTo(0, scrollY + distance * 0.14);
+    wheelRaf = requestAnimationFrame(smoothWheel);
+  }
+  window.addEventListener('wheel', event => {
+    if (!enabled) return;
+    event.preventDefault();
+    handlePageWheel(event.deltaY);
+  }, {passive:false});
+  window.addEventListener('scroll', () => { if (!wheelRaf && Math.abs(wheelTarget - scrollY) < 2) wheelTarget = scrollY; }, {passive:true});
   const styled = new Set();
   function transform(el, value, opacity) {
     if (!el) return;
@@ -272,7 +291,7 @@
     toggle.setAttribute('aria-label', enabled ? 'Pause page motion' : 'Enable page motion');
     toggle.setAttribute('aria-pressed', String(enabled));
     styled.forEach(el => { el.style.transform=''; el.style.opacity=''; });
-    if (enabled) { smoothY=scrollY; measure(); }
+    if (enabled) { smoothY=scrollY; wheelTarget=scrollY; measure(); }
     else { if (raf) cancelAnimationFrame(raf); raf=0; }
     // Keep the embedded scene's auto-rotation in step with the page motion preference.
     frame?.contentWindow?.postMessage({type:'pix3lware:motion',enabled}, garageOrigin);

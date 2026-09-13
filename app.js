@@ -73,8 +73,10 @@ controls.enableZoom = false;
 controls.minPolarAngle = 0.18;
 // Let the orbit travel beneath the chassis for the requested underside shot.
 // The limit stops short of flipping the camera upside down.
-let savedMaxPolar = Number.parseFloat(localStorage.getItem('pix3lware-max-polar'));
-controls.maxPolarAngle = Number.isFinite(savedMaxPolar) ? savedMaxPolar : Math.PI * 0.82;
+let savedMaxPolar = Number.parseFloat(localStorage.getItem('pix3lware-max-polar-v2'));
+// Derived from /home/liveuser/Documents/ford bronco.blend: the camera sits
+// at the floor line and looks toward the wheel center, without going under it.
+controls.maxPolarAngle = Number.isFinite(savedMaxPolar) ? savedMaxPolar : Math.PI / 2 + 0.02;
 controls.minDistance = 1.8;
 controls.maxDistance = 12;
 controls.autoRotate = !reducedMotion;
@@ -189,7 +191,7 @@ zoomButton?.addEventListener('click', () => setZoomMode(!zoomMode));
 lockAngleButton?.addEventListener('click', () => {
   const angle = controls.getPolarAngle();
   controls.maxPolarAngle = angle;
-  localStorage.setItem('pix3lware-max-polar', String(angle));
+  localStorage.setItem('pix3lware-max-polar-v2', String(angle));
   lockAngleButton.textContent = 'Angle locked';
 });
 // Middle mouse (button 1) is an explicit desktop zoom gesture.
@@ -206,6 +208,12 @@ renderer.domElement.addEventListener('touchstart', event => {
 renderer.domElement.addEventListener('touchend', event => {
   if (event.touches.length < 2 && !zoomButton?.matches(':focus')) setZoomMode(false);
 }, {passive:true});
+// A wheel over the iframe belongs to the page unless Zoom mode is enabled.
+renderer.domElement.addEventListener('wheel', event => {
+  if (zoomMode) return;
+  event.preventDefault();
+  window.parent.postMessage({type:'pix3lware:page-wheel', deltaY:event.deltaY}, parentOrigin);
+}, {passive:false});
 new ResizeObserver(() => {
   const width = wrap.clientWidth, height = wrap.clientHeight;
   if (!width || !height) return;

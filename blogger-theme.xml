@@ -201,6 +201,7 @@
 
 
 
+
 /* pix-motion:start */
 /* Progressive enhancement: the document remains readable without JavaScript. */
 html { scroll-padding-top: 100px; }
@@ -405,6 +406,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
 
 
 
+
 <svg aria-hidden='true' class='crt-filter-defs' focusable='false' height='0' style='position:absolute' width='0'><filter id='crt-curve' x='-5%' y='-5%' width='110%' height='110%' color-interpolation-filters='sRGB'><feTurbulence baseFrequency='0.008 0.02' numOctaves='1' seed='7' type='fractalNoise' result='crt-noise'/><feDisplacementMap in='SourceGraphic' in2='crt-noise' scale='3' xChannelSelector='R' yChannelSelector='G'/></filter></svg>
 
 <header class='site-header'>
@@ -511,7 +513,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
       <h2>take it for a spin.</h2>
       <p>Our custom Ford Bronco Raptor. Drag to look around and zoom in on the details.</p>
     </div>
-    <iframe class='garage-frame' src='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html?v=angle-lock-20260913-v6' title='Interactive Ford Bronco Raptor viewer' loading='eager' allow='fullscreen'></iframe>
+    <iframe class='garage-frame' src='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html?v=butter-scroll-20260913-v7' title='Interactive Ford Bronco Raptor viewer' loading='eager' allow='fullscreen'></iframe>
     <a class='garage-link' href='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html' target='_blank' rel='noopener'>Open the 3D garage in a new tab &#8599;</a>
   </div>
 
@@ -1463,6 +1465,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
       dismiss();
     }
     if (event.data?.type === 'pix3lware:garage-error') garageError();
+    if (event.data?.type === 'pix3lware:page-wheel') handlePageWheel(event.data.deltaY);
   });
   if (frame) {
     frame.loading = 'eager';
@@ -1568,6 +1571,24 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
   }
 
   let metrics = [], galleryMetric, raf = 0, active = true, lastY = -1, scrollTarget = scrollY, smoothY = scrollY;
+  let wheelTarget = scrollY, wheelRaf = 0;
+  function handlePageWheel(delta) {
+    wheelTarget = clamp(wheelTarget + Number(delta || 0) * 0.9, 0, document.documentElement.scrollHeight - innerHeight);
+    if (!wheelRaf) wheelRaf = requestAnimationFrame(smoothWheel);
+  }
+  function smoothWheel() {
+    wheelRaf = 0;
+    const distance = wheelTarget - scrollY;
+    if (Math.abs(distance) < 0.35) { window.scrollTo(0, wheelTarget); return; }
+    window.scrollTo(0, scrollY + distance * 0.14);
+    wheelRaf = requestAnimationFrame(smoothWheel);
+  }
+  window.addEventListener('wheel', event => {
+    if (!enabled) return;
+    event.preventDefault();
+    handlePageWheel(event.deltaY);
+  }, {passive:false});
+  window.addEventListener('scroll', () => { if (!wheelRaf && Math.abs(wheelTarget - scrollY) < 2) wheelTarget = scrollY; }, {passive:true});
   const styled = new Set();
   function transform(el, value, opacity) {
     if (!el) return;
@@ -1676,7 +1697,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
     toggle.setAttribute('aria-label', enabled ? 'Pause page motion' : 'Enable page motion');
     toggle.setAttribute('aria-pressed', String(enabled));
     styled.forEach(el => { el.style.transform=''; el.style.opacity=''; });
-    if (enabled) { smoothY=scrollY; measure(); }
+    if (enabled) { smoothY=scrollY; wheelTarget=scrollY; measure(); }
     else { if (raf) cancelAnimationFrame(raf); raf=0; }
     // Keep the embedded scene's auto-rotation in step with the page motion preference.
     frame?.contentWindow?.postMessage({type:'pix3lware:motion',enabled}, garageOrigin);

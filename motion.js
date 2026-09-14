@@ -8,6 +8,14 @@
   const loader = $('#site-loader');
   const video = $('.loader-film');
   const frame = $('.garage-frame');
+  const header = $('.site-header');
+  // The 148-frame intro is 24 fps; frame 74 starts at (74 - 1) / 24.
+  const headerCueTime = 73 / 24;
+  let headerFrameCallback;
+  header?.setAttribute('inert', '');
+  function revealHeaderLogo(mediaTime) {
+    if (mediaTime + .0001 >= headerCueTime) root.classList.add('header-logo-visible');
+  }
   const tasks = new Map();
   let dismissed = false, garageLoaded = false, introPlayed = false, slowTimer;
   // The requested animated experience starts enabled on every device. The visible
@@ -33,6 +41,8 @@
     loader?.classList.add('loader-leaving');
     setTimeout(() => {
       root.classList.remove('booting');
+      header?.removeAttribute('inert');
+      if (headerFrameCallback !== undefined) video?.cancelVideoFrameCallback?.(headerFrameCallback);
       window.scrollTo({top: 0, left: 0, behavior: 'instant'});
       scroller?.scrollTo(0, {immediate:true, force:true});
       scroller?.start();
@@ -78,8 +88,17 @@
     catch (_) { if (playIntro) playIntro.hidden = false; }
   }
   if (video) {
+    // Use decoded frame timestamps rather than a timer that could outrun buffering.
+    if (video.requestVideoFrameCallback) {
+      const onVideoFrame = (_, metadata) => {
+        revealHeaderLogo(metadata.mediaTime);
+        if (!root.classList.contains('header-logo-visible')) headerFrameCallback = video.requestVideoFrameCallback(onVideoFrame);
+      };
+      headerFrameCallback = video.requestVideoFrameCallback(onVideoFrame);
+    }
     let lastTime = 0;
     video.addEventListener('timeupdate', () => {
+      if (!video.requestVideoFrameCallback) revealHeaderLogo(video.currentTime);
       // Show the supplied animation at least once, even on a warm model cache.
       if (video.currentTime >= Math.max(.1, video.duration - .3) || (lastTime > 1 && video.currentTime < lastTime)) {
         introPlayed = true; dismiss();

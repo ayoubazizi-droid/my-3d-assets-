@@ -11,8 +11,11 @@
   // The 148-frame intro is 24 fps; frame 74 starts at (74 - 1) / 24.
   const heroCueTime = 73 / 24;
   let heroFrameCallback;
+  let heroRevealTimer;
   function revealHero(mediaTime) {
-    if (mediaTime + .0001 >= heroCueTime) root.classList.add('intro-hero-visible');
+    if (mediaTime + .0001 < heroCueTime || root.classList.contains('intro-logo-visible')) return;
+    root.classList.add('intro-logo-visible');
+    heroRevealTimer = setTimeout(() => root.classList.add('intro-hero-visible'), 3000);
   }
   const tasks = new Map();
   let dismissed = false, garageLoaded = false, introPlayed = false, slowTimer;
@@ -35,6 +38,7 @@
     if (dismissed || !garageLoaded || !introPlayed) return;
     dismissed = true;
     clearTimeout(slowTimer);
+    clearTimeout(heroRevealTimer);
     clearTimeout(window.pix3lwareBootWatchdog);
     loader?.classList.add('loader-leaving');
     setTimeout(() => {

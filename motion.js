@@ -7,15 +7,24 @@
   const clamp = (v, low = 0, high = 1) => Math.min(high, Math.max(low, v));
   const loader = $('#site-loader');
   const video = $('.loader-film');
+  const loaderLogo = $('.loader-logo');
   const frame = $('.garage-frame');
   // The 148-frame intro is 24 fps; frame 74 starts at (74 - 1) / 24.
   const heroCueTime = 73 / 24;
   let heroFrameCallback;
   let heroRevealTimer;
-  function revealHero(mediaTime) {
-    if (mediaTime + .0001 < heroCueTime || root.classList.contains('intro-logo-visible')) return;
+  let cueReached = false, logoReady = false;
+  function showIntroLogo() {
+    if (!cueReached || !logoReady || root.classList.contains('intro-logo-visible')) return;
     root.classList.add('intro-logo-visible');
-    heroRevealTimer = setTimeout(() => root.classList.add('intro-hero-visible'), 3000);
+    // The visible logo gets three seconds, even when the model is already cached.
+    heroRevealTimer = setTimeout(() => { introPlayed = true; dismiss(); }, 3000);
+  }
+  function revealHero(mediaTime) {
+    if (mediaTime + .0001 < heroCueTime || cueReached) return;
+    cueReached = true;
+    video?.pause();
+    showIntroLogo();
   }
   const tasks = new Map();
   let dismissed = false, garageLoaded = false, introPlayed = false, slowTimer;
@@ -26,6 +35,10 @@
   const status = $('.loader-status');
   const retry = $('.loader-retry');
   const playIntro = $('.loader-play');
+  loaderLogo?.decode().then(() => { logoReady = true; showIntroLogo(); }).catch(() => {
+    if (status) status.textContent = 'Logo could not load. Please retry.';
+    if (retry) retry.hidden = false;
+  });
   const garageOrigin = frame ? new URL(frame.src, location.href).origin : '';
   function progress() {
     const value = garageLoaded ? 1 : Math.min(.98, tasks.get('3D garage') || 0);
@@ -40,6 +53,7 @@
     clearTimeout(slowTimer);
     clearTimeout(heroRevealTimer);
     clearTimeout(window.pix3lwareBootWatchdog);
+    root.classList.add('intro-hero-visible');
     loader?.classList.add('loader-leaving');
     setTimeout(() => {
       root.classList.remove('booting');
@@ -83,7 +97,7 @@
   retry?.addEventListener('click', () => location.reload());
   // Explicit muted playback is independent of reduced motion / the page motion control.
   async function playVideo() {
-    if (!video || dismissed) return;
+    if (!video || dismissed || cueReached) return;
     video.muted = true; video.defaultMuted = true; video.loop = true; video.playsInline = true;
     try { await video.play(); if (playIntro) playIntro.hidden = true; }
     catch (_) { if (playIntro) playIntro.hidden = false; }
@@ -93,18 +107,12 @@
     if (video.requestVideoFrameCallback) {
       const onVideoFrame = (_, metadata) => {
         revealHero(metadata.mediaTime);
-        if (!root.classList.contains('intro-hero-visible')) heroFrameCallback = video.requestVideoFrameCallback(onVideoFrame);
+        if (!cueReached) heroFrameCallback = video.requestVideoFrameCallback(onVideoFrame);
       };
       heroFrameCallback = video.requestVideoFrameCallback(onVideoFrame);
     }
-    let lastTime = 0;
     video.addEventListener('timeupdate', () => {
       if (!video.requestVideoFrameCallback) revealHero(video.currentTime);
-      // Show the supplied animation at least once, even on a warm model cache.
-      if (video.currentTime >= Math.max(.1, video.duration - .3) || (lastTime > 1 && video.currentTime < lastTime)) {
-        introPlayed = true; dismiss();
-      }
-      lastTime = video.currentTime;
     });
     video.addEventListener('error', () => {
       if (status) status.textContent = 'Intro could not load. Please retry.';

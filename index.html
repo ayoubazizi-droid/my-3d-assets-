@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>pix3lware — pixel art &amp; 3D garage</title><link href='https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400&amp;display=swap' rel='stylesheet'/>
 <link rel='stylesheet' href='theme.css'><!-- pix-motion-head:start -->
-<style>.site-loader{display:none}html.booting{overflow:hidden}.booting:not(.intro-logo-visible) .hero .hero-banner,.booting:not(.intro-hero-visible) .hero .tagline,.booting:not(.intro-hero-visible) .hero .sub,.booting:not(.intro-hero-visible) .hero .hero-ctas,.booting:not(.intro-hero-visible) .hero .sprite-row{opacity:0}.booting .site-loader{display:block;position:fixed;inset:0;z-index:10000;background:#000;color:#fff}.loader-film{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}body.crt-text{filter:none}</style>
+<style>.site-loader{display:none}html.booting{overflow:hidden}.booting .site-loader{display:block;position:fixed;inset:0;z-index:10000;background:#000;color:#fff}.loader-film{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.loader-logo{opacity:0}body.crt-text{filter:none}</style>
 <script>if('scrollRestoration' in history)history.scrollRestoration='manual';if(location.hash)history.replaceState(history.state,'',location.pathname+location.search);window.scrollTo({top:0,left:0,behavior:'instant'});document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=setTimeout(function(){if(!window.pix3lwareMotionStarted){var s=document.querySelector('.loader-status');if(s)s.textContent='Please reload to start your world';var b=document.querySelector('.loader-retry');if(b){b.hidden=false;b.onclick=function(){location.reload();};}}},15000);</script>
-<link rel='stylesheet' href='motion.css?v=hero-logo-20260914-v13'/>
+<link rel='stylesheet' href='motion.css?v=fullscreen-logo-20260914-v14'/>
 <!-- pix-motion-head:end -->
 </head><body class='crt-text'>
 <!-- pix-loader:start -->
@@ -12,6 +12,7 @@
       <source src='./assets/loader/pix3lware.mp4?v=immersive-20260913-v3' type='video/mp4'/>
       <source src='./assets/loader/pix3lware.webm?v=immersive-20260913-v3' type='video/webm'/>
     </video>
+    <img class='loader-logo' src='./assets/branding/pixelware-full-logo.png' alt='' aria-hidden='true' fetchpriority='high'/>
     <div class='loader-hud'>
       <div class='loader-bottom'><span class='loader-status' role='status'>Loading the Ford Bronco…</span><span class='loader-percent' aria-hidden='true'>00%</span></div>
       <div class='loader-bar' aria-hidden='true'><span></span></div>
@@ -20,6 +21,7 @@
     </div>
 </div>
 <!-- pix-loader:end -->
+
 
 
 
@@ -70,7 +72,7 @@
 <div class='hero'>
   <div class='wrap hero-inner'>
     <span class='boot-line pixel-font'>LOADING PIX3LWARE.EXE</span>
-    <img alt='pix3lware' class='hero-banner' src='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/branding/pixelware-full-logo.png?v=hero-logo-20260914-v13'/>
+    <div class='hero-banner'><img alt='pix3lware' src='./assets/branding/pixelware-full-logo.png?v=fullscreen-logo-20260914-v14'/></div>
     <p class='tagline'>we draw the world one <span class='hl'>square</span> at a time.</p>
     <p class='sub'>pix3lware is a pixel-art studio &amp; asset shop &#8212; sprites, tilesets, animation packs and commissions for games, brands and people who miss the CRT hum.</p>
     <div class='hero-ctas'>
@@ -152,7 +154,7 @@
       <h2>take it for a spin.</h2>
       <p>Our custom Ford Bronco Raptor. Drag to look around and zoom in on the details.</p>
     </div>
-    <iframe class='garage-frame' src='./viewer.html?v=hero-logo-20260914-v13' title='Interactive Ford Bronco Raptor viewer' loading='eager' allow='fullscreen'></iframe>
+    <iframe class='garage-frame' src='./viewer.html?v=fullscreen-logo-20260914-v14' title='Interactive Ford Bronco Raptor viewer' loading='eager' allow='fullscreen'></iframe>
     <a class='garage-link' href='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html' target='_blank' rel='noopener'>Open the 3D garage in a new tab &#8599;</a>
   </div>
 
@@ -185,8 +187,8 @@
 </footer>
 
 <!-- pix-motion-script:start -->
-<script src='assets/vendor/lenis.min.js?v=hero-logo-20260914-v13'></script>
-<script src='motion.js?v=hero-logo-20260914-v13'></script>
-<script src='experience.js?v=hero-logo-20260914-v13'></script>
+<script src='assets/vendor/lenis.min.js?v=fullscreen-logo-20260914-v14'></script>
+<script src='motion.js?v=fullscreen-logo-20260914-v14'></script>
+<script src='experience.js?v=fullscreen-logo-20260914-v14'></script>
 <!-- pix-motion-script:end -->
 </body></html>

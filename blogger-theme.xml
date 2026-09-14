@@ -208,6 +208,7 @@
 
 
 
+
 /* pix-motion:start */
 /* Progressive enhancement: the document remains readable without JavaScript. */
 html { scroll-padding-top: 100px; scroll-behavior: auto !important; }
@@ -222,13 +223,16 @@ html.booting, .garage-frame { overflow-anchor: none; }
 body.crt-text { filter: none; }
 .hero-banner, .sprite-row, .tile svg { filter: url(#crt-curve); }
 .site-header { isolation: isolate; }
-/* The opening hero joins the film at frame 74. The normal header stays present. */
-.hero .hero-banner, .hero .tagline, .hero .sub, .hero .hero-ctas, .hero .sprite-row {
-  transition: opacity .8s ease, transform 1s cubic-bezier(.16,1,.3,1);
+/* Entrance motion uses translate separately from the scroll-driven transforms. */
+.intro-hero-visible .hero .boot-line, .intro-hero-visible .hero .tagline,
+.intro-hero-visible .hero .sub, .intro-hero-visible .hero .hero-ctas,
+.intro-hero-visible .hero .sprite-row, .intro-hero-visible .hero .scroll-cue {
+  animation: hero-detail-in 1s cubic-bezier(.16,1,.3,1) .15s backwards;
 }
-.booting:not(.intro-logo-visible) .hero .hero-banner, .booting:not(.intro-hero-visible) .hero .tagline, .booting:not(.intro-hero-visible) .hero .sub, .booting:not(.intro-hero-visible) .hero .hero-ctas, .booting:not(.intro-hero-visible) .hero .sprite-row {
-  opacity: 0; transform: translate3d(0,12px,0);
-}
+.intro-hero-visible .hero .sub { animation-delay: .25s; }
+.intro-hero-visible .hero .hero-ctas { animation-delay: .35s; }
+.intro-hero-visible .hero .sprite-row, .intro-hero-visible .hero .scroll-cue { animation-delay: .45s; }
+@keyframes hero-detail-in { from { opacity: 0; translate: 0 18px; } to { opacity: 1; translate: 0 0; } }
 .scroll-meter { position: absolute; bottom: -3px; left: 0; width: 100%; height: 3px; background: var(--red); transform: scaleX(var(--page-progress,0)); transform-origin: left; }
 .motion-toggle { border: 1px solid currentColor; background: transparent; color: inherit; font: 10px 'Space Mono', monospace; cursor: pointer; padding: 6px 8px; white-space: nowrap; }
 .motion-toggle:hover, .motion-toggle:focus-visible { background: var(--ink); color: var(--bg-panel); }
@@ -299,6 +303,10 @@ body.crt-text { filter: none; }
 html.booting { overflow: hidden; }
 .booting .site-loader { display: block; }
 .site-loader .loader-film { position: absolute; inset: 0; width: 100%; height: 100%; max-height: none; aspect-ratio: auto; object-fit: cover; display: block; }
+.site-loader .loader-logo { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; object-fit: cover; object-position: center; opacity: 0; mix-blend-mode: screen; pointer-events: none; transition: opacity .8s ease; }
+.site-loader .loader-film { transition: opacity .8s ease; }
+.intro-logo-visible .loader-logo { opacity: 1; }
+.intro-logo-visible .loader-film { opacity: 0; }
 .loader-hud { position: absolute; bottom: max(34px, env(safe-area-inset-bottom)); left: 4vw; width: min(420px, 66vw); z-index: 1; text-shadow: none; }
 .loader-bottom { display: flex; justify-content: space-between; gap: 16px; align-items: center; text-transform: uppercase; font-size: 10px; letter-spacing: 2px; }
 .loader-status, .loader-percent { text-shadow: none !important; }
@@ -307,7 +315,7 @@ html.booting { overflow: hidden; }
 .loader-bar span { display: block; height: 100%; background: #ffce3d; transform: scaleX(var(--load-progress,0)); transform-origin: left; transition: transform .3s; }
 .loader-play, .loader-retry { background: #000b; color: #fff; border: 1px solid #999; padding: 12px 16px; margin-top: 16px; font: 11px 'Space Mono', monospace; cursor: pointer; }
 .loader-leaving { pointer-events: none; animation: loader-out .9s cubic-bezier(.76,0,.24,1) forwards; }
-@keyframes loader-out { to { clip-path: inset(0 0 100% 0); } }
+@keyframes loader-out { to { opacity: 0; } }
 
 /* A full-height opening scene replaces the short, static paper-like hero. */
 .logo { gap: 0; }
@@ -316,7 +324,8 @@ html.booting { overflow: hidden; }
 .motion-ready .hero { position: sticky; top: var(--header-height, 70px); height: calc(100svh - var(--header-height, 70px)); min-height: 0; }
 .hero { background: #10101d; color: var(--bg-panel); }
 .hero-inner { padding-block: 48px; }
-.hero-banner { width: min(560px, 72vw); max-height: 180px; object-fit: contain; filter: none; }
+.hero .hero-banner { position: relative; display: block; width: calc(100vw - 40px); max-width: none; height: auto; max-height: none; aspect-ratio: 5.5; overflow: hidden; margin: 0 calc((100% - 100vw + 40px)/2) 28px; filter: none; mix-blend-mode: screen; }
+.hero-banner img { position: absolute; width: 100%; max-width: none; height: auto; top: 50%; left: 0; transform: translateY(-50%); image-rendering: auto; }
 .hero-orbit { border-color: #ffffff24; }
 .hero-orbit::before, .hero-orbit::after { box-shadow: 0 0 35px #2fbd8e66; border-color: var(--mint); }
 .motion-ready .scroll-story { height: 320svh; }
@@ -384,7 +393,7 @@ html.motion-off { scroll-behavior: auto; }
 /* pix-motion:end */
 ]]></b:skin>
 <!-- pix-motion-head:start -->
-<style>.site-loader{display:none}html.booting{overflow:hidden}.booting:not(.intro-logo-visible) .hero .hero-banner,.booting:not(.intro-hero-visible) .hero .tagline,.booting:not(.intro-hero-visible) .hero .sub,.booting:not(.intro-hero-visible) .hero .hero-ctas,.booting:not(.intro-hero-visible) .hero .sprite-row{opacity:0}.booting .site-loader{display:block;position:fixed;inset:0;z-index:10000;background:#000;color:#fff}.loader-film{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}body.crt-text{filter:none}</style>
+<style>.site-loader{display:none}html.booting{overflow:hidden}.booting .site-loader{display:block;position:fixed;inset:0;z-index:10000;background:#000;color:#fff}.loader-film{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.loader-logo{opacity:0}body.crt-text{filter:none}</style>
 <script>//<![CDATA[
 if('scrollRestoration' in history)history.scrollRestoration='manual';if(location.hash)history.replaceState(history.state,'',location.pathname+location.search);window.scrollTo({top:0,left:0,behavior:'instant'});document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=setTimeout(function(){if(!window.pix3lwareMotionStarted){var s=document.querySelector('.loader-status');if(s)s.textContent='Please reload to start your world';var b=document.querySelector('.loader-retry');if(b){b.hidden=false;b.onclick=function(){location.reload();};}}},15000);
 //]]></script>
@@ -397,6 +406,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
       <source src='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/loader/pix3lware.mp4?v=immersive-20260913-v3' type='video/mp4'/>
       <source src='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/loader/pix3lware.webm?v=immersive-20260913-v3' type='video/webm'/>
     </video>
+    <img class='loader-logo' src='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/branding/pixelware-full-logo.png' alt='' aria-hidden='true' fetchpriority='high'/>
     <div class='loader-hud'>
       <div class='loader-bottom'><span class='loader-status' role='status'>Loading the Ford Bronco…</span><span class='loader-percent' aria-hidden='true'>00%</span></div>
       <div class='loader-bar' aria-hidden='true'><span></span></div>
@@ -405,6 +415,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
     </div>
 </div>
 <!-- pix-loader:end -->
+
 
 
 
@@ -455,7 +466,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
 <div class='hero'>
   <div class='wrap hero-inner'>
     <span class='boot-line pixel-font'>LOADING PIX3LWARE.EXE</span>
-    <img alt='pix3lware' class='hero-banner' src='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/branding/pixelware-full-logo.png?v=hero-logo-20260914-v13'/>
+    <div class='hero-banner'><img alt='pix3lware' src='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/branding/pixelware-full-logo.png?v=fullscreen-logo-20260914-v14'/></div>
     <p class='tagline'>we draw the world one <span class='hl'>square</span> at a time.</p>
     <p class='sub'>pix3lware is a pixel-art studio &amp; asset shop &#8212; sprites, tilesets, animation packs and commissions for games, brands and people who miss the CRT hum.</p>
     <div class='hero-ctas'>
@@ -537,7 +548,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
       <h2>take it for a spin.</h2>
       <p>Our custom Ford Bronco Raptor. Drag to look around and zoom in on the details.</p>
     </div>
-    <iframe class='garage-frame' src='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html?v=hero-logo-20260914-v13' title='Interactive Ford Bronco Raptor viewer' loading='eager' allow='fullscreen'></iframe>
+    <iframe class='garage-frame' src='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html?v=fullscreen-logo-20260914-v14' title='Interactive Ford Bronco Raptor viewer' loading='eager' allow='fullscreen'></iframe>
     <a class='garage-link' href='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html' target='_blank' rel='noopener'>Open the 3D garage in a new tab &#8599;</a>
   </div>
 
@@ -1439,15 +1450,24 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
   const clamp = (v, low = 0, high = 1) => Math.min(high, Math.max(low, v));
   const loader = $('#site-loader');
   const video = $('.loader-film');
+  const loaderLogo = $('.loader-logo');
   const frame = $('.garage-frame');
   // The 148-frame intro is 24 fps; frame 74 starts at (74 - 1) / 24.
   const heroCueTime = 73 / 24;
   let heroFrameCallback;
   let heroRevealTimer;
-  function revealHero(mediaTime) {
-    if (mediaTime + .0001 < heroCueTime || root.classList.contains('intro-logo-visible')) return;
+  let cueReached = false, logoReady = false;
+  function showIntroLogo() {
+    if (!cueReached || !logoReady || root.classList.contains('intro-logo-visible')) return;
     root.classList.add('intro-logo-visible');
-    heroRevealTimer = setTimeout(() => root.classList.add('intro-hero-visible'), 3000);
+    // The visible logo gets three seconds, even when the model is already cached.
+    heroRevealTimer = setTimeout(() => { introPlayed = true; dismiss(); }, 3000);
+  }
+  function revealHero(mediaTime) {
+    if (mediaTime + .0001 < heroCueTime || cueReached) return;
+    cueReached = true;
+    video?.pause();
+    showIntroLogo();
   }
   const tasks = new Map();
   let dismissed = false, garageLoaded = false, introPlayed = false, slowTimer;
@@ -1458,6 +1478,10 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
   const status = $('.loader-status');
   const retry = $('.loader-retry');
   const playIntro = $('.loader-play');
+  loaderLogo?.decode().then(() => { logoReady = true; showIntroLogo(); }).catch(() => {
+    if (status) status.textContent = 'Logo could not load. Please retry.';
+    if (retry) retry.hidden = false;
+  });
   const garageOrigin = frame ? new URL(frame.src, location.href).origin : '';
   function progress() {
     const value = garageLoaded ? 1 : Math.min(.98, tasks.get('3D garage') || 0);
@@ -1472,6 +1496,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
     clearTimeout(slowTimer);
     clearTimeout(heroRevealTimer);
     clearTimeout(window.pix3lwareBootWatchdog);
+    root.classList.add('intro-hero-visible');
     loader?.classList.add('loader-leaving');
     setTimeout(() => {
       root.classList.remove('booting');
@@ -1515,7 +1540,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
   retry?.addEventListener('click', () => location.reload());
   // Explicit muted playback is independent of reduced motion / the page motion control.
   async function playVideo() {
-    if (!video || dismissed) return;
+    if (!video || dismissed || cueReached) return;
     video.muted = true; video.defaultMuted = true; video.loop = true; video.playsInline = true;
     try { await video.play(); if (playIntro) playIntro.hidden = true; }
     catch (_) { if (playIntro) playIntro.hidden = false; }
@@ -1525,18 +1550,12 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
     if (video.requestVideoFrameCallback) {
       const onVideoFrame = (_, metadata) => {
         revealHero(metadata.mediaTime);
-        if (!root.classList.contains('intro-hero-visible')) heroFrameCallback = video.requestVideoFrameCallback(onVideoFrame);
+        if (!cueReached) heroFrameCallback = video.requestVideoFrameCallback(onVideoFrame);
       };
       heroFrameCallback = video.requestVideoFrameCallback(onVideoFrame);
     }
-    let lastTime = 0;
     video.addEventListener('timeupdate', () => {
       if (!video.requestVideoFrameCallback) revealHero(video.currentTime);
-      // Show the supplied animation at least once, even on a warm model cache.
-      if (video.currentTime >= Math.max(.1, video.duration - .3) || (lastTime > 1 && video.currentTime < lastTime)) {
-        introPlayed = true; dismiss();
-      }
-      lastTime = video.currentTime;
     });
     video.addEventListener('error', () => {
       if (status) status.textContent = 'Intro could not load. Please retry.';

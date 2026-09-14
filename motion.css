@@ -11,13 +11,16 @@ html.booting, .garage-frame { overflow-anchor: none; }
 body.crt-text { filter: none; }
 .hero-banner, .sprite-row, .tile svg { filter: url(#crt-curve); }
 .site-header { isolation: isolate; }
-/* The opening hero joins the film at frame 74. The normal header stays present. */
-.hero .hero-banner, .hero .tagline, .hero .sub, .hero .hero-ctas, .hero .sprite-row {
-  transition: opacity .8s ease, transform 1s cubic-bezier(.16,1,.3,1);
+/* Entrance motion uses translate separately from the scroll-driven transforms. */
+.intro-hero-visible .hero .boot-line, .intro-hero-visible .hero .tagline,
+.intro-hero-visible .hero .sub, .intro-hero-visible .hero .hero-ctas,
+.intro-hero-visible .hero .sprite-row, .intro-hero-visible .hero .scroll-cue {
+  animation: hero-detail-in 1s cubic-bezier(.16,1,.3,1) .15s backwards;
 }
-.booting:not(.intro-logo-visible) .hero .hero-banner, .booting:not(.intro-hero-visible) .hero .tagline, .booting:not(.intro-hero-visible) .hero .sub, .booting:not(.intro-hero-visible) .hero .hero-ctas, .booting:not(.intro-hero-visible) .hero .sprite-row {
-  opacity: 0; transform: translate3d(0,12px,0);
-}
+.intro-hero-visible .hero .sub { animation-delay: .25s; }
+.intro-hero-visible .hero .hero-ctas { animation-delay: .35s; }
+.intro-hero-visible .hero .sprite-row, .intro-hero-visible .hero .scroll-cue { animation-delay: .45s; }
+@keyframes hero-detail-in { from { opacity: 0; translate: 0 18px; } to { opacity: 1; translate: 0 0; } }
 .scroll-meter { position: absolute; bottom: -3px; left: 0; width: 100%; height: 3px; background: var(--red); transform: scaleX(var(--page-progress,0)); transform-origin: left; }
 .motion-toggle { border: 1px solid currentColor; background: transparent; color: inherit; font: 10px 'Space Mono', monospace; cursor: pointer; padding: 6px 8px; white-space: nowrap; }
 .motion-toggle:hover, .motion-toggle:focus-visible { background: var(--ink); color: var(--bg-panel); }
@@ -88,6 +91,10 @@ body.crt-text { filter: none; }
 html.booting { overflow: hidden; }
 .booting .site-loader { display: block; }
 .site-loader .loader-film { position: absolute; inset: 0; width: 100%; height: 100%; max-height: none; aspect-ratio: auto; object-fit: cover; display: block; }
+.site-loader .loader-logo { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; object-fit: cover; object-position: center; opacity: 0; mix-blend-mode: screen; pointer-events: none; transition: opacity .8s ease; }
+.site-loader .loader-film { transition: opacity .8s ease; }
+.intro-logo-visible .loader-logo { opacity: 1; }
+.intro-logo-visible .loader-film { opacity: 0; }
 .loader-hud { position: absolute; bottom: max(34px, env(safe-area-inset-bottom)); left: 4vw; width: min(420px, 66vw); z-index: 1; text-shadow: none; }
 .loader-bottom { display: flex; justify-content: space-between; gap: 16px; align-items: center; text-transform: uppercase; font-size: 10px; letter-spacing: 2px; }
 .loader-status, .loader-percent { text-shadow: none !important; }
@@ -96,7 +103,7 @@ html.booting { overflow: hidden; }
 .loader-bar span { display: block; height: 100%; background: #ffce3d; transform: scaleX(var(--load-progress,0)); transform-origin: left; transition: transform .3s; }
 .loader-play, .loader-retry { background: #000b; color: #fff; border: 1px solid #999; padding: 12px 16px; margin-top: 16px; font: 11px 'Space Mono', monospace; cursor: pointer; }
 .loader-leaving { pointer-events: none; animation: loader-out .9s cubic-bezier(.76,0,.24,1) forwards; }
-@keyframes loader-out { to { clip-path: inset(0 0 100% 0); } }
+@keyframes loader-out { to { opacity: 0; } }
 
 /* A full-height opening scene replaces the short, static paper-like hero. */
 .logo { gap: 0; }
@@ -105,7 +112,8 @@ html.booting { overflow: hidden; }
 .motion-ready .hero { position: sticky; top: var(--header-height, 70px); height: calc(100svh - var(--header-height, 70px)); min-height: 0; }
 .hero { background: #10101d; color: var(--bg-panel); }
 .hero-inner { padding-block: 48px; }
-.hero-banner { width: min(560px, 72vw); max-height: 180px; object-fit: contain; filter: none; }
+.hero .hero-banner { position: relative; display: block; width: calc(100vw - 40px); max-width: none; height: auto; max-height: none; aspect-ratio: 5.5; overflow: hidden; margin: 0 calc((100% - 100vw + 40px)/2) 28px; filter: none; mix-blend-mode: screen; }
+.hero-banner img { position: absolute; width: 100%; max-width: none; height: auto; top: 50%; left: 0; transform: translateY(-50%); image-rendering: auto; }
 .hero-orbit { border-color: #ffffff24; }
 .hero-orbit::before, .hero-orbit::after { box-shadow: 0 0 35px #2fbd8e66; border-color: var(--mint); }
 .motion-ready .scroll-story { height: 320svh; }

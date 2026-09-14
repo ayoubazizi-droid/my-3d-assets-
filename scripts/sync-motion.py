@@ -4,16 +4,17 @@ import re, shutil, xml.etree.ElementTree as ET
 
 root=Path(__file__).resolve().parents[1]
 base='https://ayoubazizi-droid.github.io/my-3d-assets-/'
-version='hero-logo-20260914-v13'
+version='fullscreen-logo-20260914-v14'
 viewer=root/'viewer.html'
 viewer.write_text(re.sub(r'(app\.js|style\.css)\?v=[^\x27\x22]+', lambda m:m[1]+'?v='+version, viewer.read_text()))
-critical=""".site-loader{display:none}html.booting{overflow:hidden}.booting:not(.intro-logo-visible) .hero .hero-banner,.booting:not(.intro-hero-visible) .hero .tagline,.booting:not(.intro-hero-visible) .hero .sub,.booting:not(.intro-hero-visible) .hero .hero-ctas,.booting:not(.intro-hero-visible) .hero .sprite-row{opacity:0}.booting .site-loader{display:block;position:fixed;inset:0;z-index:10000;background:#000;color:#fff}.loader-film{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}body.crt-text{filter:none}"""
+critical=""".site-loader{display:none}html.booting{overflow:hidden}.booting .site-loader{display:block;position:fixed;inset:0;z-index:10000;background:#000;color:#fff}.loader-film{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.loader-logo{opacity:0}body.crt-text{filter:none}"""
 bootstrap="""if('scrollRestoration' in history)history.scrollRestoration='manual';if(location.hash)history.replaceState(history.state,'',location.pathname+location.search);window.scrollTo({top:0,left:0,behavior:'instant'});document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=setTimeout(function(){if(!window.pix3lwareMotionStarted){var s=document.querySelector('.loader-status');if(s)s.textContent='Please reload to start your world';var b=document.querySelector('.loader-retry');if(b){b.hidden=false;b.onclick=function(){location.reload();};}}},15000);"""
 loader="""<div class='site-loader' id='site-loader' aria-label='Loading the Ford Bronco'>
     <video class='loader-film' autoplay='autoplay' muted='muted' playsinline='playsinline' loop='loop' preload='auto' poster='{base}assets/loader/poster.jpg' aria-label='Pix3lware animated intro'>
       <source src='{base}assets/loader/pix3lware.mp4?v=immersive-20260913-v3' type='video/mp4'/>
       <source src='{base}assets/loader/pix3lware.webm?v=immersive-20260913-v3' type='video/webm'/>
     </video>
+    <img class='loader-logo' src='{base}assets/branding/pixelware-full-logo.png' alt='' aria-hidden='true' fetchpriority='high'/>
     <div class='loader-hud'>
       <div class='loader-bottom'><span class='loader-status' role='status'>Loading the Ford Bronco…</span><span class='loader-percent' aria-hidden='true'>00%</span></div>
       <div class='loader-bar' aria-hidden='true'><span></span></div>
@@ -25,7 +26,10 @@ def block(name, text): return f'<!-- {name}:start -->\n{text}\n<!-- {name}:end -
 def remove_block(s,name): return re.sub(r'<!-- '+name+r':start -->.*?<!-- '+name+r':end -->\n?', '',s,flags=re.S)
 for filename in ['index.html','blogger-theme.xml']:
  p=root/filename; s=p.read_text(); blogger=filename.endswith('.xml')
- s=re.sub(r"(<img alt='pix3lware' class='hero-banner' src=')[^']+", r"\1"+base+'assets/branding/pixelware-full-logo.png?v='+version, s)
+ logo_src=(base if blogger else './')+'assets/branding/pixelware-full-logo.png?v='+version
+ hero_logo="<div class='hero-banner'><img alt='pix3lware' src='"+logo_src+"'/></div>"
+ s=re.sub(r"<img alt='pix3lware' class='hero-banner'[^>]+/>", lambda m:hero_logo, s)
+ s=re.sub(r"<div class='hero-banner'>.*?</div>", lambda m:hero_logo, s, flags=re.S)
  for name in ['pix-motion-head','pix-loader','pix-motion-script']: s=remove_block(s,name)
  s=re.sub(r"(<a class='logo'[^>]*>.*?</?img[^>]*>\s*)pix3lware",r'\1ix3lware',s,flags=re.S)
  s=s.replace("<a class='logo' href='./'>","<a class='logo' href='./' aria-label='pix3lware home'>")

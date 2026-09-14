@@ -34,7 +34,8 @@
     setTimeout(() => {
       root.classList.remove('booting');
       window.scrollTo({top: 0, left: 0, behavior: 'instant'});
-      smoothY = scrollTarget = 0;
+      scroller?.scrollTo(0, {immediate:true, force:true});
+      scroller?.start();
       if (loader) { loader.hidden = true; loader.style.display = 'none'; }
       video?.pause();
       document.dispatchEvent(new Event('pix3lware:entered'));
@@ -164,25 +165,13 @@
     $$('.tile', gallery).forEach((tile, i) => { tile.dataset.index = `${String(i + 1).padStart(2, '0')} / PIX3LWARE`; });
   }
 
-  let metrics = [], galleryMetric, raf = 0, active = true, lastY = -1, scrollTarget = scrollY, smoothY = scrollY;
-  let wheelTarget = scrollY, wheelRaf = 0;
+  let metrics = [], galleryMetric, raf = 0, active = true, lastY = -1;
+  let scroller;
   function handlePageWheel(delta) {
-    wheelTarget = clamp(wheelTarget + Number(delta || 0) * 0.9, 0, document.documentElement.scrollHeight - innerHeight);
-    if (!wheelRaf) wheelRaf = requestAnimationFrame(smoothWheel);
+    if (root.classList.contains('booting') || !Number.isFinite(delta)) return;
+    if (scroller) scroller.scrollTo(scroller.targetScroll + delta * .9, {programmatic:false, lerp:.06});
+    else window.scrollBy({top:delta, behavior:'instant'});
   }
-  function smoothWheel() {
-    wheelRaf = 0;
-    const distance = wheelTarget - scrollY;
-    if (Math.abs(distance) < 0.35) { window.scrollTo(0, wheelTarget); return; }
-    window.scrollTo(0, scrollY + distance * 0.14);
-    wheelRaf = requestAnimationFrame(smoothWheel);
-  }
-  window.addEventListener('wheel', event => {
-    if (!enabled) return;
-    event.preventDefault();
-    handlePageWheel(event.deltaY);
-  }, {passive:false});
-  window.addEventListener('scroll', () => { if (!wheelRaf && Math.abs(wheelTarget - scrollY) < 2) wheelTarget = scrollY; }, {passive:true});
   const styled = new Set();
   function transform(el, value, opacity) {
     if (!el) return;
@@ -211,17 +200,16 @@
     if (stage) galleryMetric = { top: stage.getBoundingClientRect().top + scrollY, height: stage.offsetHeight, pinHeight: pin.offsetHeight, inset: parseFloat(getComputedStyle(pin).top) || 0, travel: Math.max(0, gallery.scrollWidth - (pin.clientWidth - parseFloat(getComputedStyle(pin).paddingLeft) - parseFloat(getComputedStyle(pin).paddingRight))) };
     lastY = -1; requestTick();
   }
-  function render() {
+  function render(time) {
     raf = 0;
     if (!enabled || !active) return;
     const vh = innerHeight, vw = innerWidth;
-    scrollTarget = scrollY;
-    // Low-pass the scroll position so wheel and trackpad input glides into place.
-    smoothY += (scrollTarget - smoothY) * .11;
-    if (Math.abs(scrollTarget - smoothY) < .15) smoothY = scrollTarget;
-    if (Math.abs(lastY - smoothY) > .05) {
-      const y = smoothY;
-      root.style.setProperty('--page-progress', clamp(scrollY / Math.max(1, document.documentElement.scrollHeight - vh)));
+    scroller?.raf(time);
+    // Page, text, gallery and particles share one continuous scroll coordinate.
+    const y = scroller ? scroller.animatedScroll : scrollY;
+    window.pix3lwareScroll = y;
+    if (Math.abs(lastY - y) > .01) {
+      root.style.setProperty('--page-progress', clamp(y / Math.max(1, document.documentElement.scrollHeight - vh)));
       for (const m of metrics) {
         const rel = m.top - y;
         if (rel > vh * 1.5 || rel + m.height < -vh) continue;
@@ -273,7 +261,7 @@
         }
       }
       if (galleryMetric) {
-        const m=galleryMetric, p=clamp((scrollY-m.top+m.inset)/Math.max(1,m.height-m.pinHeight));
+        const m=galleryMetric, p=clamp((y-m.top+m.inset)/Math.max(1,m.height-m.pinHeight));
         transform(gallery, `translate3d(${-p*m.travel}px,0,0)`);
         stage.style.setProperty('--gallery-progress', p);
         const count = gallery.children.length;
@@ -281,7 +269,7 @@
       }
       lastY=y;
     }
-    if (smoothY !== scrollTarget) requestTick();
+    requestTick();
   }
   function requestTick() { if (!raf && enabled && active) raf = requestAnimationFrame(render); }
   function applyMotion() {
@@ -291,8 +279,16 @@
     toggle.setAttribute('aria-label', enabled ? 'Pause page motion' : 'Enable page motion');
     toggle.setAttribute('aria-pressed', String(enabled));
     styled.forEach(el => { el.style.transform=''; el.style.opacity=''; });
-    if (enabled) { smoothY=scrollY; wheelTarget=scrollY; measure(); }
-    else { if (raf) cancelAnimationFrame(raf); raf=0; }
+    scroller?.destroy(); scroller = undefined;
+    if (enabled) {
+      if (window.Lenis) {
+        scroller = new Lenis({lerp:.06, wheelMultiplier:.9, smoothWheel:true,
+          syncTouch:false, autoRaf:false, anchors:true, allowNestedScroll:true,
+          respectReducedMotion:false, stopInertiaOnNavigate:true});
+        if (root.classList.contains('booting')) scroller.stop();
+      }
+      measure();
+    } else { if (raf) cancelAnimationFrame(raf); raf=0; window.pix3lwareScroll = undefined; }
     // Keep the embedded scene's auto-rotation in step with the page motion preference.
     frame?.contentWindow?.postMessage({type:'pix3lware:motion',enabled}, garageOrigin);
     document.dispatchEvent(new CustomEvent('pix3lware:motion-change', {detail:{enabled}}));

@@ -210,9 +210,10 @@ renderer.domElement.addEventListener('touchend', event => {
 }, {passive:true});
 // A wheel over the iframe belongs to the page unless Zoom mode is enabled.
 renderer.domElement.addEventListener('wheel', event => {
-  if (zoomMode) return;
+  if (zoomMode || event.ctrlKey || event.metaKey || event.shiftKey || window.parent === window) return;
   event.preventDefault();
-  window.parent.postMessage({type:'pix3lware:page-wheel', deltaY:event.deltaY}, parentOrigin);
+  const delta = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? innerHeight : 1);
+  window.parent.postMessage({type:'pix3lware:page-wheel', deltaY:delta}, parentOrigin);
 }, {passive:false});
 new ResizeObserver(() => {
   const width = wrap.clientWidth, height = wrap.clientHeight;

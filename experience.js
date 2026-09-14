@@ -105,14 +105,15 @@
   function draw(time) {
     tick = 0;
     if (document.hidden || !motion) return;
-    // Cap background drawing at 30 fps; cursor movement stays interpolated.
-    cursorX += (pointerX-cursorX)*.24; cursorY += (pointerY-cursorY)*.24;
+    const ease = 1 - Math.exp(-16 * Math.min((time - previousTime) / 1000, .05));
+    previousTime = time;
+    cursorX += (pointerX-cursorX)*ease; cursorY += (pointerY-cursorY)*ease;
     cursor.style.transform = `translate3d(${cursorX-cursor.offsetWidth/2}px,${cursorY-cursor.offsetHeight/2}px,0) rotate(45deg)`;
-    if (context && time - previousTime > 32) {
-      previousTime = time; context.clearRect(0,0,width,height);
+    if (context) {
+      context.clearRect(0,0,width,height);
       for (const p of particles) {
         const x = (p.x*width + Math.sin(time*.00015+p.y*10)*35 + (pointerX-width/2)*p.depth*.015 + width) % width;
-        const y = ((p.y*height - scrollY*p.depth*.55 - time*.004*p.depth) % height + height) % height;
+        const y = ((p.y*height - (window.pix3lwareScroll ?? scrollY)*p.depth*.55 - time*.004*p.depth) % height + height) % height;
         context.globalAlpha = .15+p.depth*.4; context.fillStyle = p.color;
         context.fillRect(Math.round(x),Math.round(y),p.size,p.size);
       }

@@ -4,7 +4,9 @@ import re, shutil, xml.etree.ElementTree as ET
 
 root=Path(__file__).resolve().parents[1]
 base='https://ayoubazizi-droid.github.io/my-3d-assets-/'
-version='butter-scroll-20260913-v7'
+version='glide-20260914-v8'
+viewer=root/'viewer.html'
+viewer.write_text(re.sub(r'(app\.js|style\.css)\?v=[^\x27\x22]+', lambda m:m[1]+'?v='+version, viewer.read_text()))
 critical=""".site-loader{display:none}html.booting{overflow:hidden}.booting .site-loader{display:block;position:fixed;inset:0;z-index:10000;background:#000;color:#fff}.loader-film{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}body.crt-text{filter:none}"""
 bootstrap="""if('scrollRestoration' in history)history.scrollRestoration='manual';if(location.hash)history.replaceState(history.state,'',location.pathname+location.search);window.scrollTo({top:0,left:0,behavior:'instant'});document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=setTimeout(function(){if(!window.pix3lwareMotionStarted){var s=document.querySelector('.loader-status');if(s)s.textContent='Please reload to start your world';var b=document.querySelector('.loader-retry');if(b){b.hidden=false;b.onclick=function(){location.reload();};}}},15000);"""
 loader="""<div class='site-loader' id='site-loader' aria-label='Loading the Ford Bronco'>
@@ -37,10 +39,10 @@ for filename in ['index.html','blogger-theme.xml']:
   s=re.sub(r'/\* pix-motion:start \*/.*?/\* pix-motion:end \*/\n?', '',s,flags=re.S)
   s=s.replace(']]></b:skin>',f'\n/* pix-motion:start */\n{css}\n/* pix-motion:end */\n]]></b:skin>')
   head=f'<style>{critical}</style>\n<script>//<![CDATA[\n{bootstrap}\n//]]></script>'
-  script='<script>//<![CDATA[\n'+(root/'motion.js').read_text()+'\n'+(root/'experience.js').read_text()+'\n//]]></script>'
+  script='<script>//<![CDATA[\n'+(root/'assets/vendor/lenis.min.js').read_text()+'\n'+(root/'motion.js').read_text()+'\n'+(root/'experience.js').read_text()+'\n//]]></script>'
  else:
   head=f"<style>{critical}</style>\n<script>{bootstrap}</script>\n<link rel='stylesheet' href='motion.css?v={version}'/>"
-  script=f"<script src='motion.js?v={version}'></script>\n<script src='experience.js?v={version}'></script>"
+  script=f"<script src='assets/vendor/lenis.min.js?v={version}'></script>\n<script src='motion.js?v={version}'></script>\n<script src='experience.js?v={version}'></script>"
  s=s.replace('</head>',block('pix-motion-head',head)+'\n</head>')
  s=s.replace("<body class='crt-text'>","<body class='crt-text'>\n"+block('pix-loader',loader.format(base=base if blogger else './'))+'\n')
  s=s.replace('</body>',block('pix-motion-script',script)+'\n</body>')

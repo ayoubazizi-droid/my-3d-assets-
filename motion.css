@@ -1,5 +1,10 @@
 /* Progressive enhancement: the document remains readable without JavaScript. */
-html { scroll-padding-top: 100px; }
+html { scroll-padding-top: 100px; scroll-behavior: auto !important; }
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-stopped { overflow: hidden; }
+.lenis [data-lenis-prevent] { overscroll-behavior: contain; }
+/* Keep the CRT texture without repainting all text on every flicker. */
+body.crt-text, body::before { animation: none !important; }
 body { overflow-x: clip; }
 html.booting, .garage-frame { overflow-anchor: none; }
 /* A filter on body would turn fixed loaders and sticky navigation into scrolling layers. */

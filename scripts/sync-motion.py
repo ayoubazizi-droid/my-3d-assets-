@@ -4,7 +4,7 @@ import re, shutil, xml.etree.ElementTree as ET
 
 root=Path(__file__).resolve().parents[1]
 base='https://ayoubazizi-droid.github.io/my-3d-assets-/'
-version='look-only-20260914-v9'
+version='bronco-20260914-v10'
 viewer=root/'viewer.html'
 viewer.write_text(re.sub(r'(app\.js|style\.css)\?v=[^\x27\x22]+', lambda m:m[1]+'?v='+version, viewer.read_text()))
 critical=""".site-loader{display:none}html.booting{overflow:hidden}.booting .site-loader{display:block;position:fixed;inset:0;z-index:10000;background:#000;color:#fff}.loader-film{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}body.crt-text{filter:none}"""

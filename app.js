@@ -27,7 +27,7 @@ window.addEventListener('message', event => {
 // Replace an empty URL with './models/your-model.glb'. Keep all model files
 // in this GitHub Pages repository. Use a self-contained, uncompressed GLB.
 const objects = [
-  { title: 'Ford Bronco Raptor', category: '01 / CUSTOM BRONCO', symbol: '◈', shape: 'knot', url: './models/Ud.glb' },
+  { title: 'Ford Bronco Raptor', category: '01 / CUSTOM BRONCO', symbol: '◈', shape: 'knot', url: './models/Ud.glb?v=bronco-20260914-v10' },
 ];
 const wrap = document.querySelector('#canvas-wrap');
 const status = document.querySelector('#status');

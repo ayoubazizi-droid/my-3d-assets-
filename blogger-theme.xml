@@ -203,6 +203,7 @@
 
 
 
+
 /* pix-motion:start */
 /* Progressive enhancement: the document remains readable without JavaScript. */
 html { scroll-padding-top: 100px; scroll-behavior: auto !important; }
@@ -414,6 +415,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
 
 
 
+
 <svg aria-hidden='true' class='crt-filter-defs' focusable='false' height='0' style='position:absolute' width='0'><filter id='crt-curve' x='-5%' y='-5%' width='110%' height='110%' color-interpolation-filters='sRGB'><feTurbulence baseFrequency='0.008 0.02' numOctaves='1' seed='7' type='fractalNoise' result='crt-noise'/><feDisplacementMap in='SourceGraphic' in2='crt-noise' scale='3' xChannelSelector='R' yChannelSelector='G'/></filter></svg>
 
 <header class='site-header'>
@@ -520,7 +522,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
       <h2>take it for a spin.</h2>
       <p>Our custom Ford Bronco Raptor. Drag to look around and zoom in on the details.</p>
     </div>
-    <iframe class='garage-frame' src='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html?v=glide-20260914-v8' title='Interactive Ford Bronco Raptor viewer' loading='eager' allow='fullscreen'></iframe>
+    <iframe class='garage-frame' src='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html?v=look-only-20260914-v9' title='Interactive Ford Bronco Raptor viewer' loading='eager' allow='fullscreen'></iframe>
     <a class='garage-link' href='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html' target='_blank' rel='noopener'>Open the 3D garage in a new tab &#8599;</a>
   </div>
 

@@ -173,11 +173,12 @@ objects.forEach((entry, index) => {
   document.querySelector('#collection').appendChild(button);
 });
 function updateRotationLabel() {
+  if (!rotateButton) return;
   rotateButton.textContent = controls.autoRotate ? 'Pause rotation' : 'Resume rotation';
   rotateButton.setAttribute('aria-pressed', String(controls.autoRotate));
 }
-rotateButton.addEventListener('click', () => { controls.autoRotate = !controls.autoRotate; updateRotationLabel(); });
-document.querySelector('#reset').addEventListener('click', resetView);
+rotateButton?.addEventListener('click', () => { controls.autoRotate = !controls.autoRotate; updateRotationLabel(); });
+document.querySelector('#reset')?.addEventListener('click', resetView);
 let zoomMode = false;
 function setZoomMode(enabled) {
   zoomMode = enabled;

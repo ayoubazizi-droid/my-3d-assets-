@@ -214,6 +214,9 @@
 
 
 
+
+
+
 /* pix-motion:start */
 /* Progressive enhancement: the document remains readable without JavaScript. */
 html { scroll-padding-top: 100px; scroll-behavior: auto !important; }
@@ -261,6 +264,11 @@ body.crt-text { filter: none; }
 .motion-ready .palette { height: 250px; align-items: stretch; transform-origin: center; }
 .motion-ready .palette div { height: auto; }
 .motion-ready .cart-grid { perspective: 1000px; gap: 32px; }
+#offerings .cart-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.software-choice { display: flex; align-items: center; gap: 20px; margin-top: 32px; }
+.software-choice svg { width: 72px; height: 60px; flex: 0 0 auto; shape-rendering: crispEdges; }
+.software-choice span { display: block; font-size: 10px; letter-spacing: 2px; }
+.software-choice strong { display: block; margin-top: 8px; font-family: 'Press Start 2P', monospace; font-size: 18px; }
 .motion-ready .cart { min-height: 310px; display: flex; flex-direction: column; justify-content: center; }
 .motion-ready .cart .num { font-size: 32px; margin-bottom: 28px; }
 .motion-ready .cart:nth-child(2) { background: var(--yellow); }
@@ -291,6 +299,12 @@ body.crt-text { filter: none; }
 .motion-ready .site-footer { padding-block: 100px 38px; }
 .foot-links a { display: inline-block; transition: transform .2s, color .2s; }
 .foot-links a:hover { transform: translateY(-4px); }
+.foot-links { gap: 12px; }
+.foot-links .contact-icon { display: grid; place-items: center; width: 64px; height: 64px; color: var(--ink); background: var(--yellow); border: 2px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); }
+.foot-links li:nth-child(even) .contact-icon { background: var(--mint); }
+.contact-icon svg { display: block; width: 48px; height: 48px; shape-rendering: crispEdges; }
+.foot-links .contact-icon:hover { color: var(--ink); background: var(--bg-panel); }
+.contact-icon:focus-visible { outline: 3px solid var(--red); outline-offset: 6px; }
 .asset-notice { background: var(--yellow); color: var(--ink); padding: 12px 24px; font-size: 12px; border-bottom: 2px solid var(--ink); }
 .asset-notice a { margin-left: 12px; }
 
@@ -344,6 +358,7 @@ html.booting { overflow: hidden; }
 .cursor-ring.cursor-link { width: 48px; height: 48px; border-color: #2fbd8e; }
 @media (pointer: coarse) { .cursor-ring { display: none; } }
 @media (max-width: 600px) {
+  .foot-links { display: grid; grid-template-columns: repeat(3, 64px); gap: 16px; }
   .sound-toggle { right: 12px; bottom: 18px; padding: 10px 8px; font-size: 8px; }
   .loader-hud { bottom: 24px; left: 18px; width: calc(100vw - 150px); }
   .loader-bottom { font-size: 8px; letter-spacing: .5px; }
@@ -354,6 +369,7 @@ html.booting { overflow: hidden; }
 }
 
 @media (max-width: 860px) {
+  #offerings .cart-grid { grid-template-columns: minmax(0, 1fr); }
   .motion-ready .story-pin { top: var(--header-height, 112px); height: calc(100svh - var(--header-height, 112px)); }
   .story-pin { padding: 30px 5vw; }
   .story-line { font-size: clamp(14px, 4.5vw, 38px); }
@@ -441,6 +457,9 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
 
 
 
+
+
+
 <svg aria-hidden='true' class='crt-filter-defs' focusable='false' height='0' style='position:absolute' width='0'><filter id='crt-curve' x='-5%' y='-5%' width='110%' height='110%' color-interpolation-filters='sRGB'><feTurbulence baseFrequency='0.008 0.02' numOctaves='1' seed='7' type='fractalNoise' result='crt-noise'/><feDisplacementMap in='SourceGraphic' in2='crt-noise' scale='3' xChannelSelector='R' yChannelSelector='G'/></filter></svg>
 
 <header class='site-header'>
@@ -465,7 +484,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
 <div class='hero'>
   <div class='wrap hero-inner'>
     <span class='boot-line pixel-font'>LOADING PIX3LWARE.EXE</span>
-    <div class='hero-banner'><img alt='pix3lware' src='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/branding/pixelware-full-logo.png?v=blender-camera-20260915-v17'/></div>
+    <div class='hero-banner'><img alt='pix3lware' src='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/branding/pixelware-full-logo.png?v=about-contacts-20260915-v18'/></div>
     <p class='tagline'>we draw the world one <span class='hl'>square</span> at a time.</p>
     <p class='sub'>pix3lware is a pixel-art studio &amp; asset shop &#8212; sprites, tilesets, animation packs and commissions for games, brands and people who miss the CRT hum.</p>
     <div class='hero-ctas'>
@@ -488,36 +507,33 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
     <div class='about-copy'>
       <span class='eyebrow'>// ABOUT</span>
       <h2>every good sprite starts with a bad first draft.</h2>
-      <p>pix3lware started in a spare bedroom with a Game Boy, a graph-paper notebook, and way too much patience for 16&#215;16 grids. Years later, that same patience goes into every tileset, every walk-cycle, every 4-color palette we ship.</p>
-      <p>We work the way the format demands: constraint first. No layer you don&#39;t need, no pixel you can&#39;t justify.</p>
-      <div class='stat-row'>
-        <div class='stat'><b>340+</b><span>sprite packs shipped</span></div>
-        <div class='stat'><b>4px</b><span>our default grid unit</span></div>
-        <div class='stat'><b>6yr</b><span>running the studio</span></div>
-      </div>
+      <p>Old Nokia games like Bounce, Diamond Rush, and those little racing games are what got me into pixel art. Those tiny monochrome screens—just 84×48 pixels—forced every sprite to matter. A bouncing ball, a blocky snake, a tiny car racing toward a city you could never reach: each pixel carried weight. The chunky look wasn't a limitation, it was a style. And for me, it wasn't just games—it was my childhood. Waiting for the bus, hiding under the blanket past bedtime, the click of the keypad. That's why pixel art feels like home to me. It's not outdated. It's a time capsule.</p>
     </div>
     <div>
       <div class='palette'>
-        <div style='background:#ff4d5e'/>
-        <div style='background:#ffce3d'/>
-        <div style='background:#2fbd8e'/>
-        <div style='background:#1b1b2f'/>
+        <div style='background:#ff4d5e'></div>
+        <div style='background:#ffce3d'></div>
+        <div style='background:#2fbd8e'></div>
+        <div style='background:#1b1b2f'></div>
+      </div>
+      <div class='software-choice'>
+        <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 20' aria-hidden='true' focusable='false'><path fill='#ea7600' d='M8 1H11V3H13V5H18V6H21V8H23V14H21V17H18V18H10V17H7V15H5V12H1V9H3V7H5V6H1V3H8V5H10V4H8Z'/><path fill='#fff' d='M11 8H18V9H20V14H18V15H11V14H9V10H11Z'/><path fill='#265787' d='M12 9H17V10H18V13H17V14H12V13H11V10H12Z'/></svg>
+        <div><span>SOFTWARE OF CHOICE</span><strong>Blender</strong></div>
       </div>
     </div>
   </div>
 </section>
 
-<section id='offerings' style='background:var(--bg-panel); border-top:3px solid var(--ink); border-bottom:3px solid var(--ink);'>
+<section id='offerings' style='border-top:3px solid var(--ink); border-bottom:3px solid var(--ink);'>
   <div class='wrap'>
     <div class='section-head'>
       <span class='eyebrow'>// OFFERINGS</span>
-      <h2>three ways to work with us</h2>
+      <h2>two ways to work with us</h2>
       <p>Pick what fits your project &#8212; or start with a message and we&#39;ll figure it out together.</p>
     </div>
     <div class='cart-grid'>
       <div class='pixel-frame cart'><span class='num'>01</span><h3>Commissions</h3><p>Custom characters, icons and key art built to your game or brand&#39;s existing palette and grid.</p></div>
       <div class='pixel-frame cart'><span class='num'>02</span><h3>Asset packs</h3><p>Ready-to-drop tilesets, UI kits and animation sheets, licensed for indie and commercial use.</p></div>
-      <div class='pixel-frame cart'><span class='num'>03</span><h3>Tutorials</h3><p>Step-by-step breakdowns of dithering, palette limits and animation timing &#8212; for beginners and studios alike.</p></div>
     </div>
   </div>
 </section>
@@ -547,7 +563,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
       <h2>take it for a spin.</h2>
       <p>Our custom Ford Bronco Raptor. Drag to look around and zoom in on the details.</p>
     </div>
-    <iframe class='garage-frame' src='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html?v=blender-camera-20260915-v17' title='Interactive Ford Bronco Raptor viewer' loading='eager' allow='fullscreen'></iframe>
+    <iframe class='garage-frame' src='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html?v=about-contacts-20260915-v18' title='Interactive Ford Bronco Raptor viewer' loading='eager' allow='fullscreen'></iframe>
     <a class='garage-link' href='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html' target='_blank' rel='noopener'>Open the 3D garage in a new tab &#8599;</a>
   </div>
 
@@ -1422,13 +1438,13 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
       <img alt='pix3lware' height='24' src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFoAAACFCAYAAADbwO/4AAACUElEQVR42u3dS07CUBiG4e9AEZB4GRpZhIkjN+HQLbgYN+Bm3IAjl+HEEC8JN6F14N+kITEqbf/C6fsmBIq04uOxPSJgGI8vRPWX2PmdpFtJK1teShracldSKimz805h/dS2Ubw+LawTJH1K6tnHOnZ9fpulpAO7Xbqx7rqwXla4b4ldzgrLXVsOtl6w61Z2WZIW9vnPmoS+lHTCuKuvfBTOoPCBHkHhA72Awgd6CoUPNAdCJ2gCmoMhbQF9AIUPdIDCB3oOBQfDqKAzKOotf/TuusQ2ynyTvI8NTyXub6hiRLelxg767KOBrqVXoH0aAe3TFGifFkD7dAq0TzOgfRoC7VMGtE9roPnNkKooYWDVvn+fShq1DfqqAehDdh0+pUBzMIxv7g40IxpoAnp3jYFmehdNAWimd0ATuw6md7vUo/0ob3MKW56SNkLzpyzPOS3Q9cfzOpwaAO3TO9A+nQPt0xLoyL/etkEfA+3TBGhGdFQlQEc+j276uXdNPDH83nYhPUkvkvr6fv3hkaQPW+5LerPz5yoGZKjgvUn37QX7gV0HE3gCGmgCGmigCWigCWiggSag96KmHyYNjGgCGmgCGmigCWigCWiggSaggSaggQaagAaagAYaaAIaaAIaaKAJaKAJaKCBJqCBJqCBBpqABpqABhpoAnofoR+0/f8nKVPWwKlRaEa2E/QUCvbRUUEPoPCBnkPBiI4KegYFB8OooAMUPtB9KBjRUUFPoGBERzfrqPLRrf9uJ/1lW5v3LfvhXH9cdi9/J8cbxly9fQGtyY2B/hQbIgAAAABJRU5ErkJggg=='/>
       ix3lware
     </span>
-    <ul class='foot-links'>
-      <li><a href='mailto:pix3lware@gmail.com'>pix3lware@gmail.com</a></li>
-      <li><a href='https://pix3lware.blogspot.com/' target='_blank' rel='noopener noreferrer'>Blog</a></li>
-      <li><a href='https://www.tiktok.com/@pix3lware' target='_blank' rel='noopener noreferrer'>TikTok</a></li>
-      <li><a href='https://www.pinterest.com/pix3lware/' target='_blank' rel='noopener noreferrer'>Pinterest</a></li>
-      <li><a href='https://www.instagram.com/pix3lware/' target='_blank' rel='noopener noreferrer'>Instagram</a></li>
-      <li><a href='https://x.com/pix3lware' target='_blank' rel='noopener noreferrer'>X (Twitter)</a></li>
+<ul class='foot-links'>
+      <li><a class='contact-icon' href='mailto:pix3lware@gmail.com' aria-label='Email pix3lware' title='Email pix3lware'><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' aria-hidden='true' focusable='false'><path fill='currentColor' fill-rule='evenodd' d='M1 3H15V13H1ZM3 5V11H13V5Z'/><path fill='currentColor' d='M3 5H5V6H6V7H7V8H9V7H10V6H11V5H13V6H12V7H11V8H10V9H6V8H5V7H4V6H3Z'/></svg></a></li>
+      <li><a class='contact-icon' href='https://pix3lware.blogspot.com/' target='_blank' rel='noopener noreferrer' aria-label='Blog' title='Blog'><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' aria-hidden='true' focusable='false'><path fill='currentColor' fill-rule='evenodd' d='M3 1H11V3H13V7H15V13H13V15H3V13H1V3H3ZM5 4V6H9V4ZM5 9V11H11V9Z'/></svg></a></li>
+      <li><a class='contact-icon' href='https://www.tiktok.com/@pix3lware' target='_blank' rel='noopener noreferrer' aria-label='TikTok' title='TikTok'><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' aria-hidden='true' focusable='false'><path fill='currentColor' d='M8 1H11V3H12V4H14V7H12V6H11V12H10V14H8V15H4V14H2V12H1V9H2V7H4V6H7V9H5V10H4V12H7V11H8Z'/></svg></a></li>
+      <li><a class='contact-icon' href='https://www.pinterest.com/pix3lware/' target='_blank' rel='noopener noreferrer' aria-label='Pinterest' title='Pinterest'><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' aria-hidden='true' focusable='false'><path fill='currentColor' d='M5 1H11V2H13V4H14V9H13V11H11V12H8V10H10V9H11V5H10V4H6V5H5V8H3V4H4V2H5ZM7 6H9V10H8V13H7V15H4V13H5V10H6V7H7Z'/></svg></a></li>
+      <li><a class='contact-icon' href='https://www.instagram.com/pix3lware/' target='_blank' rel='noopener noreferrer' aria-label='Instagram' title='Instagram'><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' aria-hidden='true' focusable='false'><path fill='currentColor' fill-rule='evenodd' d='M3 1H13V2H14V3H15V13H14V14H13V15H3V14H2V13H1V3H2V2H3ZM4 3V4H3V12H4V13H12V12H13V4H12V3ZM6 5H10V6H11V10H10V11H6V10H5V6H6ZM7 7V9H9V7Z'/><path fill='currentColor' d='M11 4H13V6H11Z'/></svg></a></li>
+      <li><a class='contact-icon' href='https://x.com/pix3lware' target='_blank' rel='noopener noreferrer' aria-label='X (Twitter)' title='X (Twitter)'><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' aria-hidden='true' focusable='false'><path fill='currentColor' d='M1 2H5V4H7V6H9V8H11V10H13V12H15V14H11V12H9V10H7V8H5V6H3V4H1ZM12 2H15V4H13V6H11V8H9V6H10V4H12ZM5 8H7V10H6V12H4V14H1V12H3V10H5Z'/></svg></a></li>
     </ul>
   </div>
   <p class='copyright'>&#169; 2026 pix3lware. built pixel by pixel.</p>

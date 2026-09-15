@@ -11,16 +11,7 @@ html.booting, .garage-frame { overflow-anchor: none; }
 body.crt-text { filter: none; }
 .hero-banner, .sprite-row, .tile svg { filter: url(#crt-curve); }
 .site-header { isolation: isolate; }
-/* Entrance motion uses translate separately from the scroll-driven transforms. */
-.intro-hero-visible .hero .boot-line, .intro-hero-visible .hero .tagline,
-.intro-hero-visible .hero .sub, .intro-hero-visible .hero .hero-ctas,
-.intro-hero-visible .hero .sprite-row, .intro-hero-visible .hero .scroll-cue {
-  animation: hero-detail-in 1s cubic-bezier(.16,1,.3,1) .15s backwards;
-}
-.intro-hero-visible .hero .sub { animation-delay: .25s; }
-.intro-hero-visible .hero .hero-ctas { animation-delay: .35s; }
-.intro-hero-visible .hero .sprite-row, .intro-hero-visible .hero .scroll-cue { animation-delay: .45s; }
-@keyframes hero-detail-in { from { opacity: 0; translate: 0 18px; } to { opacity: 1; translate: 0 0; } }
+/* Website visibility comes from Blender frame 85; no extra entrance timeline. */
 .scroll-meter { position: absolute; bottom: -3px; left: 0; width: 100%; height: 3px; background: var(--red); transform: scaleX(var(--page-progress,0)); transform-origin: left; }
 .motion-toggle { border: 1px solid currentColor; background: transparent; color: inherit; font: 10px 'Space Mono', monospace; cursor: pointer; padding: 6px 8px; white-space: nowrap; }
 .motion-toggle:hover, .motion-toggle:focus-visible { background: var(--ink); color: var(--bg-panel); }
@@ -86,19 +77,16 @@ body.crt-text { filter: none; }
 .asset-notice { background: var(--yellow); color: var(--ink); padding: 12px 24px; font-size: 12px; border-bottom: 2px solid var(--ink); }
 .asset-notice a { margin-left: 12px; }
 
-/* The movie occupies the entire viewport, with only a small loading HUD. */
+/* Media bounds and UV crops are projected from the Blender camera in JS. */
 .site-loader { position: fixed; inset: 0; z-index: 10000; background: #000; color: #fff; display: none; overflow: hidden; font-family: 'Space Mono', monospace; }
 html.booting { overflow: hidden; }
 .booting .site-loader { display: block; }
-.site-loader { --intro-square: min(100vw, 100svh); }
-.site-loader .loader-film { position: absolute; inset: 0; width: 100%; height: 100%; max-height: none; aspect-ratio: auto; object-fit: contain; display: block; }
-.site-loader .loader-logo { position: absolute; top: 50%; left: calc(50% + var(--intro-square) * .017534); width: calc(var(--intro-square) * .901022); aspect-ratio: 6 / 1; overflow: hidden; opacity: 0; mix-blend-mode: screen; pointer-events: none; translate: -50% -50%; transform-origin: center; will-change: transform; }
-.site-loader .loader-logo img { position: absolute; top: 50%; left: -7.45%; width: 111%; max-width: none; height: auto; translate: 0 -50%; image-rendering: auto; }
-.intro-logo-visible .loader-logo { opacity: 1; }
-.intro-logo-visible .loader-film { opacity: 0; }
-.intro-morphing .loader-hud { opacity: 0; transition: opacity .1s; }
+.site-loader .loader-film { position: absolute; inset: auto; max-height: none; aspect-ratio: auto; object-fit: fill; display: block; }
+.site-loader .loader-logo { position: absolute; overflow: hidden; opacity: 1; visibility: hidden; mix-blend-mode: screen; pointer-events: none; }
+.site-loader .loader-logo img { position: absolute; max-width: none; image-rendering: auto; }
+.intro-morphing .loader-hud { visibility: hidden; }
 .booting .sound-toggle, .booting .cursor-ring { visibility: hidden; }
-.loader-hud { position: absolute; bottom: max(34px, env(safe-area-inset-bottom)); left: 4vw; width: min(420px, 66vw); z-index: 1; text-shadow: none; }
+.loader-hud { position: absolute; bottom: max(34px, env(safe-area-inset-bottom)); left: 4vw; width: min(420px, 66vw); z-index: 1001; text-shadow: none; }
 .loader-bottom { display: flex; justify-content: space-between; gap: 16px; align-items: center; text-transform: uppercase; font-size: 10px; letter-spacing: 2px; }
 .loader-status, .loader-percent { text-shadow: none !important; }
 .loader-percent { font-size: 14px; color: #ffce3d; }
@@ -112,7 +100,7 @@ html.booting { overflow: hidden; }
 .motion-ready .hero-stage { height: 210svh; }
 .motion-ready .hero { position: sticky; top: var(--header-height, 70px); height: calc(100svh - var(--header-height, 70px)); min-height: 0; }
 .hero { background: #10101d; color: var(--bg-panel); }
-.hero-inner { padding-block: 48px; }
+.hero-inner { padding-block: 48px; position: relative; }
 .hero .hero-banner { position: relative; display: block; width: min(72.958svh, 80vw); max-width: none; aspect-ratio: 6 / 1; overflow: hidden; margin: 0 auto 28px; filter: none; mix-blend-mode: screen; }
 .hero-banner img { position: absolute; top: 50%; left: -7.45%; width: 111%; max-width: none; height: auto; translate: 0 -50%; image-rendering: auto; }
 .hero-orbit { border-color: #ffffff24; }

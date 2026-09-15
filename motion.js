@@ -10,25 +10,74 @@
   const loaderLogo = $('.loader-logo img');
   const logoPlane = $('.loader-logo');
   const frame = $('.garage-frame');
-  // The 148-frame intro is 24 fps; frame 74 starts at (74 - 1) / 24.
-  const heroCueTime = 73 / 24;
+  const intro = JSON.parse($('#pix-intro-data').textContent);
+  const filmPlane = intro.planes.find(p => p.role === 'video');
+  const logoData = intro.planes.find(p => p.role === 'logo');
+  const websitePlane = intro.planes.find(p => p.role === 'website');
+  const firstHidden = plane => plane.curves.find(c => c.path === 'hide_render').points.find(p => p.value === 1).frame;
+  const logoStart = firstHidden(filmPlane);
+  const websiteStart = firstHidden(logoData);
+  const cueFrame = logoStart - 1;
+  const heroCueTime = (cueFrame - 1) / intro.fps;
   let heroFrameCallback;
-  let heroRevealTimer;
-  let cueReached = false, logoReady = false;
+  let introClock, currentIntroFrame = intro.start;
+  let cueReached = false, logoReady = false, entering = false;
+  function place(element, bounds) {
+    Object.assign(element.style, {left:`${bounds.x}px`,top:`${bounds.y}px`,
+      width:`${bounds.width}px`,height:`${bounds.height}px`});
+  }
+  function drawIntro(atFrame) {
+    currentIntroFrame = atFrame;
+    for (const [plane, element] of [[filmPlane,video],[logoData,logoPlane]]) {
+      const bounds = PixIntro.rect(intro,plane,atFrame,innerWidth,innerHeight);
+      place(element,bounds);
+      element.style.visibility = bounds.state.hide_render ? 'hidden' : 'visible';
+      element.style.zIndex = String(Math.round(1000-bounds.vertices[0].depth*100));
+    }
+    loader.dataset.frame = atFrame.toFixed(3);
+  }
+  function alignHero() {
+    const target = $('.hero-banner'), inner = $('.hero-inner');
+    if (!target || !inner) return;
+    const bounds = PixIntro.rect(intro,logoData,websiteStart,innerWidth,innerHeight);
+    PixIntro.crop(logoData,target.querySelector('img'));
+    target.style.width = `${bounds.width}px`;
+    target.style.height = `${bounds.height}px`;
+    inner.style.top = '0px'; inner.style.left = '0px';
+    const actual = target.getBoundingClientRect();
+    const heroElement = $('.hero'), stageElement = $('.hero-stage');
+    const stageTop = stageElement.getBoundingClientRect().top + scrollY;
+    const layoutTop = actual.top - heroElement.getBoundingClientRect().top + stageTop;
+    inner.style.top = `${bounds.y-layoutTop}px`;
+    inner.style.left = `${bounds.x-actual.left}px`;
+  }
   function showIntroLogo() {
-    if (!cueReached || !logoReady || root.classList.contains('intro-logo-visible')) return;
-    root.classList.add('intro-logo-visible');
-    // Blender: film through frame 74, logo from 75, hero at 85.
-    heroRevealTimer = setTimeout(() => { introPlayed = true; dismiss(); }, 1000 / 24);
+    if (!cueReached || !logoReady || !garageLoaded || entering) return;
+    entering = true;
+    Promise.allSettled([document.fonts?.ready,$('.hero-banner img')?.decode()]).then(() => {
+      alignHero();
+      root.classList.add('intro-morphing');
+      // Hold the last movie frame for its full 1/24 second, then evaluate Blender time.
+      introClock = performance.now();
+      function tick(now) {
+        const atFrame = Math.min(intro.end,cueFrame+(now-introClock)*intro.fps/1000);
+        drawIntro(atFrame);
+        if (!PixIntro.evaluate(websitePlane,atFrame).hide_render) dismiss();
+        if (atFrame < intro.end) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    });
   }
   function revealHero(mediaTime) {
     if (mediaTime + .0001 < heroCueTime || cueReached) return;
     cueReached = true;
     video?.pause();
+    video.currentTime = heroCueTime;
+    drawIntro(cueFrame);
     showIntroLogo();
   }
   const tasks = new Map();
-  let dismissed = false, garageLoaded = false, introPlayed = false, slowTimer;
+  let dismissed = false, garageLoaded = false, slowTimer;
   // The requested animated experience starts enabled on every device. The visible
   // Motion control remains available to pause it without relying on OS settings.
   let motionChoice = true;
@@ -47,33 +96,17 @@
     const percent = $('.loader-percent');
     if (percent) percent.textContent = `${Math.floor(value * 100).toString().padStart(2, '0')}%`;
   }
-  async function dismiss() {
+  function dismiss() {
     // No timeout and no skip may bypass the actual model's first successful render.
-    if (dismissed || !garageLoaded || !introPlayed) return;
+    if (dismissed || !garageLoaded || !entering || currentIntroFrame < websiteStart) return;
     dismissed = true;
     clearTimeout(slowTimer);
-    clearTimeout(heroRevealTimer);
     clearTimeout(window.pix3lwareBootWatchdog);
-    const target = $('.hero-banner');
-    // Wait for final text metrics before measuring where the moving logo lands.
-    await Promise.allSettled([document.fonts?.ready, target?.querySelector('img')?.decode()]);
     window.scrollTo({top:0,left:0,behavior:'instant'});
     scroller?.scrollTo(0, {immediate:true, force:true});
     measure();
-    const from = logoPlane?.getBoundingClientRect();
-    const to = target?.getBoundingClientRect();
-    root.classList.add('intro-morphing');
-    let movement;
-    if (enabled && from?.width && to?.width) {
-      const dx = to.left + to.width / 2 - from.left - from.width / 2;
-      const dy = to.top + to.height / 2 - from.top - from.height / 2;
-      movement = logoPlane.animate([
-        {transform:'translate3d(0,0,0) scale(1)'},
-        {transform:`translate3d(${dx}px,${dy}px,0) scale(${to.width / from.width})`}
-      ], {duration:10 / 24 * 1000, easing:'cubic-bezier(.333333,0,.666667,1)', fill:'forwards'});
-      await movement.finished.catch(() => {});
-    }
-    // Replace the moving logo with the identical hero logo at the same position.
+    alignHero();
+    // The real interactive page replaces the screenshot plane on its visibility key.
     root.classList.add('intro-hero-visible');
     root.classList.remove('booting');
     if (heroFrameCallback !== undefined) video?.cancelVideoFrameCallback?.(heroFrameCallback);
@@ -81,7 +114,6 @@
     scroller?.scrollTo(0, {immediate:true, force:true});
     scroller?.start();
     if (loader) { loader.hidden = true; loader.style.display = 'none'; }
-    movement?.cancel();
     root.classList.remove('intro-morphing');
     video?.pause();
     document.dispatchEvent(new Event('pix3lware:entered'));
@@ -102,7 +134,7 @@
       if (status) status.textContent = 'Your world is ready';
       if (retry) retry.hidden = true;
       frame.contentWindow?.postMessage({type:'pix3lware:motion', enabled}, garageOrigin);
-      dismiss();
+      showIntroLogo();
     }
     if (event.data?.type === 'pix3lware:garage-error') garageError();
     if (event.data?.type === 'pix3lware:page-wheel') handlePageWheel(event.data.deltaY);
@@ -123,9 +155,12 @@
     catch (_) { if (playIntro) playIntro.hidden = false; }
   }
   if (video) {
+    PixIntro.crop(logoData,loaderLogo);
+    drawIntro(intro.start);
     // Use decoded frame timestamps rather than a timer that could outrun buffering.
     if (video.requestVideoFrameCallback) {
       const onVideoFrame = (_, metadata) => {
+        if (!cueReached) drawIntro(Math.min(cueFrame,metadata.mediaTime*intro.fps+1));
         revealHero(metadata.mediaTime);
         if (!cueReached) heroFrameCallback = video.requestVideoFrameCallback(onVideoFrame);
       };
@@ -344,7 +379,9 @@
   toggle.addEventListener('click', () => { motionChoice=!enabled; applyMotion(); });
   window.addEventListener('scroll',requestTick,{passive:true});
   let resizeTimer;
-  window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(measure,120);});
+  window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{
+    measure(); alignHero(); if (!dismissed) drawIntro(currentIntroFrame);
+  },120);});
   window.addEventListener('load',measure,{once:true});
   document.fonts?.ready.then(measure);
   document.addEventListener('visibilitychange',()=>{active=!document.hidden;if(active){requestTick();if(!dismissed)playVideo();}});

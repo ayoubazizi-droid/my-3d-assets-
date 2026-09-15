@@ -40,7 +40,19 @@ Reference: https://threejs.org/docs/pages/RenderPixelatedPass.html
 
 `motion.js` / `motion.css` provide a pinned opening, reversible side-to-side text movement through the viewport, a pinned typography sequence, parallax, and a vertically controlled horizontal gallery. Scroll motion starts enabled on desktop and mobile, including computers with reduced motion enabled in the OS. The visible Motion control pauses the experience. Previous session pause settings no longer silently disable this experience. Fresh visits and reloads start at the hero instead of restoring a previous garage scroll position. The Bronco viewer fills the available screen width and height without side borders, with closer desktop camera framing. Its default four-pixel rendering is unchanged.
 
-The full-viewport loader uses the original 1920×1920 H.264 stream from `/home/liveuser/Videos/0001-0148.mkv`, remuxed to MP4 without re-encoding. VP9 WebM and a poster are fallbacks. The video fills the viewport with `object-fit: cover` (cropping the square to fit widescreen or portrait), plays muted regardless of the motion setting, and shows at least one loop. The page opens only after the Bronco signals a successful first render. Errors offer Retry; there is no timeout or skip that bypasses model readiness.
+The loader uses the original 1920×1920 H.264 stream from `/home/liveuser/Videos/0001-0148.mkv`, remuxed to MP4 without re-encoding. VP9 WebM and a poster are fallbacks. Media sizing now follows the camera in `transition dimonstration .blend`. The complete 1988×1080 camera frame fits inside the viewport without cropping or stretching. The film pauses on frame 74 until the logo, fonts, and Bronco's first successful render are ready. Errors offer Retry; no timeout bypasses readiness.
+
+`scripts/export-intro.py` exports all 26 F-curves, Bézier handles, visibility keys, geometry, UVs, and the camera projection to `assets/branding/intro-keyframes.json`. `intro-timeline.js` evaluates those channels at continuous 24 fps scene time: film through 74, logo from 75 through 84, website at 85, timeline end 95. The live interactive page substitutes for Blender's website screenshot; its hero logo is positioned at the authored endpoint. The two identical screenshot planes are validated as duplicates. No DOM-target animation, extra hold, or extra entrance easing is added. The original logo image is reused with its exact UV crop.
+
+To regenerate after editing the Blender reference:
+
+```sh
+env ALSOFT_DRIVERS=null blender --factory-startup -b '/home/liveuser/Documents/transition dimonstration .blend' --python scripts/export-intro.py
+node scripts/check-intro.cjs
+python3 scripts/sync-motion.py
+```
+
+The exporter also writes an independent Blender projection oracle to `Documents/pix3lware-theme/transition-reference/blender-evaluated-frames.json`. The check compares every plane at 377 quarter-frame samples, including hidden geometry and visibility boundaries. The current maximum error is below 0.001 pixel at the authored resolution. Browser checks cover desktop/phone playback, model readiness, logo handoff, scrolling, and resizing.
 
 Page wheel input is damped into continuous `scrollTo` motion so coarse mouse wheels do not produce stair-step movement. Wheel events received inside the viewer are forwarded to the parent page while zoom mode is off. The Blender camera at `/home/liveuser/Documents/ford bronco.blend` is used as the floor-height lower orbit limit; the camera can reach the wheel-level cinematic view without flipping over.
 

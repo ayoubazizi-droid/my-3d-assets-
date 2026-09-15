@@ -8,6 +8,7 @@
   const loader = $('#site-loader');
   const video = $('.loader-film');
   const loaderLogo = $('.loader-logo img');
+  const logoPlane = $('.loader-logo');
   const frame = $('.garage-frame');
   // The 148-frame intro is 24 fps; frame 74 starts at (74 - 1) / 24.
   const heroCueTime = 73 / 24;
@@ -17,8 +18,8 @@
   function showIntroLogo() {
     if (!cueReached || !logoReady || root.classList.contains('intro-logo-visible')) return;
     root.classList.add('intro-logo-visible');
-    // The visible logo gets three seconds, even when the model is already cached.
-    heroRevealTimer = setTimeout(() => { introPlayed = true; dismiss(); }, 3000);
+    // Blender: film through frame 74, logo from 75, hero at 85.
+    heroRevealTimer = setTimeout(() => { introPlayed = true; dismiss(); }, 1000 / 24);
   }
   function revealHero(mediaTime) {
     if (mediaTime + .0001 < heroCueTime || cueReached) return;
@@ -46,25 +47,44 @@
     const percent = $('.loader-percent');
     if (percent) percent.textContent = `${Math.floor(value * 100).toString().padStart(2, '0')}%`;
   }
-  function dismiss() {
+  async function dismiss() {
     // No timeout and no skip may bypass the actual model's first successful render.
     if (dismissed || !garageLoaded || !introPlayed) return;
     dismissed = true;
     clearTimeout(slowTimer);
     clearTimeout(heroRevealTimer);
     clearTimeout(window.pix3lwareBootWatchdog);
+    const target = $('.hero-banner');
+    // Wait for final text metrics before measuring where the moving logo lands.
+    await Promise.allSettled([document.fonts?.ready, target?.querySelector('img')?.decode()]);
+    window.scrollTo({top:0,left:0,behavior:'instant'});
+    scroller?.scrollTo(0, {immediate:true, force:true});
+    measure();
+    const from = logoPlane?.getBoundingClientRect();
+    const to = target?.getBoundingClientRect();
+    root.classList.add('intro-morphing');
+    let movement;
+    if (enabled && from?.width && to?.width) {
+      const dx = to.left + to.width / 2 - from.left - from.width / 2;
+      const dy = to.top + to.height / 2 - from.top - from.height / 2;
+      movement = logoPlane.animate([
+        {transform:'translate3d(0,0,0) scale(1)'},
+        {transform:`translate3d(${dx}px,${dy}px,0) scale(${to.width / from.width})`}
+      ], {duration:10 / 24 * 1000, easing:'cubic-bezier(.333333,0,.666667,1)', fill:'forwards'});
+      await movement.finished.catch(() => {});
+    }
+    // Replace the moving logo with the identical hero logo at the same position.
     root.classList.add('intro-hero-visible');
-    loader?.classList.add('loader-leaving');
-    setTimeout(() => {
-      root.classList.remove('booting');
-      if (heroFrameCallback !== undefined) video?.cancelVideoFrameCallback?.(heroFrameCallback);
-      window.scrollTo({top: 0, left: 0, behavior: 'instant'});
-      scroller?.scrollTo(0, {immediate:true, force:true});
-      scroller?.start();
-      if (loader) { loader.hidden = true; loader.style.display = 'none'; }
-      video?.pause();
-      document.dispatchEvent(new Event('pix3lware:entered'));
-    }, enabled ? 900 : 0);
+    root.classList.remove('booting');
+    if (heroFrameCallback !== undefined) video?.cancelVideoFrameCallback?.(heroFrameCallback);
+    window.scrollTo({top: 0, left: 0, behavior: 'instant'});
+    scroller?.scrollTo(0, {immediate:true, force:true});
+    scroller?.start();
+    if (loader) { loader.hidden = true; loader.style.display = 'none'; }
+    movement?.cancel();
+    root.classList.remove('intro-morphing');
+    video?.pause();
+    document.dispatchEvent(new Event('pix3lware:entered'));
   }
   function garageError() {
     if (dismissed) return;

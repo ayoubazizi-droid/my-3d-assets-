@@ -91,7 +91,8 @@ body.crt-text { filter: none; }
 html.booting { overflow: hidden; }
 .booting .site-loader { display: block; }
 .site-loader .loader-film { position: absolute; inset: 0; width: 100%; height: 100%; max-height: none; aspect-ratio: auto; object-fit: cover; display: block; }
-.site-loader .loader-logo { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; object-fit: cover; object-position: center; opacity: 0; mix-blend-mode: screen; pointer-events: none; transition: opacity .8s ease; }
+.site-loader .loader-logo { position: absolute; top: 50%; left: 50%; width: min(90vw, 1728px); aspect-ratio: 6 / 1; overflow: hidden; opacity: 0; mix-blend-mode: screen; pointer-events: none; translate: -50% -50%; transition: opacity .8s ease, scale 1.1s cubic-bezier(.16,1,.3,1); }
+.site-loader .loader-logo img { position: absolute; top: 50%; left: -7.45%; width: 111%; max-width: none; height: auto; translate: 0 -50%; image-rendering: auto; }
 .site-loader .loader-film { transition: opacity .8s ease; }
 .intro-logo-visible .loader-logo { opacity: 1; }
 .intro-logo-visible .loader-film { opacity: 0; }
@@ -112,8 +113,8 @@ html.booting { overflow: hidden; }
 .motion-ready .hero { position: sticky; top: var(--header-height, 70px); height: calc(100svh - var(--header-height, 70px)); min-height: 0; }
 .hero { background: #10101d; color: var(--bg-panel); }
 .hero-inner { padding-block: 48px; }
-.hero .hero-banner { position: relative; display: block; width: calc(100vw - 40px); max-width: none; height: auto; max-height: none; aspect-ratio: 5.5; overflow: hidden; margin: 0 calc((100% - 100vw + 40px)/2) 28px; filter: none; mix-blend-mode: screen; }
-.hero-banner img { position: absolute; width: 100%; max-width: none; height: auto; top: 50%; left: 0; transform: translateY(-50%); image-rendering: auto; }
+.hero .hero-banner { position: relative; display: block; width: min(720px, 80vw); max-width: none; aspect-ratio: 6 / 1; overflow: hidden; margin: 0 auto 28px; filter: none; mix-blend-mode: screen; }
+.hero-banner img { position: absolute; top: 50%; left: -7.45%; width: 111%; max-width: none; height: auto; translate: 0 -50%; image-rendering: auto; }
 .hero-orbit { border-color: #ffffff24; }
 .hero-orbit::before, .hero-orbit::after { box-shadow: 0 0 35px #2fbd8e66; border-color: var(--mint); }
 .motion-ready .scroll-story { height: 320svh; }

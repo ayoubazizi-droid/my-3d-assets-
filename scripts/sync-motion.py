@@ -4,7 +4,7 @@ import re, shutil, xml.etree.ElementTree as ET
 
 root=Path(__file__).resolve().parents[1]
 base='https://ayoubazizi-droid.github.io/my-3d-assets-/'
-version='fullscreen-logo-20260914-v14'
+version='blender-transition-20260915-v15'
 viewer=root/'viewer.html'
 viewer.write_text(re.sub(r'(app\.js|style\.css)\?v=[^\x27\x22]+', lambda m:m[1]+'?v='+version, viewer.read_text()))
 critical=""".site-loader{display:none}html.booting{overflow:hidden}.booting .site-loader{display:block;position:fixed;inset:0;z-index:10000;background:#000;color:#fff}.loader-film{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.loader-logo{opacity:0}body.crt-text{filter:none}"""
@@ -14,7 +14,7 @@ loader="""<div class='site-loader' id='site-loader' aria-label='Loading the Ford
       <source src='{base}assets/loader/pix3lware.mp4?v=immersive-20260913-v3' type='video/mp4'/>
       <source src='{base}assets/loader/pix3lware.webm?v=immersive-20260913-v3' type='video/webm'/>
     </video>
-    <img class='loader-logo' src='{base}assets/branding/pixelware-full-logo.png' alt='' aria-hidden='true' fetchpriority='high'/>
+    <div class='loader-logo' aria-hidden='true'><img src='{base}assets/branding/pixelware-full-logo.png' alt='' fetchpriority='high'/></div>
     <div class='loader-hud'>
       <div class='loader-bottom'><span class='loader-status' role='status'>Loading the Ford Bronco…</span><span class='loader-percent' aria-hidden='true'>00%</span></div>
       <div class='loader-bar' aria-hidden='true'><span></span></div>

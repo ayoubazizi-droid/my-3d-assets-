@@ -7,7 +7,7 @@
   const clamp = (v, low = 0, high = 1) => Math.min(high, Math.max(low, v));
   const loader = $('#site-loader');
   const video = $('.loader-film');
-  const loaderLogo = $('.loader-logo');
+  const loaderLogo = $('.loader-logo img');
   const frame = $('.garage-frame');
   // The 148-frame intro is 24 fps; frame 74 starts at (74 - 1) / 24.
   const heroCueTime = 73 / 24;

@@ -241,11 +241,10 @@
     stage = document.createElement('div'); stage.className = 'gallery-stage';
     pin = document.createElement('div'); pin.className = 'gallery-pin';
     const caption = document.createElement('div'); caption.className = 'gallery-caption';
-    caption.innerHTML = '<span>THE PIXEL ARCHIVE / SCROLL TO EXPLORE</span><span class="gallery-counter">01 — 08</span>';
+    caption.innerHTML = `<span>PIXEL ART STYLES / SCROLL TO EXPLORE</span><span class="gallery-counter">01 — ${String(gallery.children.length).padStart(2,'0')}</span>`;
     counter = $('.gallery-counter', caption);
     const line = document.createElement('div'); line.className = 'gallery-progress'; line.setAttribute('aria-hidden', 'true'); line.append(document.createElement('span'));
     gallery.before(stage); stage.append(pin); pin.append(caption, gallery, line);
-    $$('.tile', gallery).forEach((tile, i) => { tile.dataset.index = `${String(i + 1).padStart(2, '0')} / PIX3LWARE`; });
   }
 
   let metrics = [], galleryMetric, raf = 0, active = true, lastY = -1;

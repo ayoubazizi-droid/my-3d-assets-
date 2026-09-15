@@ -4,7 +4,7 @@ import json, re, shutil, xml.etree.ElementTree as ET
 
 root=Path(__file__).resolve().parents[1]
 base='https://ayoubazizi-droid.github.io/my-3d-assets-/'
-version='about-contacts-20260915-v18'
+version='pixel-styles-20260915-v19'
 viewer=root/'viewer.html'
 viewer.write_text(re.sub(r'(app\.js|style\.css)\?v=[^\x27\x22]+', lambda m:m[1]+'?v='+version, viewer.read_text()))
 critical=""".site-loader{display:none}html.booting{overflow:hidden}.booting .site-loader{display:block;position:fixed;inset:0;z-index:10000;background:#000;color:#fff}.loader-film{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.loader-logo{opacity:0}body.crt-text{filter:none}"""
@@ -26,6 +26,9 @@ def block(name, text): return f'<!-- {name}:start -->\n{text}\n<!-- {name}:end -
 def remove_block(s,name): return re.sub(r'<!-- '+name+r':start -->.*?<!-- '+name+r':end -->\n?', '',s,flags=re.S)
 for filename in ['index.html','blogger-theme.xml']:
  p=root/filename; s=p.read_text(); blogger=filename.endswith('.xml')
+ s=s.replace('a few tiles from the archive', 'five styles of pixel art')
+ s=s.replace('Swap these for your own sprite exports whenever you like.', 'Explore the colors, resolution and vibe of each style.')
+ s=re.sub(r"    <div class='gallery'>.*?\n    </div>(?=\n  </div>)", lambda m:(root/'partials/pixel-styles.html').read_text().rstrip(), s, flags=re.S)
  logo_src=(base if blogger else './')+'assets/branding/pixelware-full-logo.png?v='+version
  hero_logo="<div class='hero-banner'><img alt='pix3lware' src='"+logo_src+"'/></div>"
  s=re.sub(r"<img alt='pix3lware' class='hero-banner'[^>]+/>", lambda m:hero_logo, s)

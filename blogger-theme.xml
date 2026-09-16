@@ -219,6 +219,8 @@
 
 
 
+
+
 /* pix-motion:start */
 /* Progressive enhancement: the document remains readable without JavaScript. */
 html { scroll-padding-top: 100px; scroll-behavior: auto !important; }
@@ -483,6 +485,8 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
 
 
 
+
+
 <svg aria-hidden='true' class='crt-filter-defs' focusable='false' height='0' style='position:absolute' width='0'><filter id='crt-curve' x='-5%' y='-5%' width='110%' height='110%' color-interpolation-filters='sRGB'><feTurbulence baseFrequency='0.008 0.02' numOctaves='1' seed='7' type='fractalNoise' result='crt-noise'/><feDisplacementMap in='SourceGraphic' in2='crt-noise' scale='3' xChannelSelector='R' yChannelSelector='G'/></filter></svg>
 
 <header class='site-header'>
@@ -507,7 +511,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
 <div class='hero'>
   <div class='wrap hero-inner'>
     <span class='boot-line pixel-font'>LOADING PIX3LWARE.EXE</span>
-    <div class='hero-banner'><img alt='pix3lware' src='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/branding/pixelware-full-logo.png?v=pixel-styles-20260915-v19'/></div>
+    <div class='hero-banner'><img alt='pix3lware' src='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/branding/pixelware-full-logo.png?v=keyboard-20260916-v20'/></div>
     <p class='tagline'>we draw the world one <span class='hl'>square</span> at a time.</p>
     <p class='sub'>pix3lware is a pixel-art studio &amp; asset shop &#8212; sprites, tilesets, animation packs and commissions for games, brands and people who miss the CRT hum.</p>
     <div class='hero-ctas'>
@@ -660,7 +664,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
       <h2>take it for a spin.</h2>
       <p>Our custom Ford Bronco Raptor. Drag to look around and zoom in on the details.</p>
     </div>
-    <iframe class='garage-frame' src='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html?v=pixel-styles-20260915-v19' title='Interactive Ford Bronco Raptor viewer' loading='eager' allow='fullscreen'></iframe>
+    <iframe class='garage-frame' src='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html?v=keyboard-20260916-v20' title='Interactive Ford Bronco Raptor viewer' loading='eager' allow='fullscreen'></iframe>
     <a class='garage-link' href='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html' target='_blank' rel='noopener'>Open the 3D garage in a new tab &#8599;</a>
   </div>
 
@@ -1621,6 +1625,52 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
   if (typeof module !== 'undefined') module.exports = scope.PixIntro;
 })(typeof window === 'undefined' ? globalThis : window);
 
+/* Shared keyboard handling for the page and its embedded garage. */
+(() => {
+  'use strict';
+  const arrows = new Set(['ArrowUp', 'ArrowDown']);
+  const controls = 'input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="textbox"], [role="combobox"], [role="listbox"], [role="slider"], [role="spinbutton"], [role="menu"], [role="menubar"], [role="tree"], [role="grid"], [role="tablist"], audio, video, [data-lenis-prevent], [data-lenis-prevent-keyboard]';
+  function ownsArrow(event) {
+    for (const element of event.composedPath()) {
+      if (!(element instanceof Element)) continue;
+      if (element.matches(controls)) return true;
+      if (element === document.body || element === document.documentElement) continue;
+      if (element.scrollHeight > element.clientHeight + 1 && /^(auto|scroll)$/.test(getComputedStyle(element).overflowY)) return true;
+    }
+    return false;
+  }
+  function listen({down, up, reset}) {
+    const pressed = new Set();
+    const release = () => { pressed.clear(); reset(); };
+    document.addEventListener('keydown', event => {
+      if (!arrows.has(event.key) || event.defaultPrevented || event.isComposing ||
+          event.altKey || event.ctrlKey || event.metaKey || event.shiftKey || ownsArrow(event)) return;
+      if (down(event)) {
+        pressed.add(event.key);
+        event.preventDefault();
+      }
+    });
+    document.addEventListener('keyup', event => {
+      if (!pressed.delete(event.key)) return;
+      up(event.key);
+    });
+    window.addEventListener('blur', release);
+    window.addEventListener('pagehide', release);
+    document.addEventListener('focusin', release);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) release(); });
+  }
+  window.PixKeyboard = {listen};
+  if (document.currentScript?.hasAttribute('data-forward-to-parent') && parent !== window) {
+    const origin = document.referrer ? new URL(document.referrer).origin : '*';
+    const send = data => parent.postMessage(data, origin);
+    listen({
+      down: event => { send({type:'pix3lware:page-key',key:event.key,pressed:true,repeat:event.repeat}); return true; },
+      up: key => send({type:'pix3lware:page-key',key,pressed:false}),
+      reset: () => send({type:'pix3lware:page-key-reset'})
+    });
+  }
+})();
+
 (() => {
   'use strict';
   window.pix3lwareMotionStarted = true;
@@ -1761,6 +1811,8 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
     }
     if (event.data?.type === 'pix3lware:garage-error') garageError();
     if (event.data?.type === 'pix3lware:page-wheel') handlePageWheel(event.data.deltaY);
+    if (event.data?.type === 'pix3lware:page-key') handlePageKey(event.data.key, event.data.pressed === true, event.data.repeat === true);
+    if (event.data?.type === 'pix3lware:page-key-reset') resetKeys();
   });
   if (frame) {
     frame.loading = 'eager';
@@ -1872,6 +1924,44 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
 
   let metrics = [], galleryMetric, raf = 0, active = true, lastY = -1;
   let scroller;
+  const heldKeys = new Set();
+  let lastKeyTime = 0;
+  const keyDirection = key => key === 'ArrowDown' ? 1 : key === 'ArrowUp' ? -1 : 0;
+  function resetKeys() { heldKeys.clear(); lastKeyTime = 0; }
+  function handlePageKey(key, pressed, repeat = false) {
+    const direction = keyDirection(key);
+    if (!direction) return false;
+    if (!pressed) { heldKeys.delete(key); if (!heldKeys.size) lastKeyTime = 0; return true; }
+    if (root.classList.contains('booting')) return true;
+    if (!scroller) {
+      // The iframe has no page of its own to scroll when motion is switched off.
+      window.scrollBy({top:direction*40,behavior:'instant'});
+      return true;
+    }
+    if (repeat || heldKeys.has(key)) return true;
+    if (!heldKeys.size) lastKeyTime = performance.now();
+    heldKeys.add(key);
+    scroller.scrollTo(scroller.targetScroll + direction*80, {programmatic:false,lerp:.06});
+    requestTick();
+    return true;
+  }
+  PixKeyboard.listen({
+    down: event => {
+      if (!scroller && !root.classList.contains('booting')) return false;
+      return handlePageKey(event.key,true,event.repeat);
+    },
+    up: key => handlePageKey(key,false),
+    reset: resetKeys
+  });
+  function advanceKeys(time) {
+    if (!heldKeys.size || !scroller || root.classList.contains('booting')) return;
+    const elapsed = clamp(time-lastKeyTime,0,100)/1000;
+    lastKeyTime = time;
+    // Held arrows advance every rendered frame, independent of OS key repeat.
+    const direction = keyDirection([...heldKeys].at(-1));
+    const speed = clamp(innerHeight*.9,480,960);
+    scroller.scrollTo(scroller.targetScroll + direction*speed*elapsed, {programmatic:false,lerp:.06});
+  }
   function handlePageWheel(delta) {
     if (root.classList.contains('booting') || !Number.isFinite(delta)) return;
     if (scroller) scroller.scrollTo(scroller.targetScroll + delta * .9, {programmatic:false, lerp:.06});
@@ -1909,6 +1999,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
     raf = 0;
     if (!enabled || !active) return;
     const vh = innerHeight, vw = innerWidth;
+    advanceKeys(time);
     scroller?.raf(time);
     // Page, text, gallery and particles share one continuous scroll coordinate.
     const y = scroller ? scroller.animatedScroll : scrollY;
@@ -1978,6 +2069,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
   }
   function requestTick() { if (!raf && enabled && active) raf = requestAnimationFrame(render); }
   function applyMotion() {
+    resetKeys();
     enabled = motionChoice;
     root.classList.toggle('motion-ready', enabled); root.classList.toggle('motion-off', !enabled);
     toggle.textContent = enabled ? 'MOTION ON' : 'MOTION OFF';

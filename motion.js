@@ -138,6 +138,8 @@
     }
     if (event.data?.type === 'pix3lware:garage-error') garageError();
     if (event.data?.type === 'pix3lware:page-wheel') handlePageWheel(event.data.deltaY);
+    if (event.data?.type === 'pix3lware:page-key') handlePageKey(event.data.key, event.data.pressed === true, event.data.repeat === true);
+    if (event.data?.type === 'pix3lware:page-key-reset') resetKeys();
   });
   if (frame) {
     frame.loading = 'eager';
@@ -249,6 +251,44 @@
 
   let metrics = [], galleryMetric, raf = 0, active = true, lastY = -1;
   let scroller;
+  const heldKeys = new Set();
+  let lastKeyTime = 0;
+  const keyDirection = key => key === 'ArrowDown' ? 1 : key === 'ArrowUp' ? -1 : 0;
+  function resetKeys() { heldKeys.clear(); lastKeyTime = 0; }
+  function handlePageKey(key, pressed, repeat = false) {
+    const direction = keyDirection(key);
+    if (!direction) return false;
+    if (!pressed) { heldKeys.delete(key); if (!heldKeys.size) lastKeyTime = 0; return true; }
+    if (root.classList.contains('booting')) return true;
+    if (!scroller) {
+      // The iframe has no page of its own to scroll when motion is switched off.
+      window.scrollBy({top:direction*40,behavior:'instant'});
+      return true;
+    }
+    if (repeat || heldKeys.has(key)) return true;
+    if (!heldKeys.size) lastKeyTime = performance.now();
+    heldKeys.add(key);
+    scroller.scrollTo(scroller.targetScroll + direction*80, {programmatic:false,lerp:.06});
+    requestTick();
+    return true;
+  }
+  PixKeyboard.listen({
+    down: event => {
+      if (!scroller && !root.classList.contains('booting')) return false;
+      return handlePageKey(event.key,true,event.repeat);
+    },
+    up: key => handlePageKey(key,false),
+    reset: resetKeys
+  });
+  function advanceKeys(time) {
+    if (!heldKeys.size || !scroller || root.classList.contains('booting')) return;
+    const elapsed = clamp(time-lastKeyTime,0,100)/1000;
+    lastKeyTime = time;
+    // Held arrows advance every rendered frame, independent of OS key repeat.
+    const direction = keyDirection([...heldKeys].at(-1));
+    const speed = clamp(innerHeight*.9,480,960);
+    scroller.scrollTo(scroller.targetScroll + direction*speed*elapsed, {programmatic:false,lerp:.06});
+  }
   function handlePageWheel(delta) {
     if (root.classList.contains('booting') || !Number.isFinite(delta)) return;
     if (scroller) scroller.scrollTo(scroller.targetScroll + delta * .9, {programmatic:false, lerp:.06});
@@ -286,6 +326,7 @@
     raf = 0;
     if (!enabled || !active) return;
     const vh = innerHeight, vw = innerWidth;
+    advanceKeys(time);
     scroller?.raf(time);
     // Page, text, gallery and particles share one continuous scroll coordinate.
     const y = scroller ? scroller.animatedScroll : scrollY;
@@ -355,6 +396,7 @@
   }
   function requestTick() { if (!raf && enabled && active) raf = requestAnimationFrame(render); }
   function applyMotion() {
+    resetKeys();
     enabled = motionChoice;
     root.classList.toggle('motion-ready', enabled); root.classList.toggle('motion-off', !enabled);
     toggle.textContent = enabled ? 'MOTION ON' : 'MOTION OFF';

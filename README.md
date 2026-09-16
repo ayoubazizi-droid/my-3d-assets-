@@ -56,6 +56,8 @@ The exporter also writes an independent Blender projection oracle to `Documents/
 
 Page wheel input is damped into continuous `scrollTo` motion so coarse mouse wheels do not produce stair-step movement. Wheel events received inside the viewer are forwarded to the parent page while zoom mode is off. The Blender camera at `/home/liveuser/Documents/ford bronco.blend` is used as the floor-height lower orbit limit; the camera can reach the wheel-level cinematic view without flipping over.
 
+Up/down arrows use the same easing. A tap moves 80 pixels; holding a key advances continuously using elapsed frame time, independently of operating-system key repeat. `keyboard-scroll.js` shares keyboard handling with the embedded garage, preserving arrow keys in fields, the Look selector, editable content, and nested scroll areas. Focus loss and hidden tabs clear held keys. Motion Off restores native keyboard scrolling.
+
 `experience.js` adds a pixel cursor, a subtle particle atmosphere, and an original four-chord ambient game score synthesized using Web Audio. Sound is initially off and starts with the Sound button, as required by browser audio autoplay restrictions. It fades when muted and pauses in background tabs.
 
 Run `python3 scripts/sync-motion.py` after edits to update the static page, Blogger XML, and local Blogger install copies. The static iframe uses a relative URL so previews use the local viewer.

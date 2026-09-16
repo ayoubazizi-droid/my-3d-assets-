@@ -218,6 +218,7 @@
 
 
 
+
 /* pix-motion:start */
 /* Progressive enhancement: the document remains readable without JavaScript. */
 html { scroll-padding-top: 100px; scroll-behavior: auto !important; }
@@ -445,6 +446,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
     </div>
 </div>
 <!-- pix-loader:end -->
+
 
 
 
@@ -1535,7 +1537,6 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
     </span>
 <ul class='foot-links'>
       <li><a class='contact-icon' href='mailto:pix3lware@gmail.com' aria-label='Email pix3lware' title='Email pix3lware'><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' aria-hidden='true' focusable='false'><path fill='currentColor' fill-rule='evenodd' d='M1 3H15V13H1ZM3 5V11H13V5Z'/><path fill='currentColor' d='M3 5H5V6H6V7H7V8H9V7H10V6H11V5H13V6H12V7H11V8H10V9H6V8H5V7H4V6H3Z'/></svg></a></li>
-      <li><a class='contact-icon' href='https://pix3lware.blogspot.com/' target='_blank' rel='noopener noreferrer' aria-label='Blog' title='Blog'><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' aria-hidden='true' focusable='false'><path fill='currentColor' fill-rule='evenodd' d='M3 1H11V3H13V7H15V13H13V15H3V13H1V3H3ZM5 4V6H9V4ZM5 9V11H11V9Z'/></svg></a></li>
       <li><a class='contact-icon' href='https://www.tiktok.com/@pix3lware' target='_blank' rel='noopener noreferrer' aria-label='TikTok' title='TikTok'><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' aria-hidden='true' focusable='false'><path fill='currentColor' d='M8 1H11V3H12V4H14V7H12V6H11V12H10V14H8V15H4V14H2V12H1V9H2V7H4V6H7V9H5V10H4V12H7V11H8Z'/></svg></a></li>
       <li><a class='contact-icon' href='https://www.pinterest.com/pix3lware/' target='_blank' rel='noopener noreferrer' aria-label='Pinterest' title='Pinterest'><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' aria-hidden='true' focusable='false'><path fill='currentColor' d='M5 1H11V2H13V4H14V9H13V11H11V12H8V10H10V9H11V5H10V4H6V5H5V8H3V4H4V2H5ZM7 6H9V10H8V13H7V15H4V13H5V10H6V7H7Z'/></svg></a></li>
       <li><a class='contact-icon' href='https://www.instagram.com/pix3lware/' target='_blank' rel='noopener noreferrer' aria-label='Instagram' title='Instagram'><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' aria-hidden='true' focusable='false'><path fill='currentColor' fill-rule='evenodd' d='M3 1H13V2H14V3H15V13H14V14H13V15H3V14H2V13H1V3H2V2H3ZM4 3V4H3V12H4V13H12V12H13V4H12V3ZM6 5H10V6H11V10H10V11H6V10H5V6H6ZM7 7V9H9V7Z'/><path fill='currentColor' d='M11 4H13V6H11Z'/></svg></a></li>

@@ -38,8 +38,6 @@ for filename in ['index.html','blogger-theme.xml']:
  s=s.replace("<a class='logo' href='./'>","<a class='logo' href='./' aria-label='pix3lware home'>")
  s=re.sub(r"<a class='logo'([^>]*)>",lambda m:"<a class='logo'"+m[1]+("" if 'aria-label=' in m[1] else " aria-label='pix3lware home'")+">",s)
  s=s.replace('mailto:hello@pix3lware.com','mailto:pix3lware@gmail.com').replace('>hello@pix3lware.com<','>pix3lware@gmail.com<')
- if "href='https://pix3lware.blogspot.com/'" not in s:
-  s=s.replace("<li><a href='mailto:pix3lware@gmail.com'>pix3lware@gmail.com</a></li>","<li><a href='mailto:pix3lware@gmail.com'>pix3lware@gmail.com</a></li>\n      <li><a href='https://pix3lware.blogspot.com/' target='_blank' rel='noopener noreferrer'>Blog</a></li>")
  s=s.replace("title='Interactive Ford Bronco Raptor viewer' loading='lazy'", "title='Interactive Ford Bronco Raptor viewer' loading='eager'")
  s=re.sub(r"(class='garage-frame' src=')[^']+",lambda m:m[1]+(base if blogger else './')+'viewer.html?v='+version,s)
  if blogger:

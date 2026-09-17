@@ -58,20 +58,29 @@
     try {
       if (!audio) createAudio();
       await audio.resume();
+      if (audio.state !== 'running') return;
       master.gain.setTargetAtTime(.38, audio.currentTime, .2);
       nextChord = audio.currentTime + .05;
       scheduleMusic();
       unlocked = true;
+      clearInterval(autoplayRetry);
     } catch (_) {}
   }
-  // Browsers require a user gesture before audible audio; the first tap/click starts it.
+  // Autoplay is attempted on load and retried, so the music starts by itself
+  // whenever the browser allows it (autoplay permission, engaged/returning
+  // visitor); otherwise the first tap/click/keypress unlocks it.
   document.addEventListener('pointerdown', unlockMusic, {once:false, passive:true});
+  document.addEventListener('keydown', unlockMusic, {passive:true});
+  const autoplayRetry = setInterval(unlockMusic, 900);
+  window.addEventListener('focus', unlockMusic);
+  unlockMusic();
   sound.addEventListener('click', async () => {
     try {
       if (!audio) createAudio();
       await audio.resume();
       musicOn = !musicOn;
       unlocked = true;
+      clearInterval(autoplayRetry);
       master.gain.cancelScheduledValues(audio.currentTime);
       master.gain.setTargetAtTime(musicOn ? .38 : 0, audio.currentTime, .2);
       if (musicOn) { nextChord = audio.currentTime + .05; scheduleMusic(); }
@@ -142,4 +151,10 @@
   window.addEventListener('pageshow', event => { if (event.persisted && audio) scheduler = setInterval(scheduleMusic,250); });
   window.addEventListener('resize', resize, {passive:true});
   resize(); start();
+  // Read-only probe for automated checks and debugging.
+  window.pix3lwareAudio = {
+    get state() { return audio ? audio.state : 'none'; },
+    get gain() { return master ? master.gain.value : 0; },
+    get unlocked() { return unlocked; }
+  };
 })();

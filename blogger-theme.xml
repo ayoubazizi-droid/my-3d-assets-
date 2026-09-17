@@ -221,6 +221,7 @@
 
 
 
+
 /* pix-motion:start */
 /* Progressive enhancement: the document remains readable without JavaScript. */
 html { scroll-padding-top: 100px; scroll-behavior: auto !important; }
@@ -494,6 +495,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
 
 
 
+
 <svg aria-hidden='true' class='crt-filter-defs' focusable='false' height='0' style='position:absolute' width='0'><filter id='crt-curve' x='-5%' y='-5%' width='110%' height='110%' color-interpolation-filters='sRGB'><feTurbulence baseFrequency='0.008 0.02' numOctaves='1' seed='7' type='fractalNoise' result='crt-noise'/><feDisplacementMap in='SourceGraphic' in2='crt-noise' scale='3' xChannelSelector='R' yChannelSelector='G'/></filter></svg>
 
 <header class='site-header'>
@@ -518,7 +520,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
 <div class='hero'>
   <div class='wrap hero-inner'>
     <span class='boot-line pixel-font'>LOADING PIX3LWARE.EXE</span>
-    <div class='hero-banner'><img alt='pix3lware' src='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/branding/pixelware-full-logo.png?v=keyboard-20260916-v20'/></div>
+    <div class='hero-banner'><img alt='pix3lware' src='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/branding/pixelware-full-logo.png?v=contact-20260917-v22'/></div>
     <p class='tagline'>we draw the world one <span class='hl'>square</span> at a time.</p>
     <p class='sub'>pix3lware is a pixel-art studio &amp; asset shop &#8212; sprites, tilesets, animation packs and commissions for games, brands and people who miss the CRT hum.</p>
     <div class='hero-ctas'>
@@ -671,7 +673,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
       <h2>take it for a spin.</h2>
       <p>Our custom Ford Bronco Raptor. Drag to look around and zoom in on the details.</p>
     </div>
-    <iframe class='garage-frame' src='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html?v=keyboard-20260916-v20' title='Interactive Ford Bronco Raptor viewer' loading='eager' allow='fullscreen'></iframe>
+    <iframe class='garage-frame' src='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html?v=contact-20260917-v22' title='Interactive Ford Bronco Raptor viewer' loading='eager' allow='fullscreen'></iframe>
     <a class='garage-link' href='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html' target='_blank' rel='noopener'>Open the 3D garage in a new tab &#8599;</a>
   </div>
 
@@ -2172,20 +2174,29 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
     try {
       if (!audio) createAudio();
       await audio.resume();
+      if (audio.state !== 'running') return;
       master.gain.setTargetAtTime(.38, audio.currentTime, .2);
       nextChord = audio.currentTime + .05;
       scheduleMusic();
       unlocked = true;
+      clearInterval(autoplayRetry);
     } catch (_) {}
   }
-  // Browsers require a user gesture before audible audio; the first tap/click starts it.
+  // Autoplay is attempted on load and retried, so the music starts by itself
+  // whenever the browser allows it (autoplay permission, engaged/returning
+  // visitor); otherwise the first tap/click/keypress unlocks it.
   document.addEventListener('pointerdown', unlockMusic, {once:false, passive:true});
+  document.addEventListener('keydown', unlockMusic, {passive:true});
+  const autoplayRetry = setInterval(unlockMusic, 900);
+  window.addEventListener('focus', unlockMusic);
+  unlockMusic();
   sound.addEventListener('click', async () => {
     try {
       if (!audio) createAudio();
       await audio.resume();
       musicOn = !musicOn;
       unlocked = true;
+      clearInterval(autoplayRetry);
       master.gain.cancelScheduledValues(audio.currentTime);
       master.gain.setTargetAtTime(musicOn ? .38 : 0, audio.currentTime, .2);
       if (musicOn) { nextChord = audio.currentTime + .05; scheduleMusic(); }
@@ -2256,6 +2267,12 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
   window.addEventListener('pageshow', event => { if (event.persisted && audio) scheduler = setInterval(scheduleMusic,250); });
   window.addEventListener('resize', resize, {passive:true});
   resize(); start();
+  // Read-only probe for automated checks and debugging.
+  window.pix3lwareAudio = {
+    get state() { return audio ? audio.state : 'none'; },
+    get gain() { return master ? master.gain.value : 0; },
+    get unlocked() { return unlocked; }
+  };
 })();
 
 //]]></script>

@@ -63,16 +63,16 @@
       nextChord = audio.currentTime + .05;
       scheduleMusic();
       unlocked = true;
-      clearInterval(autoplayRetry);
+      if (typeof autoplayRetry !== 'undefined') clearInterval(autoplayRetry);
     } catch (_) {}
   }
-  // Autoplay is attempted on load and retried, so the music starts by itself
-  // whenever the browser allows it (autoplay permission, engaged/returning
-  // visitor); otherwise the first tap/click/keypress unlocks it.
-  document.addEventListener('pointerdown', unlockMusic, {once:false, passive:true});
-  document.addEventListener('keydown', unlockMusic, {passive:true});
+  // Music starts automatically when the browser allows autoplay; otherwise the
+  // click or keypress that enters the site doubles as the audio gesture.
+  document.addEventListener('pix3lware:enter-request', unlockMusic);
   const autoplayRetry = setInterval(unlockMusic, 900);
   window.addEventListener('focus', unlockMusic);
+  document.addEventListener('pointerdown', unlockMusic, {once:false, passive:true});
+  document.addEventListener('keydown', unlockMusic, {passive:true});
   unlockMusic();
   sound.addEventListener('click', async () => {
     try {

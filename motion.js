@@ -51,10 +51,22 @@
     inner.style.top = `${bounds.y-layoutTop}px`;
     inner.style.left = `${bounds.x-actual.left}px`;
   }
+  let preparingEntry = false, entryReady = false, entryAccepted = false;
   function showIntroLogo() {
     if (!cueReached || !logoReady || !garageLoaded || entering) return;
+    if (!entryReady) {
+      if (preparingEntry) return;
+      preparingEntry = true;
+      Promise.allSettled([document.fonts?.ready,$('.hero-banner img')?.decode()]).then(() => {
+        entryReady = true;
+        if (status) status.textContent = 'Your world is ready';
+        if (enter) { enter.hidden = false; enter.focus({preventScroll:true}); }
+      });
+      return;
+    }
+    if (!entryAccepted) return;
     entering = true;
-    Promise.allSettled([document.fonts?.ready,$('.hero-banner img')?.decode()]).then(() => {
+    {
       alignHero();
       root.classList.add('intro-morphing');
       // Hold the last movie frame for its full 1/24 second, then evaluate Blender time.
@@ -66,7 +78,7 @@
         if (atFrame < intro.end) requestAnimationFrame(tick);
       }
       requestAnimationFrame(tick);
-    });
+    }
   }
   function revealHero(mediaTime) {
     if (mediaTime + .0001 < heroCueTime || cueReached) return;
@@ -85,6 +97,7 @@
   const status = $('.loader-status');
   const retry = $('.loader-retry');
   const playIntro = $('.loader-play');
+  const enter = $('.loader-enter');
   loaderLogo?.decode().then(() => { logoReady = true; showIntroLogo(); }).catch(() => {
     if (status) status.textContent = 'Logo could not load. Please retry.';
     if (retry) retry.hidden = false;
@@ -149,6 +162,26 @@
     ask();
   } else garageError();
   retry?.addEventListener('click', () => location.reload());
+  // Interaction gate: once the world is ready, the site enters on the first
+  // click or keypress. That same gesture lets the browser start the music.
+  const gateControls = new AbortController();
+  function gateKey(event) {
+    if (!entryReady || entryAccepted || event.repeat || event.isComposing || event.ctrlKey || event.metaKey || event.altKey) return;
+    if (['Tab','Shift','Control','Alt','Meta','Escape'].includes(event.key)) return;
+    event.preventDefault();
+    enterSite();
+  }
+  function enterSite() {
+    if (!entryReady || entryAccepted) return;
+    entryAccepted = true;
+    gateControls.abort();
+    if (enter) { enter.blur(); enter.hidden = true; }
+    // Dispatch synchronously inside the trusted gesture, before the animation.
+    document.dispatchEvent(new Event('pix3lware:enter-request'));
+    showIntroLogo();
+  }
+  document.addEventListener('keydown', gateKey, {capture:true, signal: gateControls.signal});
+  loader?.addEventListener('click', enterSite, {signal: gateControls.signal});
   // Explicit muted playback is independent of reduced motion / the page motion control.
   async function playVideo() {
     if (!video || dismissed || cueReached) return;

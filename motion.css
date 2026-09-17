@@ -119,6 +119,10 @@ html.booting { overflow: hidden; }
 .loader-bar { height: 2px; margin-top: 12px; background: #333; }
 .loader-bar span { display: block; height: 100%; background: #ffce3d; transform: scaleX(var(--load-progress,0)); transform-origin: left; transition: transform .3s; }
 .loader-play, .loader-retry { background: #000b; color: #fff; border: 1px solid #999; padding: 12px 16px; margin-top: 16px; font: 11px 'Space Mono', monospace; cursor: pointer; }
+.loader-enter { position: fixed; left: 50%; top: 50%; translate: -50% 130%; width: max-content; max-width: min(92vw, 440px); text-align: center; background: none; border: none; color: #fff; text-shadow: 0 0 7px #000, 0 2px 3px #000; padding: 14px 18px; font: 11px 'Space Mono', monospace; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; animation: enter-flicker 1.4s steps(1, end) infinite; }
+.loader-enter[hidden] { display: none; }
+.loader-enter:focus { outline: none; }
+@keyframes enter-flicker { 0% {opacity:1} 9% {opacity:.25} 14% {opacity:1} 37% {opacity:.85} 41% {opacity:.15} 47% {opacity:1} 68% {opacity:.55} 73% {opacity:1} 86% {opacity:.35} 90% {opacity:1} }
 
 /* A full-height opening scene replaces the short, static paper-like hero. */
 .logo { gap: 0; }
@@ -158,6 +162,7 @@ html.booting { overflow: hidden; }
   .contact-icon svg { width: 40px; height: 40px; }
   .sound-toggle { right: 12px; bottom: 18px; padding: 10px 8px; font-size: 8px; }
   .loader-hud { bottom: 24px; left: 18px; width: calc(100vw - 150px); }
+  .loader-enter { font-size: 9px; letter-spacing: 1px; padding: 12px 14px; }
   .loader-bottom { font-size: 8px; letter-spacing: .5px; }
   .hero-inner { padding-block: 24px; }
   .hero p.sub { font-size: 14px; }
@@ -201,6 +206,7 @@ html.motion-off { scroll-behavior: auto; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .loader-leaving { animation: none; }
+  .loader-enter { animation: none; }
 }
 @media (pointer: fine) {
   html, body, a, button, input, select, label { cursor: url('./assets/pixel-cursor.svg') 16 16, crosshair; }

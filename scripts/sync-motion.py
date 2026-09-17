@@ -4,7 +4,7 @@ import json, re, shutil, xml.etree.ElementTree as ET
 
 root=Path(__file__).resolve().parents[1]
 base='https://ayoubazizi-droid.github.io/my-3d-assets-/'
-version='contact-20260917-v22'
+version='enter-20260917-v26'
 viewer=root/'viewer.html'
 viewer.write_text(re.sub(r'(app\.js|style\.css|keyboard-scroll\.js)\?v=[^\x27\x22]+', lambda m:m[1]+'?v='+version, viewer.read_text()))
 critical=""".site-loader{display:none}html.booting{overflow:hidden}.booting .site-loader{display:block;position:fixed;inset:0;z-index:10000;background:#000;color:#fff}.loader-film{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.loader-logo{opacity:0}body.crt-text{filter:none}"""
@@ -20,6 +20,7 @@ loader="""<div class='site-loader' id='site-loader' aria-label='Loading the Ford
       <div class='loader-bar' aria-hidden='true'><span></span></div>
       <button class='loader-play' type='button' hidden='hidden'>PLAY INTRO &#9654;</button>
       <button class='loader-retry' type='button' hidden='hidden'>RETRY LOADING &#8635;</button>
+      <button class='loader-enter' type='button' hidden='hidden'>CLICK OR PRESS ANY KEY TO CONTINUE</button>
     </div>
 </div>"""
 def block(name, text): return f'<!-- {name}:start -->\n{text}\n<!-- {name}:end -->'

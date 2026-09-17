@@ -222,6 +222,11 @@
 
 
 
+
+
+
+
+
 /* pix-motion:start */
 /* Progressive enhancement: the document remains readable without JavaScript. */
 html { scroll-padding-top: 100px; scroll-behavior: auto !important; }
@@ -344,6 +349,10 @@ html.booting { overflow: hidden; }
 .loader-bar { height: 2px; margin-top: 12px; background: #333; }
 .loader-bar span { display: block; height: 100%; background: #ffce3d; transform: scaleX(var(--load-progress,0)); transform-origin: left; transition: transform .3s; }
 .loader-play, .loader-retry { background: #000b; color: #fff; border: 1px solid #999; padding: 12px 16px; margin-top: 16px; font: 11px 'Space Mono', monospace; cursor: pointer; }
+.loader-enter { position: fixed; left: 50%; top: 50%; translate: -50% 130%; width: max-content; max-width: min(92vw, 440px); text-align: center; background: none; border: none; color: #fff; text-shadow: 0 0 7px #000, 0 2px 3px #000; padding: 14px 18px; font: 11px 'Space Mono', monospace; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; animation: enter-flicker 1.4s steps(1, end) infinite; }
+.loader-enter[hidden] { display: none; }
+.loader-enter:focus { outline: none; }
+@keyframes enter-flicker { 0% {opacity:1} 9% {opacity:.25} 14% {opacity:1} 37% {opacity:.85} 41% {opacity:.15} 47% {opacity:1} 68% {opacity:.55} 73% {opacity:1} 86% {opacity:.35} 90% {opacity:1} }
 
 /* A full-height opening scene replaces the short, static paper-like hero. */
 .logo { gap: 0; }
@@ -383,6 +392,7 @@ html.booting { overflow: hidden; }
   .contact-icon svg { width: 40px; height: 40px; }
   .sound-toggle { right: 12px; bottom: 18px; padding: 10px 8px; font-size: 8px; }
   .loader-hud { bottom: 24px; left: 18px; width: calc(100vw - 150px); }
+  .loader-enter { font-size: 9px; letter-spacing: 1px; padding: 12px 14px; }
   .loader-bottom { font-size: 8px; letter-spacing: .5px; }
   .hero-inner { padding-block: 24px; }
   .hero p.sub { font-size: 14px; }
@@ -426,6 +436,7 @@ html.motion-off { scroll-behavior: auto; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .loader-leaving { animation: none; }
+  .loader-enter { animation: none; }
 }
 @media (pointer: fine) {
   html, body, a, button, input, select, label { cursor: url('https://ayoubazizi-droid.github.io/my-3d-assets-/assets/pixel-cursor.svg') 16 16, crosshair; }
@@ -453,9 +464,15 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
       <div class='loader-bar' aria-hidden='true'><span></span></div>
       <button class='loader-play' type='button' hidden='hidden'>PLAY INTRO &#9654;</button>
       <button class='loader-retry' type='button' hidden='hidden'>RETRY LOADING &#8635;</button>
+      <button class='loader-enter' type='button' hidden='hidden'>CLICK OR PRESS ANY KEY TO CONTINUE</button>
     </div>
 </div>
 <!-- pix-loader:end -->
+
+
+
+
+
 
 
 
@@ -520,7 +537,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
 <div class='hero'>
   <div class='wrap hero-inner'>
     <span class='boot-line pixel-font'>LOADING PIX3LWARE.EXE</span>
-    <div class='hero-banner'><img alt='pix3lware' src='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/branding/pixelware-full-logo.png?v=contact-20260917-v22'/></div>
+    <div class='hero-banner'><img alt='pix3lware' src='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/branding/pixelware-full-logo.png?v=enter-20260917-v26'/></div>
     <p class='tagline'>we draw the world one <span class='hl'>square</span> at a time.</p>
     <p class='sub'>pix3lware is a pixel-art studio &amp; asset shop &#8212; sprites, tilesets, animation packs and commissions for games, brands and people who miss the CRT hum.</p>
     <div class='hero-ctas'>
@@ -673,7 +690,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
       <h2>take it for a spin.</h2>
       <p>Our custom Ford Bronco Raptor. Drag to look around and zoom in on the details.</p>
     </div>
-    <iframe class='garage-frame' src='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html?v=contact-20260917-v22' title='Interactive Ford Bronco Raptor viewer' loading='eager' allow='fullscreen'></iframe>
+    <iframe class='garage-frame' src='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html?v=enter-20260917-v26' title='Interactive Ford Bronco Raptor viewer' loading='eager' allow='fullscreen'></iframe>
     <a class='garage-link' href='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html' target='_blank' rel='noopener'>Open the 3D garage in a new tab &#8599;</a>
   </div>
 
@@ -1733,10 +1750,22 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
     inner.style.top = `${bounds.y-layoutTop}px`;
     inner.style.left = `${bounds.x-actual.left}px`;
   }
+  let preparingEntry = false, entryReady = false, entryAccepted = false;
   function showIntroLogo() {
     if (!cueReached || !logoReady || !garageLoaded || entering) return;
+    if (!entryReady) {
+      if (preparingEntry) return;
+      preparingEntry = true;
+      Promise.allSettled([document.fonts?.ready,$('.hero-banner img')?.decode()]).then(() => {
+        entryReady = true;
+        if (status) status.textContent = 'Your world is ready';
+        if (enter) { enter.hidden = false; enter.focus({preventScroll:true}); }
+      });
+      return;
+    }
+    if (!entryAccepted) return;
     entering = true;
-    Promise.allSettled([document.fonts?.ready,$('.hero-banner img')?.decode()]).then(() => {
+    {
       alignHero();
       root.classList.add('intro-morphing');
       // Hold the last movie frame for its full 1/24 second, then evaluate Blender time.
@@ -1748,7 +1777,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
         if (atFrame < intro.end) requestAnimationFrame(tick);
       }
       requestAnimationFrame(tick);
-    });
+    }
   }
   function revealHero(mediaTime) {
     if (mediaTime + .0001 < heroCueTime || cueReached) return;
@@ -1767,6 +1796,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
   const status = $('.loader-status');
   const retry = $('.loader-retry');
   const playIntro = $('.loader-play');
+  const enter = $('.loader-enter');
   loaderLogo?.decode().then(() => { logoReady = true; showIntroLogo(); }).catch(() => {
     if (status) status.textContent = 'Logo could not load. Please retry.';
     if (retry) retry.hidden = false;
@@ -1831,6 +1861,26 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
     ask();
   } else garageError();
   retry?.addEventListener('click', () => location.reload());
+  // Interaction gate: once the world is ready, the site enters on the first
+  // click or keypress. That same gesture lets the browser start the music.
+  const gateControls = new AbortController();
+  function gateKey(event) {
+    if (!entryReady || entryAccepted || event.repeat || event.isComposing || event.ctrlKey || event.metaKey || event.altKey) return;
+    if (['Tab','Shift','Control','Alt','Meta','Escape'].includes(event.key)) return;
+    event.preventDefault();
+    enterSite();
+  }
+  function enterSite() {
+    if (!entryReady || entryAccepted) return;
+    entryAccepted = true;
+    gateControls.abort();
+    if (enter) { enter.blur(); enter.hidden = true; }
+    // Dispatch synchronously inside the trusted gesture, before the animation.
+    document.dispatchEvent(new Event('pix3lware:enter-request'));
+    showIntroLogo();
+  }
+  document.addEventListener('keydown', gateKey, {capture:true, signal: gateControls.signal});
+  loader?.addEventListener('click', enterSite, {signal: gateControls.signal});
   // Explicit muted playback is independent of reduced motion / the page motion control.
   async function playVideo() {
     if (!video || dismissed || cueReached) return;
@@ -2179,16 +2229,16 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
       nextChord = audio.currentTime + .05;
       scheduleMusic();
       unlocked = true;
-      clearInterval(autoplayRetry);
+      if (typeof autoplayRetry !== 'undefined') clearInterval(autoplayRetry);
     } catch (_) {}
   }
-  // Autoplay is attempted on load and retried, so the music starts by itself
-  // whenever the browser allows it (autoplay permission, engaged/returning
-  // visitor); otherwise the first tap/click/keypress unlocks it.
-  document.addEventListener('pointerdown', unlockMusic, {once:false, passive:true});
-  document.addEventListener('keydown', unlockMusic, {passive:true});
+  // Music starts automatically when the browser allows autoplay; otherwise the
+  // click or keypress that enters the site doubles as the audio gesture.
+  document.addEventListener('pix3lware:enter-request', unlockMusic);
   const autoplayRetry = setInterval(unlockMusic, 900);
   window.addEventListener('focus', unlockMusic);
+  document.addEventListener('pointerdown', unlockMusic, {once:false, passive:true});
+  document.addEventListener('keydown', unlockMusic, {passive:true});
   unlockMusic();
   sound.addEventListener('click', async () => {
     try {

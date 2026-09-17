@@ -20,6 +20,9 @@ const root=require('node:path').resolve(__dirname,'..');
   await page.goto('https://keyboard.test/',{waitUntil:'domcontentloaded'});
   await page.keyboard.press('ArrowDown');
   assert.equal(await page.evaluate(()=>scrollY),0,'loader stays at top');
+   await page.locator('.loader-enter').waitFor({state:'visible'});
+   await page.keyboard.press('Enter');
+
   await page.waitForFunction(()=>document.documentElement.classList.contains('intro-hero-visible'));
   await page.evaluate(()=>{
    window.keySamples=[]; window.recordKeys=true;

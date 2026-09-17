@@ -60,7 +60,13 @@
       Promise.allSettled([document.fonts?.ready,$('.hero-banner img')?.decode()]).then(() => {
         entryReady = true;
         if (status) status.textContent = 'Your world is ready';
-        if (enter) { enter.hidden = false; enter.focus({preventScroll:true}); }
+        if (enter) {
+          enter.hidden = false; enter.focus({preventScroll:true});
+          // Blinking prompt, adapted from https://stackoverflow.com/a/59870701
+          // (NVRM, CC BY-SA 4.0), slowed from 300ms to 1200ms.
+          if (enter.animate && !matchMedia('(prefers-reduced-motion: reduce)').matches)
+            enter.animate([{opacity:0},{opacity:1}], {duration:1200, iterations:Infinity});
+        }
       });
       return;
     }
@@ -175,7 +181,7 @@
     if (!entryReady || entryAccepted) return;
     entryAccepted = true;
     gateControls.abort();
-    if (enter) { enter.blur(); enter.hidden = true; }
+    if (enter) { enter.getAnimations().forEach(a => a.cancel()); enter.blur(); enter.hidden = true; }
     // Dispatch synchronously inside the trusted gesture, before the animation.
     document.dispatchEvent(new Event('pix3lware:enter-request'));
     showIntroLogo();

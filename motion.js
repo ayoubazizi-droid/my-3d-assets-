@@ -62,10 +62,8 @@
         if (status) status.textContent = 'Your world is ready';
         if (enter) {
           enter.hidden = false; enter.focus({preventScroll:true});
-          // Blinking prompt, adapted from https://stackoverflow.com/a/59870701
-          // (NVRM, CC BY-SA 4.0), slowed from 300ms to 1200ms.
-          if (enter.animate && !matchMedia('(prefers-reduced-motion: reduce)').matches)
-            enter.animate([{opacity:0},{opacity:1}], {duration:1200, iterations:Infinity});
+          // Prompt blinks exactly like the █ cursor after "LOADING PIX3LWARE.EXE"
+          // via CSS (motion.css: enter-blink 1s steps(1) infinite) — no JS needed.
         }
       });
       return;

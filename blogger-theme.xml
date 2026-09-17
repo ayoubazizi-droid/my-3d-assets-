@@ -228,6 +228,7 @@
 
 
 
+
 /* pix-motion:start */
 /* Progressive enhancement: the document remains readable without JavaScript. */
 html { scroll-padding-top: 100px; scroll-behavior: auto !important; }
@@ -350,10 +351,10 @@ html.booting { overflow: hidden; }
 .loader-bar { height: 2px; margin-top: 12px; background: #333; }
 .loader-bar span { display: block; height: 100%; background: #ffce3d; transform: scaleX(var(--load-progress,0)); transform-origin: left; transition: transform .3s; }
 .loader-play, .loader-retry { background: #000b; color: #fff; border: 1px solid #999; padding: 12px 16px; margin-top: 16px; font: 11px 'Space Mono', monospace; cursor: pointer; }
-.loader-enter { position: fixed; left: 50%; top: 50%; translate: -50% 130%; width: max-content; max-width: min(92vw, 720px); text-align: center; background: none; border: none; color: #fff; text-shadow: 0 0 10px #000, 0 3px 4px #000; padding: 14px 18px; font: 22px 'Space Mono', monospace; letter-spacing: 4px; text-transform: uppercase; cursor: pointer; animation: enter-flicker 1.4s steps(1, end) infinite; }
+.loader-enter { position: fixed; left: 50%; top: 50%; translate: -50% 130%; width: max-content; max-width: min(92vw, 720px); text-align: center; background: none; border: none; color: #fff; text-shadow: 0 0 10px #000, 0 3px 4px #000, 0 0 22px #ffffff2e; padding: 14px 18px; font: 22px 'Space Mono', monospace; letter-spacing: 4px; text-transform: uppercase; cursor: pointer; animation: enter-flicker 2.2s steps(1, end) infinite; will-change: opacity; }
 .loader-enter[hidden] { display: none; }
 .loader-enter:focus { outline: none; }
-@keyframes enter-flicker { 0% {opacity:1} 9% {opacity:.25} 14% {opacity:1} 37% {opacity:.85} 41% {opacity:.15} 47% {opacity:1} 68% {opacity:.55} 73% {opacity:1} 86% {opacity:.35} 90% {opacity:1} }
+@keyframes enter-flicker { 0% {opacity:1} 7% {opacity:.9} 8% {opacity:.25} 10% {opacity:1} 13% {opacity:.35} 15% {opacity:1} 26% {opacity:1} 27% {opacity:.05} 29% {opacity:1} 44% {opacity:.85} 45% {opacity:.4} 47% {opacity:1} 62% {opacity:.7} 64% {opacity:1} 81% {opacity:.55} 83% {opacity:1} 91% {opacity:.2} 92% {opacity:1} }
 
 /* A full-height opening scene replaces the short, static paper-like hero. */
 .logo { gap: 0; }
@@ -515,6 +516,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
 
 
 
+
 <svg aria-hidden='true' class='crt-filter-defs' focusable='false' height='0' style='position:absolute' width='0'><filter id='crt-curve' x='-5%' y='-5%' width='110%' height='110%' color-interpolation-filters='sRGB'><feTurbulence baseFrequency='0.008 0.02' numOctaves='1' seed='7' type='fractalNoise' result='crt-noise'/><feDisplacementMap in='SourceGraphic' in2='crt-noise' scale='3' xChannelSelector='R' yChannelSelector='G'/></filter></svg>
 
 <header class='site-header'>
@@ -539,7 +541,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
 <div class='hero'>
   <div class='wrap hero-inner'>
     <span class='boot-line pixel-font'>LOADING PIX3LWARE.EXE</span>
-    <div class='hero-banner'><img alt='pix3lware' src='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/branding/pixelware-full-logo.png?v=enter-20260917-v27'/></div>
+    <div class='hero-banner'><img alt='pix3lware' src='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/branding/pixelware-full-logo.png?v=enter-20260917-v28'/></div>
     <p class='tagline'>we draw the world one <span class='hl'>square</span> at a time.</p>
     <p class='sub'>pix3lware is a pixel-art studio &amp; asset shop &#8212; sprites, tilesets, animation packs and commissions for games, brands and people who miss the CRT hum.</p>
     <div class='hero-ctas'>
@@ -692,7 +694,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
       <h2>take it for a spin.</h2>
       <p>Our custom Ford Bronco Raptor. Drag to look around and zoom in on the details.</p>
     </div>
-    <iframe class='garage-frame' src='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html?v=enter-20260917-v27' title='Interactive Ford Bronco Raptor viewer' loading='eager' allow='fullscreen'></iframe>
+    <iframe class='garage-frame' src='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html?v=enter-20260917-v28' title='Interactive Ford Bronco Raptor viewer' loading='eager' allow='fullscreen'></iframe>
     <a class='garage-link' href='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html' target='_blank' rel='noopener'>Open the 3D garage in a new tab &#8599;</a>
   </div>
 

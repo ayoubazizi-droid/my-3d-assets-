@@ -162,13 +162,15 @@ html.booting { overflow: hidden; }
 .cursor-ring.cursor-visible { opacity: 1; }
 .cursor-ring.cursor-link { width: 48px; height: 48px; border-color: #2fbd8e; }
 @media (pointer: coarse) { .cursor-ring { display: none; } }
+/* Phones skip the entry gate once loading completes. */
+@media (pointer: coarse) and (max-height: 600px) { .loader-enter { display: none; } }
 @media (max-width: 600px) {
   .site-footer .foot-links { gap: 10px; }
   .foot-links .contact-icon { width: 52px; height: 52px; }
   .contact-icon svg { width: 40px; height: 40px; }
   .sound-toggle { right: 12px; bottom: 18px; padding: 10px 8px; font-size: 8px; }
   .loader-hud { bottom: 24px; left: 18px; width: calc(100vw - 150px); }
-  .loader-enter { font-size: 18px; letter-spacing: 2px; padding: 12px 14px; }
+  .loader-enter { display: none; }
   .loader-bottom { font-size: 8px; letter-spacing: .5px; }
   .hero-inner { padding-block: 24px; }
   .hero p.sub { font-size: 14px; }

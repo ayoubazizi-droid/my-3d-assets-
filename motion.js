@@ -60,7 +60,10 @@
       Promise.allSettled([document.fonts?.ready,$('.hero-banner img')?.decode()]).then(() => {
         entryReady = true;
         if (status) status.textContent = 'Your world is ready';
-        if (enter) {
+        if (matchMedia('(max-width: 600px), (pointer: coarse) and (max-height: 600px)').matches) {
+          // Phones proceed automatically, but only after all entry prerequisites are ready.
+          enterSite();
+        } else if (enter) {
           enter.hidden = false; enter.focus({preventScroll:true});
           // Prompt blinks exactly like the █ cursor after "LOADING PIX3LWARE.EXE"
           // via CSS (motion.css: enter-blink 1s steps(1) infinite) — no JS needed.
@@ -180,7 +183,7 @@
     entryAccepted = true;
     gateControls.abort();
     if (enter) { enter.getAnimations().forEach(a => a.cancel()); enter.blur(); enter.hidden = true; }
-    // Dispatch synchronously inside the trusted gesture, before the animation.
+    // Desktop gestures request audio synchronously; phone auto-entry only attempts autoplay.
     document.dispatchEvent(new Event('pix3lware:enter-request'));
     showIntroLogo();
   }

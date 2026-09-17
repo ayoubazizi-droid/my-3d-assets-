@@ -95,6 +95,11 @@ body.crt-text { filter: none; }
 .contact-icon svg { display: block; width: 48px; height: 48px; shape-rendering: crispEdges; }
 .foot-links .contact-icon:hover { color: var(--ink); background: var(--bg-panel); }
 .contact-icon:focus-visible { outline: 3px solid var(--red); outline-offset: 6px; }
+/* Contact links line up as a tidy row directly above the logo strip and copyright. */
+.site-footer .foot-grid { flex-direction: column; align-items: flex-end; gap: 24px; }
+.site-footer .foot-links { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 14px; max-width: 100%; margin: 0; }
+.site-footer .foot-links li { margin: 0; }
+.site-footer .copyright { text-align: right; margin-top: 18px; }
 .asset-notice { background: var(--yellow); color: var(--ink); padding: 12px 24px; font-size: 12px; border-bottom: 2px solid var(--ink); }
 .asset-notice a { margin-left: 12px; }
 
@@ -148,7 +153,9 @@ html.booting { overflow: hidden; }
 .cursor-ring.cursor-link { width: 48px; height: 48px; border-color: #2fbd8e; }
 @media (pointer: coarse) { .cursor-ring { display: none; } }
 @media (max-width: 600px) {
-  .foot-links { display: grid; grid-template-columns: repeat(3, 64px); gap: 16px; }
+  .site-footer .foot-links { gap: 10px; }
+  .foot-links .contact-icon { width: 52px; height: 52px; }
+  .contact-icon svg { width: 40px; height: 40px; }
   .sound-toggle { right: 12px; bottom: 18px; padding: 10px 8px; font-size: 8px; }
   .loader-hud { bottom: 24px; left: 18px; width: calc(100vw - 150px); }
   .loader-bottom { font-size: 8px; letter-spacing: .5px; }

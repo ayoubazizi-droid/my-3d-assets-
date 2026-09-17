@@ -314,7 +314,7 @@
     }
     add('.section-head h2, .about-copy h2, .newsletter h2', 'heading');
     add('.hero .tagline', 'heroLayer');
-    add('.section-head p, .about-copy p, .stat, .eyebrow, .foot-links li', 'reveal');
+    add('.section-head p, .about-copy p, .stat, .eyebrow', 'reveal');
     add('.scroll-story', 'story');
     add('.cart', 'card'); add('.palette', 'palette'); add('.hero-banner', 'hero');
     add('.hero p.sub, .hero-ctas, .sprite-row', 'heroLayer');

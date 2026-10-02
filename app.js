@@ -5,10 +5,12 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPixelatedPass } from 'three/addons/postprocessing/RenderPixelatedPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { MeshoptDecoder } from './assets/vendor/meshopt_decoder.module.js';
 
 // The outer page waits for the model's first successful render, not iframe.onload.
 let garageState = 'loading', garageProgress = 0;
 let sceneVisible = false;
+let sceneRaf = 0, lastSceneTime = 0, renderRequired = true;
 const parentOrigin = document.referrer ? new URL(document.referrer).origin : '*';
 function notifyParent(type, details = {}) {
   if (window.parent !== window) window.parent.postMessage({ type, ...details }, parentOrigin);
@@ -21,13 +23,14 @@ window.addEventListener('message', event => {
   if (event.data?.type === 'pix3lware:motion') {
     controls.autoRotate = !!event.data.enabled;
     updateRotationLabel();
+    invalidateScene();
   }
 });
 
-// Replace an empty URL with './models/your-model.glb'. Keep all model files
-// in this GitHub Pages repository. Use a self-contained, uncompressed GLB.
+// The original baked export is kept alongside this losslessly compressed copy.
 const objects = [
-  { title: 'Ford Bronco Raptor', category: '01 / CUSTOM BRONCO', symbol: '◈', shape: 'knot', url: './models/Ud.glb?v=bronco-20260914-v10' },
+  { title: 'Ford Bronco Raptor', category: '01 / CUSTOM BRONCO', symbol: '◈', shape: 'knot',
+    url: MeshoptDecoder.supported ? './models/Ud-optimized.glb?v=performance-20260916-v21' : './models/Ud.glb?v=bronco-20260914-v10' },
 ];
 const wrap = document.querySelector('#canvas-wrap');
 const status = document.querySelector('#status');
@@ -59,6 +62,7 @@ let pixelSize = 4;
 pixelStyle.addEventListener('change', () => {
   pixelSize = Number(pixelStyle.value);
   if (pixelSize > 0) pixelPass.setPixelSize(pixelSize * renderer.getPixelRatio());
+  invalidateScene();
 });
 // Studio reflections make the baked metallic paint and chrome visible.
 const pmrem = new THREE.PMREMGenerator(renderer);
@@ -67,6 +71,7 @@ scene.environment = pmrem.fromScene(environment, 0.04).texture;
 environment.dispose();
 pmrem.dispose();
 const controls = new OrbitControls(camera, renderer.domElement);
+controls.addEventListener('change', invalidateScene);
 controls.enableDamping = true;
 controls.enablePan = false;
 controls.enableZoom = false;
@@ -89,6 +94,7 @@ const rim = new THREE.DirectionalLight(0xffffff, 2);
 rim.position.set(-4, 1, -2);
 scene.add(rim);
 const loader = new GLTFLoader();
+loader.setMeshoptDecoder(MeshoptDecoder);
 let current, requestId = 0;
 function resetView() {
   // Closer framing on wide screens; preserve space around the car on phones.
@@ -148,6 +154,7 @@ async function select(index) {
     status.textContent = 'Ready to explore';
     garageState = 'ready'; garageProgress = 1;
     notifyParent('pix3lware:garage-ready');
+    invalidateScene();
   } catch (error) {
     if (root) dispose(root);
     if (id !== requestId) return;
@@ -177,7 +184,7 @@ function updateRotationLabel() {
   rotateButton.textContent = controls.autoRotate ? 'Pause rotation' : 'Resume rotation';
   rotateButton.setAttribute('aria-pressed', String(controls.autoRotate));
 }
-rotateButton?.addEventListener('click', () => { controls.autoRotate = !controls.autoRotate; updateRotationLabel(); });
+rotateButton?.addEventListener('click', () => { controls.autoRotate = !controls.autoRotate; updateRotationLabel(); invalidateScene(); });
 document.querySelector('#reset')?.addEventListener('click', resetView);
 let zoomMode = false;
 function setZoomMode(enabled) {
@@ -223,15 +230,30 @@ new ResizeObserver(() => {
   camera.updateProjectionMatrix();
   renderer.setSize(width, height);
   composer.setSize(width, height);
+  invalidateScene();
 }).observe(wrap);
-new IntersectionObserver(entries => { sceneVisible = entries[0].isIntersecting; }).observe(wrap);
+new IntersectionObserver(entries => { sceneVisible = entries[0].isIntersecting; invalidateScene(); }).observe(wrap);
+document.addEventListener('visibilitychange', invalidateScene);
 updateRotationLabel();
 select(0);
-const clock = new THREE.Clock();
-renderer.setAnimationLoop(() => {
-  const delta = Math.min(clock.getDelta(), 0.1);
+function requestSceneFrame() {
+  if (document.hidden || !sceneVisible || garageState !== 'ready') {
+    cancelAnimationFrame(sceneRaf); sceneRaf = 0; lastSceneTime = 0;
+    return;
+  }
+  if (!sceneRaf) sceneRaf = requestAnimationFrame(renderScene);
+}
+function invalidateScene() { renderRequired = true; requestSceneFrame(); }
+function renderScene(time) {
+  sceneRaf = 0;
   if (document.hidden || !sceneVisible || garageState !== 'ready') return;
-  controls.update(delta);
-  if (pixelSize > 0) composer.render(delta);
-  else renderer.render(scene, camera);
-});
+  const delta = lastSceneTime ? Math.min((time-lastSceneTime)/1000,.1) : 1/60;
+  lastSceneTime = time;
+  const changed = controls.update(delta);
+  if (renderRequired || changed || controls.autoRotate) {
+    renderRequired = false;
+    if (pixelSize > 0) composer.render(delta);
+    else renderer.render(scene,camera);
+  }
+  if (controls.autoRotate || changed) requestSceneFrame();
+}

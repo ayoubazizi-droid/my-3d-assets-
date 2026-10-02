@@ -7,7 +7,7 @@ The design comes from the supplied pix3lware Blogger theme: original pixel artwo
 - `index.html` / `theme.css`: standalone static version of the design. Blogger's live post list is omitted here. The original inactive newsletter form is replaced with a garage link on this static page.
 - `blogger-theme.xml`: complete Blogger theme with its original Blog1 post widget and the embedded 3D garage. The Contact footer links to TikTok, Pinterest, Instagram, and X. The original newsletter form is preserved; subscribing is not connected to a mailing service.
 - `viewer.html` / `style.css` / `app.js`: compact Three.js viewer, styled to match the theme.
-- `models/Ud.glb`: baked Bronco, with embedded textures, approximately 26 MB.
+- `models/Ud-optimized.glb`: losslessly compressed Bronco (23.7 MB), with embedded textures. `models/Ud.glb` keeps the original 30.1 MB export as a fallback.
 - `blogger-embed.html`: optional snippet for an individual Blogger page; unnecessary if installing the complete theme.
 
 ## Install the Blogger theme
@@ -26,7 +26,7 @@ Local preview: `python3 -m http.server 8011` from this directory. Open `http://l
 
 ## Pixel rendering
 
-The viewer starts in Pixel art mode. The Look selector offers Fine pixels (2 CSS pixels), Pixel art (4), Chunky pixels (7), and Smooth 3D. EffectComposer runs RenderPixelatedPass and OutputPass; smooth mode renders directly. Pixel size accounts for device pixel ratio. Text and buttons remain sharp HTML controls. Render targets resize with the viewer; no change to the GLB or Blogger theme installation is needed.
+The viewer starts in Pixel art mode. The Look selector offers Fine pixels (2 CSS pixels), Pixel art (4), and Smooth 3D. EffectComposer runs RenderPixelatedPass and OutputPass; smooth mode renders directly. Pixel size accounts for device pixel ratio. Text and buttons remain sharp HTML controls. Render targets resize with the viewer; no change to the GLB or Blogger theme installation is needed.
 
 The display also has a CRT treatment: four-pixel scanlines, mild red/green phosphor fringing, a curved-screen vignette, softened contrast, and an inset glass highlight. It is applied as a CSS screen layer above the rendered canvas, so it stays lightweight and keeps the model controls accessible.
 
@@ -61,3 +61,11 @@ Up/down arrows use the same easing. A tap moves 80 pixels; holding a key advance
 `experience.js` adds a pixel cursor, a subtle particle atmosphere, and an original four-chord ambient game score synthesized using Web Audio. Sound is initially off and starts with the Sound button, as required by browser audio autoplay restrictions. It fades when muted and pauses in background tabs.
 
 Run `python3 scripts/sync-motion.py` after edits to update the static page, Blogger XML, and local Blogger install copies. The static iframe uses a relative URL so previews use the local viewer.
+
+## Performance
+
+The page scroll loop sleeps when scrolling settles, waking for wheel, arrow-key, anchor, and native scroll input. It uses a bounded time step on wake to preserve easing. Animation targets and layout measurements are cached; progress bars update their own transforms instead of inherited CSS variables; gallery labels update only when the card number changes. The cursor uses CSS centering rather than per-frame layout reads. Sound bars animate transforms instead of height.
+
+The atmosphere starts after the intro and uses one canvas pixel per CSS pixel, keeping the same integer pixel grid with 75% fewer backing pixels at DPR 2. The garage schedules frames only while visible and moving, or after controls, render mode, resize, or visibility changes. The loader still requires the real model's first successful render.
+
+The lossless WebP logo is 795,370 bytes instead of 2,054,066 bytes; decoded RGB hashes match. Loader and hero share one versioned URL to avoid duplicate downloads. The source PNG remains available. Meshoptimizer 0.20 reduces the Bronco to 23,662,592 bytes without quantization, simplification, changed materials, or altered texture bytes. Its decoder and MIT license are vendored in `assets/vendor/`; the uncompressed model is used if WebAssembly is unavailable. See `models/README.md` for regeneration.

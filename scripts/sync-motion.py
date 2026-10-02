@@ -4,7 +4,7 @@ import json, re, shutil, xml.etree.ElementTree as ET
 
 root=Path(__file__).resolve().parents[1]
 base='https://ayoubazizi-droid.github.io/my-3d-assets-/'
-version='keyboard-20260916-v20'
+version='performance-20260916-v21'
 viewer=root/'viewer.html'
 viewer.write_text(re.sub(r'(app\.js|style\.css|keyboard-scroll\.js)\?v=[^\x27\x22]+', lambda m:m[1]+'?v='+version, viewer.read_text()))
 critical=""".site-loader{display:none}html.booting{overflow:hidden}.booting .site-loader{display:block;position:fixed;inset:0;z-index:10000;background:#000;color:#fff}.loader-film{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.loader-logo{opacity:0}body.crt-text{filter:none}"""
@@ -14,7 +14,7 @@ loader="""<div class='site-loader' id='site-loader' aria-label='Loading the Ford
       <source src='{base}assets/loader/pix3lware.mp4?v=immersive-20260913-v3' type='video/mp4'/>
       <source src='{base}assets/loader/pix3lware.webm?v=immersive-20260913-v3' type='video/webm'/>
     </video>
-    <div class='loader-logo' aria-hidden='true'><img src='{base}assets/branding/pixelware-full-logo.png' alt='' fetchpriority='high'/></div>
+    <div class='loader-logo' aria-hidden='true'><img src='{base}assets/branding/pixelware-full-logo.webp?v={version}' alt='' fetchpriority='high'/></div>
     <div class='loader-hud'>
       <div class='loader-bottom'><span class='loader-status' role='status'>Loading the Ford Bronco…</span><span class='loader-percent' aria-hidden='true'>00%</span></div>
       <div class='loader-bar' aria-hidden='true'><span></span></div>
@@ -29,7 +29,7 @@ for filename in ['index.html','blogger-theme.xml']:
  s=s.replace('a few tiles from the archive', 'five styles of pixel art')
  s=s.replace('Swap these for your own sprite exports whenever you like.', 'Explore the colors, resolution and vibe of each style.')
  s=re.sub(r"    <div class='gallery'>.*?\n    </div>(?=\n  </div>)", lambda m:(root/'partials/pixel-styles.html').read_text().rstrip(), s, flags=re.S)
- logo_src=(base if blogger else './')+'assets/branding/pixelware-full-logo.png?v='+version
+ logo_src=(base if blogger else './')+'assets/branding/pixelware-full-logo.webp?v='+version
  hero_logo="<div class='hero-banner'><img alt='pix3lware' src='"+logo_src+"'/></div>"
  s=re.sub(r"<img alt='pix3lware' class='hero-banner'[^>]+/>", lambda m:hero_logo, s)
  s=re.sub(r"<div class='hero-banner'>.*?</div>", lambda m:hero_logo, s, flags=re.S)
@@ -52,7 +52,7 @@ for filename in ['index.html','blogger-theme.xml']:
  data=json.dumps(json.loads((root/'assets/branding/intro-keyframes.json').read_text()),separators=(',',':'))
  script="<script id='pix-intro-data' type='application/json'>"+data+"</script>\n"+script
  s=s.replace('</head>',block('pix-motion-head',head)+'\n</head>')
- s=s.replace("<body class='crt-text'>","<body class='crt-text'>\n"+block('pix-loader',loader.format(base=base if blogger else './'))+'\n')
+ s=s.replace("<body class='crt-text'>","<body class='crt-text'>\n"+block('pix-loader',loader.format(base=base if blogger else './',version=version))+'\n')
  s=s.replace('</body>',block('pix-motion-script',script)+'\n</body>')
  p.write_text(s)
 

@@ -134,16 +134,16 @@ html.booting { overflow: hidden; }
 #gallery { background: #e9dfc3; }
 .motion-ready .motion-word { will-change: transform, opacity; }
 .motion-ready .palette { box-shadow: 18px 18px 0 var(--ink); }
-.pixel-atmosphere { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; opacity: .55; }
+.pixel-atmosphere { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; opacity: .55; image-rendering: pixelated; }
 .booting .pixel-atmosphere { visibility: hidden; }
 .sound-toggle { position: fixed; right: 22px; bottom: max(24px, env(safe-area-inset-bottom)); z-index: 10002; display: flex; gap: 10px; align-items: center; background: #10101de8; color: #f3efe1; border: 1px solid #ffffff50; padding: 12px; font: 10px 'Space Mono', monospace; letter-spacing: 1px; cursor: pointer; text-shadow: none !important; }
 .sound-bars { display: flex; align-items: center; gap: 3px; height: 16px; }
-.sound-bars i { width: 2px; height: 3px; background: #2fbd8e; }
+.sound-bars i { width: 2px; height: 16px; transform: scaleY(.1875); background: #2fbd8e; }
 .sound-on .sound-bars i { animation: equalizer .8s ease-in-out infinite alternate; }
 .sound-on .sound-bars i:nth-child(2) { animation-delay: -.5s; }
 .sound-on .sound-bars i:nth-child(3) { animation-delay: -.2s; }
-@keyframes equalizer { to { height: 16px; } }
-.cursor-ring { position: fixed; top: 0; left: 0; width: 32px; height: 32px; border: 1px solid #ffce3d; pointer-events: none; z-index: 10005; opacity: 0; transition: width .2s, height .2s, border-color .2s; mix-blend-mode: difference; }
+@keyframes equalizer { to { transform: scaleY(1); } }
+.cursor-ring { position: fixed; top: 0; left: 0; width: 32px; height: 32px; translate: -50% -50%; border: 1px solid #ffce3d; pointer-events: none; z-index: 10005; opacity: 0; transition: width .2s, height .2s, border-color .2s; mix-blend-mode: difference; }
 .cursor-ring.cursor-visible { opacity: 1; }
 .cursor-ring.cursor-link { width: 48px; height: 48px; border-color: #2fbd8e; }
 @media (pointer: coarse) { .cursor-ring { display: none; } }

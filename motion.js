@@ -238,18 +238,20 @@
   });
 
   const gallery = $('.gallery');
-  let stage, pin, counter;
+  let stage, pin, counter, galleryBar;
   if (gallery) {
     stage = document.createElement('div'); stage.className = 'gallery-stage';
     pin = document.createElement('div'); pin.className = 'gallery-pin';
     const caption = document.createElement('div'); caption.className = 'gallery-caption';
     caption.innerHTML = `<span>PIXEL ART STYLES / SCROLL TO EXPLORE</span><span class="gallery-counter">01 — ${String(gallery.children.length).padStart(2,'0')}</span>`;
     counter = $('.gallery-counter', caption);
-    const line = document.createElement('div'); line.className = 'gallery-progress'; line.setAttribute('aria-hidden', 'true'); line.append(document.createElement('span'));
+    const line = document.createElement('div'); line.className = 'gallery-progress'; line.setAttribute('aria-hidden', 'true');
+    galleryBar = document.createElement('span'); line.append(galleryBar);
     gallery.before(stage); stage.append(pin); pin.append(caption, gallery, line);
   }
 
   let metrics = [], galleryMetric, raf = 0, active = true, lastY = -1;
+  let pageTravel = 1, previousRenderTime = 0, animationTime = 0, galleryIndex = -1;
   let scroller;
   const heldKeys = new Set();
   let lastKeyTime = 0;
@@ -293,23 +295,32 @@
     if (root.classList.contains('booting') || !Number.isFinite(delta)) return;
     if (scroller) scroller.scrollTo(scroller.targetScroll + delta * .9, {programmatic:false, lerp:.06});
     else window.scrollBy({top:delta, behavior:'instant'});
+    requestTick();
   }
   const styled = new Set();
+  let transforms = new WeakMap();
   function transform(el, value, opacity) {
     if (!el) return;
-    styled.add(el); el.style.transform = value;
-    if (opacity !== undefined) el.style.opacity = opacity;
+    styled.add(el);
+    const previous = transforms.get(el);
+    if (previous?.value !== value) el.style.transform = value;
+    if (opacity !== undefined && previous?.opacity !== opacity) el.style.opacity = opacity;
+    transforms.set(el,{value,opacity});
   }
   function measure() {
     root.style.setProperty('--header-height', `${$('header')?.offsetHeight || 70}px`);
     root.style.setProperty('--viewport-width', `${root.clientWidth}px`);
     // Remove previous transforms for stable layout-based scroll offsets.
     styled.forEach(el => { el.style.transform = ''; el.style.opacity = ''; });
+    transforms = new WeakMap();
     metrics = [];
     function add(selector, type) {
       $$(selector).forEach((el, i) => {
         const rect = el.getBoundingClientRect();
-        metrics.push({el, type, i, top: rect.top + scrollY, height: rect.height, words: type === 'heading' ? $$('.motion-word', el) : []});
+        metrics.push({el, type, i, top: rect.top + scrollY, height: rect.height,
+          words: type === 'heading' ? $$('.motion-word', el) : [],
+          parts: type === 'story' ? $$('.story-line', el) : type === 'palette' ? [...el.children] : [],
+          arrow: type === 'contact' ? $('.contact-arrow',el) : null});
       });
     }
     add('.section-head h2, .about-copy h2, .newsletter h2', 'heading');
@@ -320,6 +331,7 @@
     add('.hero p.sub, .hero-ctas, .sprite-row', 'heroLayer');
     add('.motion-band-track', 'band'); add('.garage-frame', 'garage'); add('.contact-title', 'contact');
     if (stage) galleryMetric = { top: stage.getBoundingClientRect().top + scrollY, height: stage.offsetHeight, pinHeight: pin.offsetHeight, inset: parseFloat(getComputedStyle(pin).top) || 0, travel: Math.max(0, gallery.scrollWidth - (pin.clientWidth - parseFloat(getComputedStyle(pin).paddingLeft) - parseFloat(getComputedStyle(pin).paddingRight))) };
+    pageTravel = Math.max(1,root.scrollHeight-innerHeight);
     lastY = -1; requestTick();
   }
   function render(time) {
@@ -327,12 +339,16 @@
     if (!enabled || !active) return;
     const vh = innerHeight, vw = innerWidth;
     advanceKeys(time);
-    scroller?.raf(time);
+    // Restart with a normal-sized time step after sleeping, so the first wheel
+    // event after an idle period cannot jump straight to its destination.
+    animationTime += previousRenderTime ? clamp(time-previousRenderTime,0,50) : 1000/60;
+    previousRenderTime = time;
+    scroller?.raf(animationTime);
     // Page, text, gallery and particles share one continuous scroll coordinate.
     const y = scroller ? scroller.animatedScroll : scrollY;
     window.pix3lwareScroll = y;
     if (Math.abs(lastY - y) > .01) {
-      root.style.setProperty('--page-progress', clamp(y / Math.max(1, document.documentElement.scrollHeight - vh)));
+      transform(meter,`scaleX(${clamp(y / Math.max(1,scroller?.limit ?? pageTravel))})`);
       for (const m of metrics) {
         const rel = m.top - y;
         if (rel > vh * 1.5 || rel + m.height < -vh) continue;
@@ -341,7 +357,7 @@
         const through = clamp((vh - rel) / (vh + m.height));
         if (m.type === 'story') {
           const p = clamp((y - m.top + vh * .35) / (m.height - vh * .65));
-          $$('.story-line', m.el).forEach((line, i) => {
+          m.parts.forEach((line, i) => {
             const t = clamp((p - i * .09) / .68);
             const arrival = clamp(t / .55);
             const departure = clamp((t - .65) / .35);
@@ -368,7 +384,7 @@
           transform(m.el, `translate3d(${(1-q)*(m.i%2?140:-140)}px,${(1-q)*100+drift}px,0) rotate(${(1-q)*(m.i%2?-9:9)+(through-.5)*3}deg)`, .15+.85*q);
         } else if (m.type === 'palette') {
           transform(m.el, `translate3d(${(1-eased)*130}px,${(through-.5)*-60}px,0) rotate(${(through-.5)*12}deg) scale(${.83+.17*eased})`);
-          [...m.el.children].forEach((el,i) => transform(el, `translateY(${Math.sin(through*Math.PI*2+i*.8)*18}px)`));
+          m.parts.forEach((el,i) => transform(el, `translateY(${Math.sin(through*Math.PI*2+i*.8)*18}px)`));
         } else if (m.type === 'hero') {
           const p = clamp(y / (vh*1.15));
           transform(m.el, `translate3d(${p*-vw*.48}px,${p*-100}px,0) rotate(${-p*12}deg) scale(${1+p*.5})`, 1-p);
@@ -380,35 +396,43 @@
           transform(m.el, `translate3d(0,${(1-eased)*60}px,0)`);
         } else if (m.type === 'contact') {
           transform(m.el, `translate3d(${(1-eased)*-180}px,0,0)`, .2+.8*eased);
-          transform($('.contact-arrow',m.el), `rotate(${(through-.5)*70}deg)`);
+          transform(m.arrow, `rotate(${(through-.5)*70}deg)`);
         }
       }
       if (galleryMetric) {
         const m=galleryMetric, p=clamp((y-m.top+m.inset)/Math.max(1,m.height-m.pinHeight));
         transform(gallery, `translate3d(${-p*m.travel}px,0,0)`);
-        stage.style.setProperty('--gallery-progress', p);
+        transform(galleryBar,`scaleX(${p})`);
         const count = gallery.children.length;
-        counter.textContent = `${String(Math.min(count,Math.round(p*(count-1))+1)).padStart(2,'0')} — ${String(count).padStart(2,'0')}`;
+        const index = Math.min(count,Math.round(p*(count-1))+1);
+        if (index !== galleryIndex) {
+          galleryIndex = index;
+          counter.textContent = `${String(index).padStart(2,'0')} — ${String(count).padStart(2,'0')}`;
+        }
       }
       lastY=y;
     }
-    requestTick();
+    if (heldKeys.size || scroller?.isScrolling) requestTick();
   }
   function requestTick() { if (!raf && enabled && active) raf = requestAnimationFrame(render); }
   function applyMotion() {
     resetKeys();
+    previousRenderTime = 0; animationTime = 0;
     enabled = motionChoice;
     root.classList.toggle('motion-ready', enabled); root.classList.toggle('motion-off', !enabled);
     toggle.textContent = enabled ? 'MOTION ON' : 'MOTION OFF';
     toggle.setAttribute('aria-label', enabled ? 'Pause page motion' : 'Enable page motion');
     toggle.setAttribute('aria-pressed', String(enabled));
     styled.forEach(el => { el.style.transform=''; el.style.opacity=''; });
+    transforms = new WeakMap();
     scroller?.destroy(); scroller = undefined;
     if (enabled) {
       if (window.Lenis) {
         scroller = new Lenis({lerp:.06, wheelMultiplier:.9, smoothWheel:true,
           syncTouch:false, autoRaf:false, anchors:true, allowNestedScroll:true,
           respectReducedMotion:false, stopInertiaOnNavigate:true});
+        scroller.on('virtual-scroll',requestTick);
+        scroller.on('scroll',requestTick);
         if (root.classList.contains('booting')) scroller.stop();
       }
       measure();
@@ -419,6 +443,7 @@
   }
   toggle.addEventListener('click', () => { motionChoice=!enabled; applyMotion(); });
   window.addEventListener('scroll',requestTick,{passive:true});
+  document.addEventListener('click',requestTick);
   let resizeTimer;
   window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{
     measure(); alignHero(); if (!dismissed) drawIntro(currentIntroFrame);

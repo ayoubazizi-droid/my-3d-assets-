@@ -5,6 +5,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPixelatedPass } from 'three/addons/postprocessing/RenderPixelatedPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { AsciiEffect } from 'three/addons/effects/AsciiEffect.js';
 
 // The outer page waits for the model's first successful render, not iframe.onload.
 let garageState = 'loading', garageProgress = 0;
@@ -45,6 +46,26 @@ renderer.toneMappingExposure = 1.3;
 wrap.appendChild(renderer.domElement);
 renderer.domElement.setAttribute('aria-label', '3D preview; choose an object with the buttons below');
 renderer.domElement.setAttribute('role', 'img');
+// Keep the regular viewer intact and layer the heavier ASCII pass above it
+// only while the pointer is over the model, following three.js's demo effect.
+const asciiRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+asciiRenderer.setPixelRatio(1);
+asciiRenderer.setClearColor(0x000000, 0);
+const asciiEffect = new AsciiEffect(asciiRenderer, ' .:-=+*#%@', { invert: false });
+asciiEffect.domElement.className = 'ascii-effect';
+asciiEffect.domElement.setAttribute('aria-hidden', 'true');
+asciiEffect.domElement.hidden = true;
+wrap.appendChild(asciiEffect.domElement);
+let asciiActive = false;
+function setAsciiActive(active) {
+  asciiActive = active;
+  asciiEffect.domElement.hidden = !active;
+  asciiEffect.domElement.classList.toggle('is-active', active);
+}
+wrap.addEventListener('pointerenter', event => {
+  if (event.pointerType === 'mouse' || event.pointerType === 'pen') setAsciiActive(true);
+});
+wrap.addEventListener('pointerleave', () => setAsciiActive(false));
 // Render the model to a small texture, then upscale with nearest-neighbor sampling.
 // Pixel sizes are CSS pixels so high-density screens get the same visual style.
 const pixelStyle = document.querySelector('#pixel-style');
@@ -223,6 +244,7 @@ new ResizeObserver(() => {
   camera.updateProjectionMatrix();
   renderer.setSize(width, height);
   composer.setSize(width, height);
+  asciiEffect.setSize(width, height);
 }).observe(wrap);
 new IntersectionObserver(entries => { sceneVisible = entries[0].isIntersecting; }).observe(wrap);
 updateRotationLabel();
@@ -234,4 +256,5 @@ renderer.setAnimationLoop(() => {
   controls.update(delta);
   if (pixelSize > 0) composer.render(delta);
   else renderer.render(scene, camera);
+  if (asciiActive) asciiEffect.render(scene, camera);
 });

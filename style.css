@@ -15,6 +15,12 @@ main { padding: 0; max-width: none; height: 100%; display: flex; flex-direction:
 .viewer-bottom { flex: 0 0 auto; }
 .viewer-note { flex: 0 0 auto; padding: 12px 18px; }
 .viewer-note { min-height: 72px; padding-right: 150px; }
+
+/* three.js-inspired ASCII hover treatment for the live 3D viewer. */
+#canvas-wrap .ascii-effect { position:absolute; inset:0; z-index:4; width:100%; height:100%; overflow:hidden; pointer-events:none; opacity:0; color:#1b1b2f; background:rgba(243,239,225,.92); transition:opacity .16s ease; }
+#canvas-wrap .ascii-effect.is-active { opacity:1; }
+#canvas-wrap .ascii-effect pre { width:100%; height:100%; margin:0; overflow:hidden; font-family:'Space Mono',monospace; font-size:7px; line-height:7px; letter-spacing:0; white-space:pre; }
+@media(max-width:600px){#canvas-wrap .ascii-effect pre{font-size:6px;line-height:6px}}
 @media (max-width:600px) { main { padding: 0; } .viewer-bottom { gap: 10px; padding: 12px 16px; } .viewer-note { gap: 3px; padding: 8px 16px; } }
 
 .viewer-note { min-height: 72px; padding-right: 150px; }

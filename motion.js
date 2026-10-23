@@ -144,7 +144,18 @@
     if (retry) retry.hidden = false;
   }
   window.addEventListener('message', event => {
-    if (!frame || event.source !== frame.contentWindow || event.origin !== garageOrigin) return;
+    if (event.origin !== garageOrigin) return;
+    const fromMainGarage = !!frame && event.source === frame.contentWindow;
+    const fromSecondGarage = [...document.querySelectorAll('#garage-second iframe')].some(el => el.contentWindow === event.source);
+    if (!fromMainGarage && !fromSecondGarage) return;
+    // Both canvases may forward page scroll, but only the primary Bronco
+    // is allowed to drive the intro loader and its readiness state.
+    if (fromSecondGarage) {
+      if (event.data?.type === 'pix3lware:page-wheel') handlePageWheel(event.data.deltaY);
+      if (event.data?.type === 'pix3lware:page-key') handlePageKey(event.data.key, event.data.pressed === true, event.data.repeat === true);
+      if (event.data?.type === 'pix3lware:page-key-reset') resetKeys();
+      return;
+    }
     if (event.data?.type === 'pix3lware:garage-progress' && !garageLoaded) {
       tasks.set('3D garage', clamp(event.data.progress, 0, .98)); progress();
       if (status) status.textContent = event.data.progress >= .9 ? 'Preparing the Bronco…' : 'Loading the Ford Bronco…';

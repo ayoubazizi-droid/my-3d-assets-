@@ -173,3 +173,12 @@
   .crt-text, .crt-text h1, .crt-text h2, .crt-text h3, .crt-text p, .crt-text a, .crt-text button, .crt-text label, .crt-text span, .crt-text li, .crt-text select{ text-shadow:.06rem 0 .06rem rgba(234,54,175,.58),-.125rem 0 .06rem rgba(117,250,105,.46); }
   .crt-text{filter:url(#crt-curve);}
   @media (prefers-reduced-motion:no-preference){body::before{animation:crt-breathe 8s steps(2,end) infinite}.crt-text{animation:textflicker .08s infinite alternate}@keyframes crt-breathe{0%,100%{opacity:.88}50%{opacity:1}}@keyframes textflicker{from{text-shadow:1px 0 0 rgba(234,54,175,.5),-2px 0 0 rgba(117,250,105,.4)}to{text-shadow:2px .5px 2px rgba(234,54,175,.68),-1px -.5px 2px rgba(117,250,105,.54)}}}
+
+/* Two independent 3D showcases: clear separation and responsive framing. */
+#garage-second{margin-top:clamp(64px,9vw,128px);padding-top:clamp(28px,4vw,56px);border-top:3px solid var(--ink);}
+.garage-frame{border-radius:8px;overflow:hidden;max-width:100%;}
+#garage-second .garage-frame{box-shadow:10px 10px 0 var(--ink);}
+#garage-second .section-head h2{letter-spacing:-.035em;}
+.garage-link{font-weight:700;transition:transform .18s ease;}
+.garage-link:hover{transform:translateY(-2px);}
+@media(max-width:600px){#garage-second{margin-top:64px;padding-top:30px}.garage-frame{height:615px}}

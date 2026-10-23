@@ -27,7 +27,7 @@ window.addEventListener('message', event => {
 // Replace an empty URL with './models/your-model.glb'. Keep all model files
 // in this GitHub Pages repository. Use a self-contained, uncompressed GLB.
 const objects = [
-  { title: 'Second 3D Object', category: '02 / 3D COLLECTION', symbol: '◆', shape: 'crystal', url: './models/second-object.glb' },
+  { title: 'Second 3D Object', category: '02 / 3D COLLECTION', symbol: '◆', shape: 'crystal', url: '' /* Set to './models/second-object.glb' after uploading your model. */ },
 ];
 const wrap = document.querySelector('#canvas-wrap');
 const status = document.querySelector('#status');

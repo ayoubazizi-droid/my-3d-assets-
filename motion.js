@@ -140,14 +140,14 @@
   }
   function garageError() {
     if (dismissed) return;
-    if (status) status.textContent = 'Bronco could not load. Retry to enter.';
+    if (status) status.textContent = 'Betrayer could not load. Retry to enter.';
     if (retry) retry.hidden = false;
   }
   window.addEventListener('message', event => {
     if (!frame || event.source !== frame.contentWindow || event.origin !== garageOrigin) return;
     if (event.data?.type === 'pix3lware:garage-progress' && !garageLoaded) {
       tasks.set('3D garage', clamp(event.data.progress, 0, .98)); progress();
-      if (status) status.textContent = event.data.progress >= .9 ? 'Preparing the Bronco…' : 'Loading the Ford Bronco…';
+      if (status) status.textContent = event.data.progress >= .9 ? 'Preparing Betrayer…' : 'Loading Betrayer…';
     }
     if (event.data?.type === 'pix3lware:garage-ready') {
       garageLoaded = true; progress();
@@ -222,7 +222,7 @@
   }
   slowTimer = setTimeout(() => {
     if (!garageLoaded) {
-      if (status) status.textContent = 'Still preparing your Bronco. Please wait…';
+      if (status) status.textContent = 'Still preparing Betrayer. Please wait…';
       if (retry) retry.hidden = false;
     }
   }, 30000);

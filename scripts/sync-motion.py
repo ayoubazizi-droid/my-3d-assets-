@@ -4,19 +4,19 @@ import json, re, shutil, xml.etree.ElementTree as ET
 
 root=Path(__file__).resolve().parents[1]
 base='https://ayoubazizi-droid.github.io/my-3d-assets-/'
-version='enter-20260917-v34'
+version='betrayer-20261125-v35'
 viewer=root/'viewer.html'
 viewer.write_text(re.sub(r'(app\.js|style\.css|keyboard-scroll\.js)\?v=[^\x27\x22]+', lambda m:m[1]+'?v='+version, viewer.read_text()))
 critical=""".site-loader{display:none}html.booting{overflow:hidden}.booting .site-loader{display:block;position:fixed;inset:0;z-index:10000;background:#000;color:#fff}.loader-film{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.loader-logo{opacity:0}body.crt-text{filter:none}"""
 bootstrap="""if('scrollRestoration' in history)history.scrollRestoration='manual';if(location.hash)history.replaceState(history.state,'',location.pathname+location.search);window.scrollTo({top:0,left:0,behavior:'instant'});document.documentElement.classList.add('booting');window.pix3lwareBootWatchdog=setTimeout(function(){if(!window.pix3lwareMotionStarted){var s=document.querySelector('.loader-status');if(s)s.textContent='Please reload to start your world';var b=document.querySelector('.loader-retry');if(b){b.hidden=false;b.onclick=function(){location.reload();};}}},15000);"""
-loader="""<div class='site-loader' id='site-loader' aria-label='Loading the Ford Bronco'>
+loader="""<div class='site-loader' id='site-loader' aria-label='Loading Betrayer'>
     <video class='loader-film' autoplay='autoplay' muted='muted' playsinline='playsinline' loop='loop' preload='auto' poster='{base}assets/loader/poster.jpg' aria-label='Pix3lware animated intro'>
       <source src='{base}assets/loader/pix3lware.mp4?v=immersive-20260913-v3' type='video/mp4'/>
       <source src='{base}assets/loader/pix3lware.webm?v=immersive-20260913-v3' type='video/webm'/>
     </video>
     <div class='loader-logo' aria-hidden='true'><img src='{base}assets/branding/pixelware-full-logo.png' alt='' fetchpriority='high'/></div>
     <div class='loader-hud'>
-      <div class='loader-bottom'><span class='loader-status' role='status'>Loading the Ford Bronco…</span><span class='loader-percent' aria-hidden='true'>00%</span></div>
+      <div class='loader-bottom'><span class='loader-status' role='status'>Loading Betrayer…</span><span class='loader-percent' aria-hidden='true'>00%</span></div>
       <div class='loader-bar' aria-hidden='true'><span></span></div>
       <button class='loader-play' type='button' hidden='hidden'>PLAY INTRO &#9654;</button>
       <button class='loader-retry' type='button' hidden='hidden'>RETRY LOADING &#8635;</button>
@@ -39,7 +39,7 @@ for filename in ['index.html','blogger-theme.xml']:
  s=s.replace("<a class='logo' href='./'>","<a class='logo' href='./' aria-label='pix3lware home'>")
  s=re.sub(r"<a class='logo'([^>]*)>",lambda m:"<a class='logo'"+m[1]+("" if 'aria-label=' in m[1] else " aria-label='pix3lware home'")+">",s)
  s=s.replace('mailto:hello@pix3lware.com','mailto:pix3lware@gmail.com').replace('>hello@pix3lware.com<','>pix3lware@gmail.com<')
- s=s.replace("title='Interactive Ford Bronco Raptor viewer' loading='lazy'", "title='Interactive Ford Bronco Raptor viewer' loading='eager'")
+ s=s.replace("title='Interactive Betrayer viewer' loading='lazy'", "title='Interactive Betrayer viewer' loading='eager'")
  s=re.sub(r"(class='garage-frame' src=')[^']+",lambda m:m[1]+(base if blogger else './')+'viewer.html?v='+version,s)
  if blogger:
   css=(root/'motion.css').read_text().replace("url('./assets/", "url('"+base+"assets/")

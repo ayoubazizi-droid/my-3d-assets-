@@ -167,7 +167,7 @@
   }
   @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
 
-  /* Interactive Bronco gallery */
+  /* Interactive Betrayer gallery */
   .garage{ margin-top:56px; scroll-margin-top:90px; }
   .foot-links{flex-wrap:wrap;}
   .garage .section-head{ margin-bottom:24px; }
@@ -471,14 +471,14 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
 </head>
 <body class='crt-text'>
 <!-- pix-loader:start -->
-<div class='site-loader' id='site-loader' aria-label='Loading the Ford Bronco'>
+<div class='site-loader' id='site-loader' aria-label='Loading Betrayer'>
     <video class='loader-film' autoplay='autoplay' muted='muted' playsinline='playsinline' loop='loop' preload='auto' poster='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/loader/poster.jpg' aria-label='Pix3lware animated intro'>
       <source src='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/loader/pix3lware.mp4?v=immersive-20260913-v3' type='video/mp4'/>
       <source src='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/loader/pix3lware.webm?v=immersive-20260913-v3' type='video/webm'/>
     </video>
     <div class='loader-logo' aria-hidden='true'><img src='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/branding/pixelware-full-logo.png' alt='' fetchpriority='high'/></div>
     <div class='loader-hud'>
-      <div class='loader-bottom'><span class='loader-status' role='status'>Loading the Ford Bronco…</span><span class='loader-percent' aria-hidden='true'>00%</span></div>
+      <div class='loader-bottom'><span class='loader-status' role='status'>Loading Betrayer…</span><span class='loader-percent' aria-hidden='true'>00%</span></div>
       <div class='loader-bar' aria-hidden='true'><span></span></div>
       <button class='loader-play' type='button' hidden='hidden'>PLAY INTRO &#9654;</button>
       <button class='loader-retry' type='button' hidden='hidden'>RETRY LOADING &#8635;</button>
@@ -566,7 +566,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
 <div class='hero'>
   <div class='wrap hero-inner'>
     <span class='boot-line pixel-font'>LOADING PIX3LWARE.EXE</span>
-    <div class='hero-banner'><img alt='pix3lware' src='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/branding/pixelware-full-logo.png?v=enter-20260917-v34'/></div>
+    <div class='hero-banner'><img alt='pix3lware' src='https://ayoubazizi-droid.github.io/my-3d-assets-/assets/branding/pixelware-full-logo.png?v=betrayer-20261125-v35'/></div>
     <p class='tagline'>we draw the world one <span class='hl'>square</span> at a time.</p>
     <p class='sub'>pix3lware is a pixel-art studio &amp; asset shop &#8212; sprites, tilesets, animation packs and commissions for games, brands and people who miss the CRT hum.</p>
     <div class='hero-ctas'>
@@ -717,9 +717,9 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
     <div class='section-head'>
       <span class='eyebrow'>// 3D GARAGE</span>
       <h2>take it for a spin.</h2>
-      <p>Our custom Ford Bronco Raptor. Drag to look around and zoom in on the details.</p>
+      <p>Our custom Betrayer character. Drag to look around and zoom in on the details.</p>
     </div>
-    <iframe class='garage-frame' src='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html?v=enter-20260917-v34' title='Interactive Ford Bronco Raptor viewer' loading='eager' allow='fullscreen'></iframe>
+    <iframe class='garage-frame' src='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html?v=betrayer-20261125-v35' title='Interactive Betrayer viewer' loading='eager' allow='fullscreen'></iframe>
     <a class='garage-link' href='https://ayoubazizi-droid.github.io/my-3d-assets-/viewer.html' target='_blank' rel='noopener'>Open the 3D garage in a new tab &#8599;</a>
   </div>
 
@@ -1868,14 +1868,14 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
   }
   function garageError() {
     if (dismissed) return;
-    if (status) status.textContent = 'Bronco could not load. Retry to enter.';
+    if (status) status.textContent = 'Betrayer could not load. Retry to enter.';
     if (retry) retry.hidden = false;
   }
   window.addEventListener('message', event => {
     if (!frame || event.source !== frame.contentWindow || event.origin !== garageOrigin) return;
     if (event.data?.type === 'pix3lware:garage-progress' && !garageLoaded) {
       tasks.set('3D garage', clamp(event.data.progress, 0, .98)); progress();
-      if (status) status.textContent = event.data.progress >= .9 ? 'Preparing the Bronco…' : 'Loading the Ford Bronco…';
+      if (status) status.textContent = event.data.progress >= .9 ? 'Preparing Betrayer…' : 'Loading Betrayer…';
     }
     if (event.data?.type === 'pix3lware:garage-ready') {
       garageLoaded = true; progress();
@@ -1950,7 +1950,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';if(location
   }
   slowTimer = setTimeout(() => {
     if (!garageLoaded) {
-      if (status) status.textContent = 'Still preparing your Bronco. Please wait…';
+      if (status) status.textContent = 'Still preparing Betrayer. Please wait…';
       if (retry) retry.hidden = false;
     }
   }, 30000);

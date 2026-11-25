@@ -158,7 +158,7 @@
   }
   @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
 
-  /* Interactive Bronco gallery */
+  /* Interactive Betrayer gallery */
   .garage{ margin-top:56px; scroll-margin-top:90px; }
   .foot-links{flex-wrap:wrap;}
   .garage .section-head{ margin-bottom:24px; }

@@ -27,7 +27,7 @@ window.addEventListener('message', event => {
 // Replace an empty URL with './models/your-model.glb'. Keep all model files
 // in this GitHub Pages repository. Use a self-contained, uncompressed GLB.
 const objects = [
-  { title: 'Ford Bronco Raptor', category: '01 / CUSTOM BRONCO', symbol: '◈', shape: 'knot', url: './models/Ud.glb?v=bronco-20260914-v10' },
+  { title: 'Betrayer', category: '01 / THE BETRAYER', symbol: '◈', shape: 'knot', url: './models/Betrayer.glb?v=c2acb17ef5' },
 ];
 const wrap = document.querySelector('#canvas-wrap');
 const status = document.querySelector('#status');
@@ -71,11 +71,9 @@ controls.enableDamping = true;
 controls.enablePan = false;
 controls.enableZoom = false;
 controls.minPolarAngle = 0.18;
-// Let the orbit travel beneath the chassis for the requested underside shot.
 // The limit stops short of flipping the camera upside down.
-let savedMaxPolar = Number.parseFloat(localStorage.getItem('pix3lware-max-polar-v2'));
-// Derived from /home/liveuser/Documents/ford bronco.blend: the camera sits
-// at the floor line and looks toward the wheel center, without going under it.
+let savedMaxPolar = Number.parseFloat(localStorage.getItem('pix3lware-max-polar-v3'));
+// Keep the camera from travelling under the character.
 controls.maxPolarAngle = Number.isFinite(savedMaxPolar) ? savedMaxPolar : Math.PI / 2 + 0.02;
 controls.minDistance = 1.8;
 controls.maxDistance = 12;
@@ -91,10 +89,10 @@ scene.add(rim);
 const loader = new GLTFLoader();
 let current, requestId = 0;
 function resetView() {
-  // Closer framing on wide screens; preserve space around the car on phones.
-  const distance = wrap.clientWidth < 600 ? 4.6 : 3.55;
+  // Frame the full height of the character, with extra room on phones.
+  const distance = wrap.clientWidth < 600 ? 5.2 : 4.5;
   camera.position.set(2.8, 1.5, 3.4).normalize().multiplyScalar(distance);
-  controls.target.set(0, -0.28, 0);
+  controls.target.set(0, 0, 0);
   controls.update();
 }
 function dispose(root) {
@@ -192,7 +190,7 @@ zoomButton?.addEventListener('click', () => setZoomMode(!zoomMode));
 lockAngleButton?.addEventListener('click', () => {
   const angle = controls.getPolarAngle();
   controls.maxPolarAngle = angle;
-  localStorage.setItem('pix3lware-max-polar-v2', String(angle));
+  localStorage.setItem('pix3lware-max-polar-v3', String(angle));
   lockAngleButton.textContent = 'Angle locked';
 });
 // Middle mouse (button 1) is an explicit desktop zoom gesture.

@@ -27,7 +27,7 @@ window.addEventListener('message', event => {
 // Replace an empty URL with './models/your-model.glb'. Keep all model files
 // in this GitHub Pages repository. Use a self-contained, uncompressed GLB.
 const objects = [
-  { title: 'Ford Bronco Raptor', category: '01 / CUSTOM BRONCO', symbol: '◈', shape: 'knot', url: './models/Ud.glb?v=bronco-20260914-v10' },
+  { title: 'Betrayer', category: '01 / 3D CHARACTER', symbol: '◈', shape: 'knot', url: './models/Betrayer.glb?v=betrayer-20261125-v1' },
 ];
 const wrap = document.querySelector('#canvas-wrap');
 const status = document.querySelector('#status');
@@ -71,11 +71,9 @@ controls.enableDamping = true;
 controls.enablePan = false;
 controls.enableZoom = false;
 controls.minPolarAngle = 0.18;
-// Let the orbit travel beneath the chassis for the requested underside shot.
-// The limit stops short of flipping the camera upside down.
+// Allow low-angle views without letting the camera flip upside down.
 let savedMaxPolar = Number.parseFloat(localStorage.getItem('pix3lware-max-polar-v2'));
-// Derived from /home/liveuser/Documents/ford bronco.blend: the camera sits
-// at the floor line and looks toward the wheel center, without going under it.
+// Keep the initial character view centered while allowing an underside orbit.
 controls.maxPolarAngle = Number.isFinite(savedMaxPolar) ? savedMaxPolar : Math.PI / 2 + 0.02;
 controls.minDistance = 1.8;
 controls.maxDistance = 12;
@@ -91,10 +89,9 @@ scene.add(rim);
 const loader = new GLTFLoader();
 let current, requestId = 0;
 function resetView() {
-  // Closer framing on wide screens; preserve space around the car on phones.
-  const distance = wrap.clientWidth < 600 ? 4.6 : 3.55;
+  const distance = wrap.clientWidth < 600 ? 4.8 : 4.2;
   camera.position.set(2.8, 1.5, 3.4).normalize().multiplyScalar(distance);
-  controls.target.set(0, -0.28, 0);
+  controls.target.set(0, 0, 0);
   controls.update();
 }
 function dispose(root) {

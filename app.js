@@ -27,7 +27,7 @@ window.addEventListener('message', event => {
 // Replace an empty URL with './models/your-model.glb'. Keep all model files
 // in this GitHub Pages repository. Use a self-contained, uncompressed GLB.
 const objects = [
-  { title: 'Betrayer', category: '01 / THE BETRAYER', symbol: '◈', shape: 'knot', url: './models/Betrayer.glb?v=c2acb17ef5' },
+  { title: 'Betrayer', category: '01 / THE BETRAYER', symbol: '◈', shape: 'knot', url: './models/Betrayer.glb?v=light1' },
 ];
 const wrap = document.querySelector('#canvas-wrap');
 const status = document.querySelector('#status');
